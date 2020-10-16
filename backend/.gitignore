@@ -4,6 +4,12 @@
 __pycache__/
 db.sqlite3
 media
+.idea/
+.vs/
+.backendEnv
+.pk
+.pem
+.pub
 .env
 .venv
 env/
@@ -11,6 +17,6 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-/api/backendEnv/*
+backendEnv/*
 .DS_Store
 *.sqlite3
