@@ -42,7 +42,7 @@ You can start editing the page by modifying pages/index.js. The page auto-update
 
 ## Backend
 We're using venv to contain requirements and keep track of the packages we're using. Name your environment backendEnv inside /api/, so you don't need to change your .gitignore.
-```cd api
+```cd backend
 python3 -m venv backendEnv
 source backendEnv/bin/activate
 pip install -r requirements.txt
