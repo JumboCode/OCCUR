@@ -19,6 +19,6 @@
     "no-multiple-empty-lines": ["error", { "max": 2, "maxBOF": 0, "maxEOF": 0 }]
   },
   "settings": {
-    "import/resolver": { "node": { "paths": ["src"] } }
+    "import/resolver": { "node": { "moduleDirectory": ["node_modules", "src/"] } }
   }
 }
