@@ -1,9 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import 'styles/base.scss';
+import styles from './app.module.scss';
+
 export default function AppContainer({ Component, pageProps }) {
   return (
-    <Component {...pageProps} />
+    <div className={styles.base}>
+      <Component {...pageProps} />
+    </div>
   );
 }
 
