@@ -1,15 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export default function AppContainer({ Component }) {
+export default function AppContainer({ Component, pageProps }) {
   return (
-    <div>
-      Secret message
-      <Component />
-    </div>
+    <Component {...pageProps} />
   );
 }
 
 AppContainer.propTypes = {
-  Component: PropTypes.node.isRequired,
+  Component: PropTypes.elementType.isRequired,
+  pageProps: PropTypes.shape({}).isRequired,
 };
