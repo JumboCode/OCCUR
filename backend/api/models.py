@@ -1,7 +1,6 @@
 from django.db import models
 
 # Models
-
 class Location(models.Model):
     street_address = models.CharField(max_length=30, blank=True)
     city = models.CharField(max_length=15, blank=True)
