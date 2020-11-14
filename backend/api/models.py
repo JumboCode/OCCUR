@@ -14,7 +14,7 @@ class Location(models.Model):
             self.street_address,
             self.city,
             self.state,
-            self.zipcode,
+            self.zip_code,
         )
 
 class Resource(models.Model):
@@ -42,10 +42,9 @@ class Resource(models.Model):
     description = models.TextField(blank=True)
     
     def __str__(self):
-        return "Resource: {},\n Provided by: {} \nDate: {}.isoformat ".format(
+        return "Resource: {},\n Provided by: {}\n".format(
             self.name,
             self.organization,
-            self.startDate,
         )
 
 
