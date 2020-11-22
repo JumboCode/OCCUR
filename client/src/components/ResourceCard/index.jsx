@@ -1,17 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import './ResourceCard.module.scss';
+import styles from './ResourceCard.module.scss';
 
 export default function ResourceCard({
   resourceTitle, organization, startDate, endDate, location, imageSrc
 }) {
   return (
-    <div className="container">
-      <h1>{resourceTitle}</h1>
-      <h1>{organization}</h1>
+    <div className={styles.container}>
+      <h3>{resourceTitle}</h3>
+      <p>{organization}</p>
+      <p>{startDate.toLocaleDateString()}</p>
     </div>
   );
 }
+
 
 ResourceCard.propTypes = {
   resourceTitle: PropTypes.string.isRequired,
