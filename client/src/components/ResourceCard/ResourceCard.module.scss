@@ -1,4 +1,50 @@
 
-.container {
-   color: red;
+
+
+.leftside {
+   background-color: #3b31c4;
+	color: #fff;
+	padding: 30px;
+	max-width: 250px;
+	width:200px;
+}
+
+.leftside a {
+	display: inline-block;
+	font-size: 12px;
+	opacity: 0.6;
+	margin-top: 30px;
+	text-decoration: none;
+}
+
+.rightside {
+   padding: 30px;
+   position: relative;
+   width: 100%;
+   line-height: 5px;
+}
+
+.rightside h4 {
+  font-weight: 500;
+}
+
+.ResourceInfo {
+   background-color: #fff;
+	border-radius: 10px;
+	box-shadow: 0 10px 10px rgba(0, 0, 0, 0.2);
+	display: flex;
+	max-width: 100%;
+	margin: 20px;
+	overflow: hidden;
+	width: 700px;
+	
+}
+
+.ResourceInfo h6 {
+   opacity: 0.6;
+   margin: 0;
+   letter-spacing: 1px;
+   text-transform: uppercase;
+   
+  
 }
