@@ -27,7 +27,16 @@ export default function SearchPage() {
         endDate={new Date('2021-03-17T05:00:00Z')}
         location="Alameda Food Bank"
         startTime={new Date('2021-03-17T12:00:00Z')}
-        endTime={new Date('2021-03-17T05:00:00Z')}
+        endTime={new Date('2021-03-17T21:00:00Z')}
+      />
+      <ResourceCard
+        resourceTitle="Oakland Food Drive"
+        organization="Food4Food"
+        startDate={new Date('2021-03-17T08:00:00Z')}
+        endDate={new Date('2021-03-17T05:00:00Z')}
+        location="Alameda Food Bank"
+        startTime={new Date('2021-03-17T12:00:00Z')}
+        endTime={new Date('2021-03-17T21:00:00Z')}
       />
 
       <div>

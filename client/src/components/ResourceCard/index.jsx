@@ -8,12 +8,12 @@ export default function ResourceCard({
   return (
     <div className={styles.container}>
       <div className={styles.ResourceInfo}>
-        <div className={styles.leftside}>
+        <div style={{ 'background-color': getRandomColor() }} className={styles.leftside}>
           {/* <h1>hi</h1> */}
         </div>
 
         <div className={styles.rightside}>
-          <h3>{resourceTitle} &#xf073;</h3>
+          <h3>{resourceTitle}</h3>
           <h6>{organization}</h6>
           <h4>{startDate.toLocaleDateString()}</h4>
           <h4>{location}</h4>
@@ -23,6 +23,21 @@ export default function ResourceCard({
       </div>
     </div>
   );
+}
+
+function getRandomNumber(low, high) {
+  const r = Math.floor(Math.random() * (high - low + 1)) + low;
+  return r;
+}
+function getRandomColor() {
+  const characters = '0123456789ABCDEF';
+  let color = '#';
+
+  for (let i = 0; i < 6; i++) {
+    color += characters[getRandomNumber(0, 15)];
+  }
+
+  return color;
 }
 
 
