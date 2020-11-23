@@ -1,20 +1,17 @@
-
-
-
 .leftside {
-   /*background-color: #483de4;*/
-	color: #fff;
-	padding: 30px;
-	max-width: 250px;
-	width:200px;
+  background-color: #483de4;
+  color: #fff;
+  padding: 30px;
+  max-width: 250px;
+  width:200px;
 }
 
 .leftside a {
-	display: inline-block;
-	font-size: 12px;
-	opacity: 0.6;
-	margin-top: 30px;
-	text-decoration: none;
+  display: inline-block;
+  font-size: 12px;
+  opacity: 0.6;
+  margin-top: 30px;
+  text-decoration: none;
 }
 
 .rightside {
@@ -30,14 +27,14 @@
 
 .ResourceInfo {
    background-color: #fff;
-	border-radius: 10px;
-	box-shadow: 0 10px 10px rgba(96, 16, 224, 0.2);
-	display: flex;
-	max-width: 100%;
-	margin: 20px;
-	overflow: hidden;
-	width: 700px;
-	
+  border-radius: 10px;
+  box-shadow: 0 10px 10px rgba(96, 16, 224, 0.2);
+  display: flex;
+  max-width: 100%;
+  margin: 20px;
+  overflow: hidden;
+  width: 700px;
+
 }
 
 .ResourceInfo h6 {
@@ -45,6 +42,6 @@
    margin: 0;
    letter-spacing: 1px;
    text-transform: uppercase;
-   
-  
+
+
 }
