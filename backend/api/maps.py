@@ -9,7 +9,12 @@ load_dotenv(verbose=True)
 
 ### getCoordinates
 # Input: adress object
-#    Format : {street}
+#    Format : {“Location”: {
+#       “Street_Address”: “”,
+#       “City” : “”,
+#       “State” : “”,
+#       “Zip code” : “”}}
+
 # Output: 
 def getCoordinates(address):
     coordinates = {}
