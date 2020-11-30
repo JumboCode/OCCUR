@@ -37,7 +37,7 @@ class Resource(models.Model):
     time            = models.TimeField(auto_now=False, auto_now_add=False, null=True)
     flyer           = models.URLField(null=True, blank=True)
     link            = models.URLField(null=True, blank=True)
-    location        = models.ForeignKey('Location', on_delete=models.CASCADE, blank=True)
+    location        = models.OneToOneField('Location', on_delete=models.CASCADE, primary_key=True, blank=True)
     zoom            = models.URLField(null=True, blank=True)
     description     = models.TextField(blank=False)
     
