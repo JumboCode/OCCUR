@@ -1,23 +1,27 @@
 from django.conf import settings
+from dotenv import load_dotenv
 import requests
 import os
-# getCoordinates
-# Input: 
+
+# loading dotenv
+load_dotenv(verbose=True)
+
+
+### getCoordinates
+# Input: adress object
+#    Format : {street}
 # Output: 
-
-# load_dotenv()
-
 def getCoordinates(address):
+    coordinates = {}
     curr_address = "1313+Disneyland+Dr,+Anaheim,+CA"
 
     response = requests.get("https://maps.googleapis.com/maps/api/geocode/json?address={}&key={}".format(
         curr_address,
         os.getenv('GOOGLE_MAPS_API_KEY'),
     ))
-    return response.json()
-    # print(response['results'])
 
-getCoordinates("nothing")
-
-
-# https://maps.googleapis.com/maps/api/geocode/outputFormat?parameters
+    response = response.json()
+    coordinates['lat'] = response['results'][0]['geometry']['location']['lat']
+    coordinates['lng'] = response['results'][0]['geometry']['location']['lng']
+    
+    return coordinates
