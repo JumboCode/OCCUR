@@ -8,17 +8,19 @@ load_dotenv(verbose=True)
 
 
 ### getCoordinates
-# Input: adress object
-#    Format : {“Location”: {
-#       “Street_Address”: “”,
-#       “City” : “”,
-#       “State” : “”,
-#       “Zip code” : “”}}
+# Input: adress object, dictionary object to string
+#    Format : {
+#       “Street_Address”: “419 Boston Ave”,
+#       “City” : “Medford”,
+#       “State” : “MA”,
+#       “Zip code” : 35432}
 
 # Output: 
 def getCoordinates(address):
+    #turn address into string, use interactive mode to check 
     coordinates = {}
-    curr_address = "1313+Disneyland+Dr,+Anaheim,+CA"
+    curr_address = address.get("Street_Address") + ", " + address.get("City") + ", " + address.get("State") + " " + str(address.get("Zip code"))
+    #curr_address = "1313+Disneyland+Dr,+Anaheim,+CA"
 
     response = requests.get("https://maps.googleapis.com/maps/api/geocode/json?address={}&key={}".format(
         curr_address,
