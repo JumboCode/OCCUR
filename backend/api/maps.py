@@ -13,10 +13,8 @@ load_dotenv(verbose=True)
 # Output Format: {'lat': '', 'lng': '' } or {} if no geocoordinates returned from API call
 
 def getCoordinates(address):
-    #turn address into string, use interactive mode to check 
     coordinates = {}
-    curr_address = address.get("Street_Address") + " " + address.get("City") + " " + address.get("State") + " " + str(address.get("Zip code"))
-    #curr_address = "1313+Disneyland+Dr,+Anaheim,+CA"
+    curr_address = "{} {} {} {}".format(address.get("street_address"), address.get("city"), address.get("state"), str(address.get("zip_code")) )
     print (curr_address)
 
     response = requests.get("https://maps.googleapis.com/maps/api/geocode/json?address={}&key={}".format(
