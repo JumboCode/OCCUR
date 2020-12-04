@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+
 import { Auth0Provider } from '@auth0/auth0-react';
 
 import 'styles/base.scss';
