@@ -17,7 +17,10 @@ from django.contrib import admin
 from django.urls import path
 from api import views
 urlpatterns = [
-    path('api/v1/new/', views.DummyAPI.as_view()),
+    path('api/v1/new/', views.LocationCreate.as_view()),
+    path('api/v1/<int:id>/delete/', views.LocationDestroy.as_view()),
+    path('api/v1/list/resource', views.ResourceList.as_view()),
+    path('api/v1/list/location', views.LocationList.as_view()),
     path('admin/', admin.site.urls
     ),
 ]
