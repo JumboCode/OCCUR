@@ -8,8 +8,8 @@ import styles from './app.module.scss';
 export default function AppContainer({ Component, pageProps }) {
   return (
     <Auth0Provider
-      domain="occur.us.auth0.com"
-      clientId="OUr5pR1GCGKp7krFCbcZ1SwkxZLwTYo8"
+      domain={process.env.NEXT_PUBLIC_AUTH0_DOMAIN}
+      clientId={process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID}
       redirectUri={process.env.NEXT_PUBLIC_BASE_URL}
     >
       <div className={styles.base}>
