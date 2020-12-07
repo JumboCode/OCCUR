@@ -14,5 +14,7 @@ module.exports = {
         test: /\.(js)x?$/,
       },
     });
+
+    return config;
   },
 };
