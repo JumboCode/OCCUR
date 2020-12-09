@@ -23,9 +23,9 @@ class ResourceSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         location_validated_data = validated_data.pop('location')
         resource = Resource.objects.create(**validated_data)
-        location_serializer = self.fields['location']
         print('********************************************')
-        print(location_validated_data)
+        print(resource)
+        location_serializer = self.fields['location']
         location_validated_data['resource'] = resource
         locations = location_serializer.create(location_validated_data)
         return resource

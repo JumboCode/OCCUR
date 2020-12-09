@@ -38,6 +38,20 @@ from rest_framework import status
 
 class ResourceCreate(CreateAPIView):
     def create(self, request, *args, **kwargs):
+        address = request.data['location']
+
+        #---- retrieve geoCoordinates 
+        geoCoordinates = getCoordinates(address)
+        # TO DO:
+        # check that a valid lat and lng returned
+        # set default lat and lng if nothing is returned
+        request.data['location']['latitude'] = geoCoordinates['lat']
+        request.data['location']['longitude'] = geoCoordinates['lng']
+
+        #---- convert image to url reference
+        image = request.data['flyer']
+        request.data['flyer'] = cloudinary_url(image)
+
         serializer = ResourceSerializer(data=request.data)
         if serializer.is_valid():
             resource = serializer.save()
