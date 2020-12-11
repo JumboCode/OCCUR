@@ -1,3 +1,4 @@
+import React, { useContext } from 'react';
 import auth0 from 'auth0-js';
 
 export const webAuth = new auth0.WebAuth({
@@ -19,3 +20,6 @@ export function doLogin(email) {
     if (err) console.error('Error sending passwordless link:', err);
   });
 }
+
+export const AuthContext = React.createContext({});
+export const useAuth = () => useContext(AuthContext);
