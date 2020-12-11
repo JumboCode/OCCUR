@@ -1,10 +1,11 @@
 import auth0 from 'auth0-js';
 
-const webAuth = new auth0.WebAuth({
+export const webAuth = new auth0.WebAuth({
   clientID: process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID,
   domain: process.env.NEXT_PUBLIC_AUTH0_DOMAIN,
   redirectUri: process.env.NEXT_PUBLIC_BASE_URL,
   responseType: 'token id_token',
+  audience: 'occur-api',
 });
 
 /* eslint-disable import/prefer-default-export */
