@@ -10,7 +10,6 @@ class LocationSerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
 
 
-
 class ResourceSerializer(serializers.ModelSerializer):
     location = LocationSerializer(many=False)
     class Meta:
@@ -23,8 +22,6 @@ class ResourceSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         location_validated_data = validated_data.pop('location')
         resource = Resource.objects.create(**validated_data)
-        print('********************************************')
-        print(resource)
         location_serializer = self.fields['location']
         location_validated_data['resource'] = resource
         locations = location_serializer.create(location_validated_data)
