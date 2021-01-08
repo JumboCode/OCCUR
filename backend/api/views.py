@@ -25,8 +25,9 @@ class ResourceCreate(CreateAPIView):
         request.data['location']['longitude'] = geoCoordinates['lng']
 
         #---- convert image to url reference
-        image = request.data['flyer']
-        request.data['flyer'] = cloudinary_url(image)
+        if request.data.get('flyer'):
+            image = request.data['flyer']
+            request.data['flyer'] = cloudinary_url(image)
 
         serializer = ResourceSerializer(data=request.data)
         if serializer.is_valid():
