@@ -7,27 +7,34 @@ from api.serializers import ResourceSerializer
 from api.serializers import LocationSerializer
 from api.models import Resource
 from api.models import Location
+from api.img_upload import cloudinary_url
+from api.maps import getCoordinates
+from rest_framework import status
 
 class ResourceCreate(CreateAPIView):
-    serializer_class = ResourceSerializer
-    
     def create(self, request, *args, **kwargs):
-        # validate resource
-        # Checks image and processes image_data
-            # If image is url store URL 
-            # If image is binary data call image_upload(resource[‘Image_Of_Flyer’])
-        # Checks address and retrieves latitude and longitude
-        # Creates location object
-        # Creates resource object
-        # Returns resource object
+        address = request.data['location']
 
-        return Response({"message": "Hello, world!"})
+        #---- retrieve geoCoordinates 
+        geoCoordinates = getCoordinates(address)
+        # TO DO:
+        # check that a valid lat and lng returned
+        # set default lat and lng if nothing is returned
+        print (geoCoordinates)
+        request.data['location']['latitude'] = geoCoordinates['lat']
+        request.data['location']['longitude'] = geoCoordinates['lng']
 
-class LocationCreate(CreateAPIView):
-    serializer_class = LocationSerializer
-    
-    def create(self, request, *args, **kwargs):
-        return super().create(request, *args, **kwargs)
+        #---- convert image to url reference
+        if request.data.get('flyer'):
+            image = request.data['flyer']
+            request.data['flyer'] = cloudinary_url(image)
+
+        serializer = ResourceSerializer(data=request.data)
+        if serializer.is_valid():
+            resource = serializer.save()
+            serializer = ResourceSerializer(resource)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ResourceDestroy(DestroyAPIView):
     queryset = Resource.objects.all()

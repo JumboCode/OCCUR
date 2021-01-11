@@ -15,7 +15,7 @@ load_dotenv(verbose=True)
 def getCoordinates(address):
     coordinates = {}
     curr_address = "{} {} {} {}".format(address.get("street_address"), address.get("city"), address.get("state"), str(address.get("zip_code")) )
-    print (curr_address)
+    # print (curr_address)
 
     response = requests.get("https://maps.googleapis.com/maps/api/geocode/json?address={}&key={}".format(
         curr_address,
