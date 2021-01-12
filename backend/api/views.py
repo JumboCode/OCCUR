@@ -20,7 +20,6 @@ def apiUrlsList(request):
         'create a new resource': 'api/v1/new/resource/',
         'delete a resource': 'api/v1/<int:id>/delete/resource',
     }
-
     return Response(Urls)
 
 
