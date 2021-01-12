@@ -18,6 +18,7 @@ def apiUrlsList(request):
         'list all resources': 'api/v1/list/resource',
         'list all locations': 'api/v1/list/location',
         'create a new resource': 'api/v1/new/resource/',
+        'delete a resource': 'api/v1/<int:id>/delete/resource',
     }
 
     return Response(Urls)
