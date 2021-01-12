@@ -17,8 +17,8 @@ from django.contrib import admin
 from django.urls import path
 from api import views
 urlpatterns = [
+    path('',views.apiUrlsList, name="apiUrlsList" ),
     path('api/v1/new/resource/', views.ResourceCreate.as_view()),
-    # path('api/v1/new/', views.LocationCreate.as_view()),
     path('api/v1/<int:id>/delete/location', views.LocationDestroy.as_view()),
     path('api/v1/<int:id>/delete/resource', views.ResourceDestroy.as_view()),
     path('api/v1/list/resource', views.ResourceList.as_view()),
