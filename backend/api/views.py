@@ -15,10 +15,10 @@ from rest_framework.decorators import api_view
 @api_view(['GET'])
 def apiUrlsList(request):
     Urls = {
-        'GET /resources' : 'list all resources'
-        'POST /resources': 'add a new resource'
-        'GET /resources/(id)' : 'retrieve a single resource'
-        'PUT /resources/(id)' : 'modify a single resource'
+        'GET /resources' : 'list all resources',
+        'POST /resources': 'add a new resource',
+        'GET /resources/(id)' : 'retrieve a single resource',
+        'PUT /resources/(id)' : 'modify a single resource',
         'DELETE /resources/(id)' : 'remove a single resource'
     }
     return Response(Urls)
