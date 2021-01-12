@@ -18,11 +18,11 @@ from django.urls import path
 from api import views
 urlpatterns = [
     path('',views.apiUrlsList, name="apiUrlsList" ),
-    path('api/v1/new/resource/', views.ResourceCreate.as_view()),
-    path('api/v1/<int:id>/delete/location', views.LocationDestroy.as_view()),
-    path('api/v1/<int:id>/delete/resource', views.ResourceDestroy.as_view()),
-    path('api/v1/list/resource', views.ResourceList.as_view()),
-    path('api/v1/list/location', views.LocationList.as_view()),
+    path('resource/', views.ResourceCreate.as_view()),
+    path('location/<int:id>/', views.LocationDestroy.as_view()),
+    path('resource/<int:id>/', views.ResourceDestroy.as_view()),
+    path('resources/', views.ResourceList.as_view()),
+    path('locations/', views.LocationList.as_view()),
     path('admin/', admin.site.urls
     ),
 ]
