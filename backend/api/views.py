@@ -12,7 +12,15 @@ from api.maps import getCoordinates
 from rest_framework import status
 
 class ResourceCreate(CreateAPIView):
-    def create(self, request, *args, **kwargs):
+    @staticmethod
+    def inputValidator(request.data):
+        if request.data['startDate'] > request.data['endDate']:
+            return (False, "Start date must be before end date!")
+            
+
+
+
+    def create(self, request, *args, **kwargs):   
         address = request.data['location']
 
         #---- retrieve geoCoordinates 
