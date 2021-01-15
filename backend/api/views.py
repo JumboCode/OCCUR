@@ -12,8 +12,7 @@ from api.maps import getCoordinates
 from rest_framework import status
 
 class ResourceCreate(CreateAPIView):
-    @staticmethod
-    def inputValidator(data):
+    def inputValidator(self, data):
         if data['startDate'] > data['endDate']:
             return (False, "Start date must be before end date!")
         
@@ -25,7 +24,7 @@ class ResourceCreate(CreateAPIView):
 
 
     def create(self, request, *args, **kwargs): 
-        success, message = inputValidator(request.data)  
+        success, message = self.inputValidator(request.data)  
         if not success:
             print("error:", message)
         address = request.data['location']
