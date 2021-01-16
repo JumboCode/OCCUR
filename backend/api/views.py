@@ -10,18 +10,14 @@ from api.models import Location
 from api.img_upload import cloudinary_url
 from api.maps import getCoordinates
 from rest_framework import status
+from datetime import datetime
 
 class ResourceCreate(CreateAPIView):
     def inputValidator(self, data):
         if data['startDate'] > data['endDate']:
-            return (False, "Start date must be before end date!")
+            return (False, 'Start date must be before end date!')
         
         return (True, "")
-
-
-
-
-
 
     def create(self, request, *args, **kwargs): 
         success, message = self.inputValidator(request.data)  
