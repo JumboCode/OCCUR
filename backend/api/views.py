@@ -17,12 +17,16 @@ class ResourceCreate(CreateAPIView):
         if data['startDate'] > data['endDate']:
             return (False, 'Start date must be before end date!')
         
-        return (True, "")
+        nowStr = datetime.now().strftime('%Y-%m-%d')
+        if data['startDate'] < nowStr:
+            return (False, 'Start date must be in the future')
+
+        return (True, '')
 
     def create(self, request, *args, **kwargs): 
         success, message = self.inputValidator(request.data)  
         if not success:
-            print("error:", message)
+            print('error:', message)
         address = request.data['location']
 
         #---- retrieve geoCoordinates 
