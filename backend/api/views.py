@@ -21,6 +21,9 @@ class ResourceCreate(CreateAPIView):
         if data['startDate'] < nowStr:
             return (False, 'Start date must be in the future')
 
+        if bool(data['location']) and data['location'][zip_code] != 5 or data['location'][zip_code] != 0:
+            return (False, 'Invalid zipcode')
+
         return (True, '')
 
     def create(self, request, *args, **kwargs): 
