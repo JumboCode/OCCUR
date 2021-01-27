@@ -21,7 +21,7 @@ class ResourceCreate(CreateAPIView):
         if data['startDate'] < nowStr:
             return (False, 'Start date must be in the future')
 
-        if bool(data['location']) and len(data['location']['zip_code']) != 5 or len(data['location']['zip_code']) != 0:
+        if not bool(data['location']) or (len(data['location']['zip_code']) != 5 or len(data['location']['zip_code']) != 0):
             return (False, 'Invalid zipcode')
 
         return (True, '')
