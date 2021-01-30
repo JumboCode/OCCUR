@@ -32,6 +32,10 @@ class ResourceCreate(CreateAPIView):
         if not re.match(dataURLPattern, data['flyer']):
             return (False, 'Data URL for `flyer` is either missing or invalid')
 
+        correctDataURLStart = 'data:image'
+        if not correctDataURLStart == data['flyer'][:len(correctDataURLStart)]:
+            return (False, 'Attribute `flyer` is not a valid image')
+
         return (True, '')
 
     def create(self, request, *args, **kwargs): 
