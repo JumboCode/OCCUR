@@ -22,6 +22,8 @@ def apiUrlsList(request):
     }
     return Response(Urls)
 
+#class ResourceRetrieveUpdate
+
 class ResourceCreate(CreateAPIView):
     def create(self, request, *args, **kwargs):
         address = request.data['location']
