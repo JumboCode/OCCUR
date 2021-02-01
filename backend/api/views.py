@@ -28,7 +28,7 @@ class ResourceCreate(CreateAPIView):
         if not 'flyer' in data:
             return (False, 'Missing `flyer` attribute')
 
-        dataURLPattern = r"data:[\w\/]+;base64,"
+        dataURLPattern = r"data:.+;base64,"
         if not re.match(dataURLPattern, data['flyer']):
             return (False, 'Data URL for `flyer` is either missing or invalid')
 
