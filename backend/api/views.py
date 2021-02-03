@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 # Create your views here.
-from rest_framework.generics import CreateAPIView, ListAPIView, DestroyAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
 from api.serializers import ResourceSerializer
 from api.serializers import LocationSerializer
@@ -49,9 +49,10 @@ class ResourceCreate(CreateAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class ResourceDestroy(DestroyAPIView):
+class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     queryset = Resource.objects.all()
     lookup_field = 'id'
+    serializer_class = ResourceSerializer
 
     def delete(self, request, *args, **kwargs):
         Resource_id = request.data.get('id')
@@ -61,11 +62,32 @@ class ResourceDestroy(DestroyAPIView):
             cache.delete('resource_data_{}'.format(Resource_id))
         return response
 
+    def update(self, request, *args, **kwargs):
+        response = super().update(request, *args, **kwargs)
+        if response.status_code == 200:
+            from django.core.cache import cache
+            Resource = response.data
+            cache.set('resource_data_{}'.format(Resource_id), {
+                # 'id': Resource['id'], **** just making sure this is read only
+                'name': Resource['name'],
+                'organization': Resource['organization'],
+                'category': Resource['category'],
+                'startDate': Resource['startDate'],
+                'endDate': Resource['endDate'],
+                'time': Resource['time'],
+                'flyer': Resource['flyer'],
+                'zoom': Resource['zoom'],
+                'description': Resource['description'],
+                'location': Resource['location'],
+            })
+        return response
 
 
-class LocationDestroy(DestroyAPIView):
+
+class LocationRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     queryset = Location.objects.all()
     lookup_field = 'id'
+    serializer_class = LocationSerializer
 
     def delete(self, request, *args, **kwargs):
         Location_id = request.data.get('id')
@@ -73,6 +95,22 @@ class LocationDestroy(DestroyAPIView):
         if response.status_code == 204:
             from django.core.cache import cache
             cache.delete('location_data_{}'.format(Location_id))
+        return response
+
+    def update(self, request, *args, **kwargs):
+        response = super().update(request, *args, **kwargs)
+        if response.status_code == 200:
+            from django.core.cache import cache
+            Location = response.data
+            cache.set('location_data_{}'.format(Location_id), {
+                # 'id': Location['id'], **** just making sure this is read only
+                'street_address': Location['street_address'],
+                'city': Location['city'],
+                'state': Location['state'],
+                'zip_code': Location['zip_code'],
+                'latitude': Location['latitude'],
+                'longitude': Location['longitude'],
+            })
         return response
 
 

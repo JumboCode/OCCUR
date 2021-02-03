@@ -19,8 +19,8 @@ from api import views
 urlpatterns = [
     path('',views.apiUrlsList, name="apiUrlsList" ),
     path('api/v1/new/resource/', views.ResourceCreate.as_view()),
-    path('api/v1/<int:id>/delete/location', views.LocationDestroy.as_view()),
-    path('api/v1/<int:id>/delete/resource', views.ResourceDestroy.as_view()),
+    path('api/v1/<int:id>/location', views.LocationRetrieveUpdateDestroy.as_view()),
+    path('api/v1/<int:id>/resource', views.ResourceRetrieveUpdateDestroy.as_view()),
     path('api/v1/list/resource', views.ResourceList.as_view()),
     path('api/v1/list/location', views.LocationList.as_view()),
     path('admin/', admin.site.urls
