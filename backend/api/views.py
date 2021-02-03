@@ -11,6 +11,7 @@ from api.img_upload import cloudinary_url
 from api.maps import getCoordinates
 from rest_framework import status
 from datetime import datetime
+import re
 
 class ResourceCreate(CreateAPIView):
     def inputValidator(self, data):
@@ -23,6 +24,17 @@ class ResourceCreate(CreateAPIView):
 
         if bool(data['location']) and len(data['location']['zip_code']) != 5 and len(data['location']['zip_code']) != 0:
             return (False, 'Invalid zipcode')
+
+        if not 'flyer' in data:
+            return (False, 'Missing `flyer` attribute')
+
+        dataURLPattern = r"data:.+;base64,"
+        if not re.match(dataURLPattern, data['flyer']):
+            return (False, 'Data URL for `flyer` is either missing or invalid')
+
+        correctDataURLStart = 'data:image'
+        if not correctDataURLStart == data['flyer'][:len(correctDataURLStart)]:
+            return (False, 'Attribute `flyer` is not a valid image')
 
         return (True, '')
 
