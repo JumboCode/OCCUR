@@ -25,8 +25,10 @@ class ResourceCreate(CreateAPIView):
         if bool(data['location']) and len(data['location']['zip_code']) != 5 and len(data['location']['zip_code']) != 0:
             return (False, 'Invalid zipcode')
 
+        # instead add a fyler object that is null
         if not 'flyer' in data:
-            return (False, 'Missing `flyer` attribute')
+            # return (False, 'Missing `flyer` attribute')
+            data['flyer'] = None
 
         dataURLPattern = r"data:.+;base64,"
         if not re.match(dataURLPattern, data['flyer']):
@@ -39,9 +41,11 @@ class ResourceCreate(CreateAPIView):
         return (True, '')
 
     def create(self, request, *args, **kwargs): 
+
         success, message = self.inputValidator(request.data)  
         if not success:
             print('error:', message)
+            
         address = request.data['location']
 
         #---- retrieve geoCoordinates 
