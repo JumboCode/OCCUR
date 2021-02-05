@@ -7,7 +7,7 @@ from api.serializers import ResourceSerializer
 from api.serializers import LocationSerializer
 from api.models import Resource
 from api.models import Location
-from api.img_upload import cloudinary_url
+from api.img_upload import cloudinary_url, cloudinary_delete
 from api.maps import getCoordinates
 from rest_framework import status
 # class ResourceCreate(CreateAPIView):
@@ -49,8 +49,14 @@ class ResourceCreate(CreateAPIView):
         request.data['location']['longitude'] = geoCoordinates['lng']
 
         #---- convert image to url reference
+
         image = request.data['flyer']
-        request.data['flyer'] = cloudinary_url(image)
+        # if the first part of the string is "data:image/", send to cloudinary
+        if image[0: 11] == "data:image/":
+            request.data['flyer'] = cloudinary_url(image)["url"]
+            request.data['flyer_id'] = cloudinary_url(image)["public_id"]
+
+        # if it's a url, don't do anything
 
         serializer = ResourceSerializer(data=request.data)
         if serializer.is_valid():
@@ -65,6 +71,12 @@ class ResourceDestroy(DestroyAPIView):
 
     def delete(self, request, *args, **kwargs):
         Resource_id = request.data.get('id')
+        # Flyer_id = queryset.filter(id=Resource_id).first()["flyer_id"] 
+        instance = self.get_object()
+        print("instance type: ", type(instance))
+        Flyer_id = instance["flyer_id"]
+        print("flyer id: ", Flyer_id)
+        cloudinary_delete(Flyer_id)
         response = super().delete(request, *args, **kwargs)
         if response.status_code == 204:
             from django.core.cache import cache
