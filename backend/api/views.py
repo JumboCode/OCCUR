@@ -22,7 +22,7 @@ class ResourceCreate(CreateAPIView):
         if data['startDate'] < nowStr:
             return (False, 'Start date must be in the future')
 
-        if 'location' in data and len(data['location']['zip_code']) != 5 and len(data['location']['zip_code']) != 0:
+        if 'location' in data and data['location'] and len(data['location']['zip_code']) != 5 and len(data['location']['zip_code']) != 0:
             return (False, 'Invalid zipcode')
 
         dataURLPattern = r"data:.+;base64,"
@@ -44,18 +44,19 @@ class ResourceCreate(CreateAPIView):
             data['zoom'] = ""
 
         if not 'location' in  data:
-            data['location'] = None
+            data['location'] = {}
         return (True, '')
 
     def create(self, request, *args, **kwargs): 
         success, message = self.inputValidator(request.data)  
         if not success:
-            print('Error: ', message, file=sys.stderr)
+            print('Error: ', message)
             
-        address = request.data['location']
 
         #---- retrieve geoCoordinates 
-        if request.data['location']:
+        if 'location' in request.data and request.data['location']:
+            print(bool(request.data['location']))
+            address = request.data['location']
             geoCoordinates = getCoordinates(address)
 
             request.data['location']['latitude'] = geoCoordinates['lat']
@@ -67,6 +68,7 @@ class ResourceCreate(CreateAPIView):
             request.data['flyer'] = cloudinary_url(image)
 
         serializer = ResourceSerializer(data=request.data)
+
         if serializer.is_valid():
             resource = serializer.save()
             serializer = ResourceSerializer(resource)
