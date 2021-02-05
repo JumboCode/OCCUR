@@ -22,43 +22,47 @@ class ResourceCreate(CreateAPIView):
         if data['startDate'] < nowStr:
             return (False, 'Start date must be in the future')
 
-        if bool(data['location']) and len(data['location']['zip_code']) != 5 and len(data['location']['zip_code']) != 0:
+        if 'location' in data and len(data['location']['zip_code']) != 5 and len(data['location']['zip_code']) != 0:
             return (False, 'Invalid zipcode')
 
-        # instead add a fyler object that is null
-        if not 'flyer' in data:
-            # return (False, 'Missing `flyer` attribute')
-            data['flyer'] = None
-
         dataURLPattern = r"data:.+;base64,"
-        if not re.match(dataURLPattern, data['flyer']):
+        if 'flyer' in data and not re.match(dataURLPattern, data['flyer']):
             return (False, 'Data URL for `flyer` is either missing or invalid')
 
         correctDataURLStart = 'data:image'
-        if not correctDataURLStart == data['flyer'][:len(correctDataURLStart)]:
+        if 'flyer' in data and not correctDataURLStart == data['flyer'][:len(correctDataURLStart)]:
             return (False, 'Attribute `flyer` is not a valid image')
 
+        # Add empty / blank values for attributes that
+        # do not have to be passed in to create a new resource
+        # -> zoom, flyer, location
+        if not 'flyer' in data:
+            # return (False, 'Missing `flyer` attribute')
+            data['flyer'] = ""
+        
+        if not 'zoom' in data:
+            data['zoom'] = ""
+
+        if not 'location' in  data:
+            data['location'] = None
         return (True, '')
 
     def create(self, request, *args, **kwargs): 
-
         success, message = self.inputValidator(request.data)  
         if not success:
-            print('error:', message)
+            print('Error: ', message, file=sys.stderr)
             
         address = request.data['location']
 
         #---- retrieve geoCoordinates 
-        geoCoordinates = getCoordinates(address)
-        # TO DO:
-        # check that a valid lat and lng returned
-        # set default lat and lng if nothing is returned
-        print (geoCoordinates)
-        request.data['location']['latitude'] = geoCoordinates['lat']
-        request.data['location']['longitude'] = geoCoordinates['lng']
+        if request.data['location']:
+            geoCoordinates = getCoordinates(address)
+
+            request.data['location']['latitude'] = geoCoordinates['lat']
+            request.data['location']['longitude'] = geoCoordinates['lng']
 
         #---- convert image to url reference
-        if request.data.get('flyer'):
+        if request.data.get('flyer') and request.data['flyer'] != "":
             image = request.data['flyer']
             request.data['flyer'] = cloudinary_url(image)
 
