@@ -1,5 +1,7 @@
 from django.shortcuts import render
-
+import io
+from rest_framework.parsers import JSONParser
+from rest_framework.renderers import JSONRenderer
 # Create your views here.
 from rest_framework.generics import CreateAPIView, ListAPIView, DestroyAPIView
 from rest_framework.response import Response
@@ -70,13 +72,23 @@ class ResourceDestroy(DestroyAPIView):
     lookup_field = 'id'
 
     def delete(self, request, *args, **kwargs):
+        print("request: ", request)
         Resource_id = request.data.get('id')
-        # Flyer_id = queryset.filter(id=Resource_id).first()["flyer_id"] 
-        instance = self.get_object()
-        print("instance type: ", type(instance))
-        Flyer_id = instance["flyer_id"]
-        print("flyer id: ", Flyer_id)
-        cloudinary_delete(Flyer_id)
+        print("Resource id: ", Resource_id)
+
+        # flyer = queryset.filter(id=Resource_id)[0]
+        queryset = Resource.objects.all()
+        print("queryset: ", queryset)
+        serializer = ResourceSerializer(queryset.filter(id=Resource_id)[0])
+        json = JSONRenderer().render(serializer.data)
+        stream = io.BytesIO(json)
+        data = JSONParser().parse(stream)
+        flyer_id = data['flyer_id']
+        # instance = self.get_object()
+        # print("instance type: ", type(instance))
+        # Flyer_id = instance["flyer_id"]
+        # print("flyer id: ", Flyer_id)
+        cloudinary_delete(flyer_id)
         response = super().delete(request, *args, **kwargs)
         if response.status_code == 204:
             from django.core.cache import cache
