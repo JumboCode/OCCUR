@@ -1,8 +1,6 @@
 from django.db import models
 
 # Models
-
-
 class Resource(models.Model):
     
     RESOURCE_CATEGORIES = [
@@ -24,7 +22,6 @@ class Resource(models.Model):
     flyer           = models.URLField(null=True, blank=True)
     flyer_id        = models.CharField(max_length=30, null=True, blank=True)
     link            = models.URLField(null=True, blank=True)
-    # location        = models.OneToOneField('Location', on_delete=models.CASCADE)
     zoom            = models.URLField(null=True, blank=True)
     description     = models.TextField(blank=False)
     

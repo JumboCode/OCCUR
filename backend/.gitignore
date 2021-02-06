@@ -20,4 +20,3 @@ venv.bak/
 backendEnv/*
 .DS_Store
 *.sqlite3
-settings.py
