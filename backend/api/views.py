@@ -10,6 +10,17 @@ from api.models import Location
 from api.img_upload import cloudinary_url
 from api.maps import getCoordinates
 from rest_framework import status
+from rest_framework.decorators import api_view
+
+@api_view(['GET'])
+def apiUrlsList(request):
+    Urls = {
+        'list all resources': 'api/v1/list/resource',
+        'list all locations': 'api/v1/list/location',
+        'create a new resource': 'api/v1/new/resource/',
+        'delete a resource': 'api/v1/<int:id>/delete/resource',
+    }
+    return Response(Urls)
 
 class ResourceCreate(CreateAPIView):
     def create(self, request, *args, **kwargs):
