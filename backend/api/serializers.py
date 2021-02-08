@@ -15,7 +15,7 @@ class ResourceSerializer(serializers.ModelSerializer):
     class Meta:
         model   = Resource
         fields  = (
-            'id', 'name','organization','category','startDate','endDate','time', 'flyer', 'flyer_id', 'zoom', 'description', 'location'
+            'id', 'name','organization','category','startDate','endDate','time', 'flyer', 'flyer_id', 'link', 'zoom', 'description', 'location'
         )
         read_only_fields = ('id',)
 
