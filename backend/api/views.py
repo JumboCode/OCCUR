@@ -1,5 +1,7 @@
 from django.shortcuts import render
-
+import io
+from rest_framework.parsers import JSONParser
+from rest_framework.renderers import JSONRenderer
 # Create your views here.
 from rest_framework.generics import CreateAPIView, ListAPIView, DestroyAPIView
 from rest_framework.response import Response
@@ -7,9 +9,13 @@ from api.serializers import ResourceSerializer
 from api.serializers import LocationSerializer
 from api.models import Resource
 from api.models import Location
-from api.img_upload import cloudinary_url
+from api.img_upload import cloudinary_url, cloudinary_delete
 from api.maps import getCoordinates
 from rest_framework import status
+
+from datetime import datetime
+import re
+
 from rest_framework.decorators import api_view
 
 @api_view(['GET'])
@@ -23,24 +29,66 @@ def apiUrlsList(request):
     return Response(Urls)
 
 class ResourceCreate(CreateAPIView):
-    def create(self, request, *args, **kwargs):
-        address = request.data['location']
+    def inputValidator(self, data):
+        if data['startDate'] > data['endDate']:
+            return (False, 'Start date must be before end date!')
+        
+        nowStr = datetime.now().strftime('%Y-%m-%d')
+        if data['startDate'] < nowStr:
+            return (False, 'Start date must be in the future')
+
+        if 'location' in data and data['location'] and len(data['location']['zip_code']) != 5 and len(data['location']['zip_code']) != 0:
+            return (False, 'Invalid zipcode')
+
+        dataURLPattern = r"data:.+;base64,"
+        if 'flyer' in data and not re.match(dataURLPattern, data['flyer']):
+            return (False, 'Data URL for `flyer` is either missing or invalid')
+
+        correctDataURLStart = 'data:image'
+        if 'flyer' in data and not correctDataURLStart == data['flyer'][:len(correctDataURLStart)]:
+            return (False, 'Attribute `flyer` is not a valid image')
+
+        # Add empty / blank values for attributes that
+        # do not have to be passed in to create a new resource
+        # -> zoom, flyer, location
+        if not 'flyer' in data:
+            # return (False, 'Missing `flyer` attribute')
+            data['flyer'] = ""
+        
+        if not 'zoom' in data:
+            data['zoom'] = ""
+
+        if not 'location' in  data:
+            data['location'] = {}
+        return (True, '')
+
+    def create(self, request, *args, **kwargs): 
+        success, message = self.inputValidator(request.data)  
+        if not success:
+            print('Error: ', message)
+            
 
         #---- retrieve geoCoordinates 
-        geoCoordinates = getCoordinates(address)
-        # TO DO:
-        # check that a valid lat and lng returned
-        # set default lat and lng if nothing is returned
-        print (geoCoordinates)
-        request.data['location']['latitude'] = geoCoordinates['lat']
-        request.data['location']['longitude'] = geoCoordinates['lng']
+        if 'location' in request.data and request.data['location']:
+            print(bool(request.data['location']))
+            address = request.data['location']
+            geoCoordinates = getCoordinates(address)
+
+            request.data['location']['latitude'] = geoCoordinates['lat']
+            request.data['location']['longitude'] = geoCoordinates['lng']
 
         #---- convert image to url reference
-        if request.data.get('flyer'):
-            image = request.data['flyer']
-            request.data['flyer'] = cloudinary_url(image)
+
+        image = request.data['flyer']
+        # if the first part of the string is "data:image/", send to cloudinary
+        if image[0: 5] == "data:":
+            request.data['flyer'] = cloudinary_url(image)["url"]
+            request.data['flyer_id'] = cloudinary_url(image)["public_id"]
+
+        # if it's a url, don't do anything
 
         serializer = ResourceSerializer(data=request.data)
+
         if serializer.is_valid():
             resource = serializer.save()
             serializer = ResourceSerializer(resource)
@@ -50,13 +98,24 @@ class ResourceCreate(CreateAPIView):
 class ResourceDestroy(DestroyAPIView):
     queryset = Resource.objects.all()
     lookup_field = 'id'
+    serializer_class = ResourceSerializer
 
-    def delete(self, request, *args, **kwargs):
-        Resource_id = request.data.get('id')
+    def delete(self, request, id=None,*args, **kwargs):
+        print("request: ", request)
+        resource_id = id
+        print("Resource id: ", resource_id)
+        serializer = ResourceSerializer(Resource.objects.all().filter(id=resource_id)[0])
+        json = JSONRenderer().render(serializer.data)
+        stream = io.BytesIO(json)
+        data = JSONParser().parse(stream)
+        flyer_id = data['flyer_id']
+        print("flyer_id: ", flyer_id)
+        if flyer_id:
+            cloudinary_delete(flyer_id)
         response = super().delete(request, *args, **kwargs)
         if response.status_code == 204:
             from django.core.cache import cache
-            cache.delete('resource_data_{}'.format(Resource_id))
+            cache.delete('resource_data_{}'.format(resource_id))
         return response
 
 
