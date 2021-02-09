@@ -20,6 +20,7 @@ class Resource(models.Model):
     endDate         = models.DateField(auto_now=False, auto_now_add=False, null=True)
     time            = models.TimeField(auto_now=False, auto_now_add=False, null=True)
     flyer           = models.URLField(null=True, blank=True)
+    flyer_id        = models.CharField(max_length=30, null=True, blank=True)
     link            = models.URLField(null=True, blank=True)
     zoom            = models.URLField(null=True, blank=True)
     description     = models.TextField(blank=False)

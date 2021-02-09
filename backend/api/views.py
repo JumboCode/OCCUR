@@ -1,5 +1,7 @@
 from django.shortcuts import render
-
+import io
+from rest_framework.parsers import JSONParser
+from rest_framework.renderers import JSONRenderer
 # Create your views here.
 from rest_framework.generics import CreateAPIView, ListAPIView, DestroyAPIView
 from rest_framework.response import Response
@@ -7,11 +9,24 @@ from api.serializers import ResourceSerializer
 from api.serializers import LocationSerializer
 from api.models import Resource
 from api.models import Location
-from api.img_upload import cloudinary_url
+from api.img_upload import cloudinary_url, cloudinary_delete
 from api.maps import getCoordinates
 from rest_framework import status
+
 from datetime import datetime
 import re
+
+from rest_framework.decorators import api_view
+
+@api_view(['GET'])
+def apiUrlsList(request):
+    Urls = {
+        'list all resources': 'api/v1/list/resource',
+        'list all locations': 'api/v1/list/location',
+        'create a new resource': 'api/v1/new/resource/',
+        'delete a resource': 'api/v1/<int:id>/delete/resource',
+    }
+    return Response(Urls)
 
 class ResourceCreate(CreateAPIView):
     def inputValidator(self, data):
@@ -63,9 +78,14 @@ class ResourceCreate(CreateAPIView):
             request.data['location']['longitude'] = geoCoordinates['lng']
 
         #---- convert image to url reference
-        if request.data.get('flyer') and request.data['flyer'] != "":
-            image = request.data['flyer']
-            request.data['flyer'] = cloudinary_url(image)
+
+        image = request.data['flyer']
+        # if the first part of the string is "data:image/", send to cloudinary
+        if image[0: 5] == "data:":
+            request.data['flyer'] = cloudinary_url(image)["url"]
+            request.data['flyer_id'] = cloudinary_url(image)["public_id"]
+
+        # if it's a url, don't do anything
 
         serializer = ResourceSerializer(data=request.data)
 
@@ -78,13 +98,24 @@ class ResourceCreate(CreateAPIView):
 class ResourceDestroy(DestroyAPIView):
     queryset = Resource.objects.all()
     lookup_field = 'id'
+    serializer_class = ResourceSerializer
 
-    def delete(self, request, *args, **kwargs):
-        Resource_id = request.data.get('id')
+    def delete(self, request, id=None,*args, **kwargs):
+        print("request: ", request)
+        resource_id = id
+        print("Resource id: ", resource_id)
+        serializer = ResourceSerializer(Resource.objects.all().filter(id=resource_id)[0])
+        json = JSONRenderer().render(serializer.data)
+        stream = io.BytesIO(json)
+        data = JSONParser().parse(stream)
+        flyer_id = data['flyer_id']
+        print("flyer_id: ", flyer_id)
+        if flyer_id:
+            cloudinary_delete(flyer_id)
         response = super().delete(request, *args, **kwargs)
         if response.status_code == 204:
             from django.core.cache import cache
-            cache.delete('resource_data_{}'.format(Resource_id))
+            cache.delete('resource_data_{}'.format(resource_id))
         return response
 
 

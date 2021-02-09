@@ -14,9 +14,6 @@ load_dotenv(verbose=True)
 
 from django.core.wsgi import get_wsgi_application
 
-from dotenv import load_dotenv
-load_dotenv()
-
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'OCCUR.settings')
 
 application = get_wsgi_application()

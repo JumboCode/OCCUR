@@ -1,14 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { AuthProvider } from '../auth';
+
 import 'styles/base.scss';
 import styles from './app.module.scss';
 
 export default function AppContainer({ Component, pageProps }) {
   return (
-    <div className={styles.base}>
-      <Component {...pageProps} />
-    </div>
+    <AuthProvider>
+      <div className={styles.base}>
+        <Component {...pageProps} />
+      </div>
+    </AuthProvider>
   );
 }
 

@@ -1,7 +1,7 @@
 {
   "extends": ["airbnb"],
   "env": { "browser": true },
-  "parserOptions": { "parser": "babel-eslint" },
+  "parser": "babel-eslint",
 
   "rules": {
     "no-param-reassign": ["error", { "props": false }],
