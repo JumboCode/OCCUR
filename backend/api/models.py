@@ -32,7 +32,7 @@ class Resource(models.Model):
         )
 
 class Location(models.Model):
-    resource        = models.OneToOneField(Resource, on_delete=models.CASCADE, null=True)
+    resource        = models.OneToOneField(Resource, on_delete=models.CASCADE, null=True, blank=True)
     street_address  = models.CharField(max_length=30, blank=True)
     city            = models.CharField(max_length=15, blank=True)
     state           = models.CharField(max_length=30, blank=True)

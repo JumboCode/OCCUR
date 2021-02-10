@@ -53,13 +53,13 @@ class ResourceCreate(CreateAPIView):
         # -> zoom, flyer, location
         if not 'flyer' in data:
             # return (False, 'Missing `flyer` attribute')
-            data['flyer'] = ""
+            data['flyer'] = None
         
         if not 'zoom' in data:
-            data['zoom'] = ""
+            data['zoom'] = None
 
         if not 'location' in  data:
-            data['location'] = {}
+            data['location'] = None
         return (True, '')
 
     def create(self, request, *args, **kwargs): 
@@ -101,9 +101,7 @@ class ResourceDestroy(DestroyAPIView):
     serializer_class = ResourceSerializer
 
     def delete(self, request, id=None,*args, **kwargs):
-        print("request: ", request)
         resource_id = id
-        print("Resource id: ", resource_id)
         serializer = ResourceSerializer(Resource.objects.all().filter(id=resource_id)[0])
         json = JSONRenderer().render(serializer.data)
         stream = io.BytesIO(json)
