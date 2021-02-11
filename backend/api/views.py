@@ -59,7 +59,7 @@ class ResourceCreate(CreateAPIView):
             data['zoom'] = None
 
         if not 'location' in  data:
-            data['location'] = None
+            data['location'] = {}
         return (True, '')
 
     def create(self, request, *args, **kwargs): 
@@ -107,7 +107,6 @@ class ResourceDestroy(DestroyAPIView):
         stream = io.BytesIO(json)
         data = JSONParser().parse(stream)
         flyer_id = data['flyer_id']
-        print("flyer_id: ", flyer_id)
         if flyer_id:
             cloudinary_delete(flyer_id)
         response = super().delete(request, *args, **kwargs)
