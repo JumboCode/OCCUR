@@ -18,15 +18,17 @@ class ResourceSerializer(serializers.ModelSerializer):
             'id', 'name','organization','category','startDate','endDate','time', 'flyer', 'flyer_id', 'link', 'zoom', 'description', 'location'
         )
         read_only_fields = ('id',)
+        write_only_field = ('location',)
 
     def create(self, validated_data):
-        if 'location' in validated_data:
+        print("in create")
+        if 'location' in validated_data and validated_data['location']:
             location_validated_data = validated_data.pop('location')
             resource = Resource.objects.create(**validated_data)
             location_serializer = self.fields['location']
             location_validated_data['resource'] = resource
             locations = location_serializer.create(location_validated_data)
             return resource
-
-        validated_data['location'] = None
+            
+        location_validated_data = validated_data.pop('location')
         return Resource.objects.create(**validated_data)
