@@ -4,6 +4,8 @@ from rest_framework.parsers import JSONParser
 from rest_framework.renderers import JSONRenderer
 # Create your views here.
 from rest_framework.generics import CreateAPIView, ListAPIView, DestroyAPIView
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
 from api.serializers import ResourceSerializer
 from api.serializers import LocationSerializer
@@ -133,6 +135,9 @@ class LocationDestroy(DestroyAPIView):
 class ResourceList(ListAPIView):
     queryset = Resource.objects.all()
     serializer_class = ResourceSerializer
+    filter_backends = (DjangoFilterBackend, SearchFilter)
+    filter_fields = ('id',)
+    search_fields = ('name',)
 
 class LocationList(ListAPIView):
     queryset = Location.objects.all()
