@@ -136,8 +136,15 @@ class ResourceList(ListAPIView):
     queryset = Resource.objects.all()
     serializer_class = ResourceSerializer
     filter_backends = (DjangoFilterBackend, SearchFilter)
-    filter_fields = ('id',)
-    search_fields = ('name',)
+    filter_fields = ('id','category',)
+    search_fields = ('name', 'organization',)
+
+    def get_queryset(self):
+        date = self.request.query_params.get('date', None)
+        if date == None:
+            return super.get_queryset()            
+        queryset = Resource.objects.all()
+        return queryset.filter(startDate = date)
 
 class LocationList(ListAPIView):
     queryset = Location.objects.all()
