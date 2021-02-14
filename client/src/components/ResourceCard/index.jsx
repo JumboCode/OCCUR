@@ -5,6 +5,10 @@ import styles from './ResourceCard.module.scss';
 import ClockIcon from '../../../public/clock.svg';
 import PinIcon from '../../../public/pin.svg';
 import CalendarIcon from '../../../public/calendar.svg';
+import ViewIcon from '../../../public/view.svg';
+import Calendar2Icon from '../../../public/calendar2.svg';
+import ShareIcon from '../../../public/share.svg';
+
 
 export default function ResourceCard({
   resourceTitle, organization, startDate, endDate, location, imageSrc, startTime, endTime,
@@ -31,9 +35,16 @@ export default function ResourceCard({
             <PinIcon />
             {location}
           </p>
+          <p>
+            <ShareIcon />
+          </p>
+          <p>
+            <ViewIcon />
+          </p>
+          <p>
+            <Calendar2Icon />
+          </p>
         </div>
-        
-        
       </div>
     </div>
   );
