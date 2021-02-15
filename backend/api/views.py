@@ -77,12 +77,10 @@ class ResourceCreate(CreateAPIView):
         #---- convert image to url reference
 
         image = request.data['flyer']
-        # if the first part of the string is "data:image/", send to cloudinary
-        if image != None and image[0: 5] == "data:":
+        # base64 flyer has been validated, so send to cloudinary
+        if image != None:
             request.data['flyer'] = cloudinary_url(image)["url"]
             request.data['flyer_id'] = cloudinary_url(image)["public_id"]
-
-        # if it's a url, don't do anything
 
         serializer = ResourceSerializer(data=request.data)
 
