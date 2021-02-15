@@ -94,8 +94,9 @@ class ResourceCreate(CreateAPIView):
         #---- convert image to url reference
 
         image = request.data['flyer']
-        # base64 flyer has been validated, so send to cloudinary
-        if image != None:
+        # if optional flyer was not passed or this object will not
+        # go on to be added to DB, don't add img to cloudinary
+        if image != None and len(vErrors) == 0:
             request.data['flyer'] = cloudinary_url(image)["url"]
             request.data['flyer_id'] = cloudinary_url(image)["public_id"]
 
