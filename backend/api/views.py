@@ -67,7 +67,6 @@ class ResourceCreate(CreateAPIView):
     def create(self, request, *args, **kwargs): 
         self.fillRequestBlanks(request.data, self.defaultOptionalVals)
         valErrors = self.inputValidator(request.data)  
-        print(valErrors)
 
         #---- retrieve geoCoordinates 
         if 'location' in request.data and request.data['location']:
@@ -88,11 +87,10 @@ class ResourceCreate(CreateAPIView):
 
         serializer = ResourceSerializer(data=request.data)
 
-        if serializer.is_valid():
+        if serializer.is_valid() and len(valErrors) == 0:
             resource = serializer.save()
             serializer = ResourceSerializer(resource)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
