@@ -12,6 +12,7 @@ from api.models import Location
 from api.img_upload import cloudinary_url, cloudinary_delete
 from api.maps import getCoordinates
 from rest_framework import status
+from collections import defaultdict
 
 from datetime import datetime
 import re
@@ -33,26 +34,30 @@ class ResourceCreate(CreateAPIView):
     defaultOptionalVals = { 'flyer': None, 'zoom': None, 'location': {}, 'flyer_id': None } 
 
     def inputValidator(self, data):
+        # dict of list matches the format of serializer.errors
+        errorCatalog = defaultdict(list)
+
         if data['startDate'] > data['endDate']:
-            return (False, 'Start date must be before end date!')
+            errorCatalog['startDate'].append('Start date must occur after end date')
         
         nowStr = datetime.now().strftime('%Y-%m-%d')
         if data['startDate'] < nowStr:
-            return (False, 'Start date must be in the future')
+            errorCatalog['startDate'].append('Start date must occur in the future')
 
         if data['location'] != {} and data['location'] and len(data['location']['zip_code']) != 5 and len(data['location']['zip_code']) != 0:
-            return (False, 'Invalid zipcode')
+            # matching format of error in foreign key field
+            errorCatalog['location'] = {}
+            errorCatalog['location']['zip_code'] = ['Invalid zipcode']
 
         dataURLPattern = r"data:.+;base64,"
         if data['flyer'] != None and not re.match(dataURLPattern, data['flyer']):
-            return (False, 'Data URL for `flyer` is either missing or invalid')
+            errorCatalog['flyer'].append('Data URL for `flyer` is either missing or invalid')
 
         correctDataURLStart = 'data:image'
         if data['flyer'] != None and not correctDataURLStart == data['flyer'][:len(correctDataURLStart)]:
-            return (False, 'Attribute `flyer` is not a valid image')
+            errorCatalog['flyer'].append('The flyer is not a valid image')
 
-        return (True, '')
-
+        return dict(errorCatalog)
 
     def fillRequestBlanks(self, data, optionalsToDefaults):
         for (fieldName,defaultVal) in optionalsToDefaults.items():
@@ -61,9 +66,8 @@ class ResourceCreate(CreateAPIView):
 
     def create(self, request, *args, **kwargs): 
         self.fillRequestBlanks(request.data, self.defaultOptionalVals)
-        success, message = self.inputValidator(request.data)  
-        if not success:
-            print('Error: ', message)
+        valErrors = self.inputValidator(request.data)  
+        print(valErrors)
 
         #---- retrieve geoCoordinates 
         if 'location' in request.data and request.data['location']:
@@ -88,6 +92,8 @@ class ResourceCreate(CreateAPIView):
             resource = serializer.save()
             serializer = ResourceSerializer(resource)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ResourceDestroy(DestroyAPIView):
