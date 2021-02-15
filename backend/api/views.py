@@ -29,6 +29,9 @@ def apiUrlsList(request):
     return Response(Urls)
 
 class ResourceCreate(CreateAPIView):
+
+    defaultOptionalVals = { 'flyer': None, 'zoom': None, 'location': {}, 'flyer_id': None } 
+
     def inputValidator(self, data):
         if data['startDate'] > data['endDate']:
             return (False, 'Start date must be before end date!')
@@ -37,36 +40,30 @@ class ResourceCreate(CreateAPIView):
         if data['startDate'] < nowStr:
             return (False, 'Start date must be in the future')
 
-        if 'location' in data and data['location'] and len(data['location']['zip_code']) != 5 and len(data['location']['zip_code']) != 0:
+        if data['location'] != {} and data['location'] and len(data['location']['zip_code']) != 5 and len(data['location']['zip_code']) != 0:
             return (False, 'Invalid zipcode')
 
         dataURLPattern = r"data:.+;base64,"
-        if 'flyer' in data and not re.match(dataURLPattern, data['flyer']):
+        if data['flyer'] != None and not re.match(dataURLPattern, data['flyer']):
             return (False, 'Data URL for `flyer` is either missing or invalid')
 
         correctDataURLStart = 'data:image'
-        if 'flyer' in data and not correctDataURLStart == data['flyer'][:len(correctDataURLStart)]:
+        if data['flyer'] != None and not correctDataURLStart == data['flyer'][:len(correctDataURLStart)]:
             return (False, 'Attribute `flyer` is not a valid image')
 
-        # Add empty / blank values for attributes that
-        # do not have to be passed in to create a new resource
-        # -> zoom, flyer, location
-        if not 'flyer' in data:
-            # return (False, 'Missing `flyer` attribute')
-            data['flyer'] = None
-        
-        if not 'zoom' in data:
-            data['zoom'] = None
-
-        if not 'location' in  data:
-            data['location'] = {}
         return (True, '')
 
+
+    def fillRequestBlanks(self, data, optionalsToDefaults):
+        for (fieldName,defaultVal) in optionalsToDefaults.items():
+            if not fieldName in data:
+                data[fieldName] = defaultVal
+
     def create(self, request, *args, **kwargs): 
+        self.fillRequestBlanks(request.data, self.defaultOptionalVals)
         success, message = self.inputValidator(request.data)  
         if not success:
             print('Error: ', message)
-            
 
         #---- retrieve geoCoordinates 
         if 'location' in request.data and request.data['location']:
@@ -81,7 +78,7 @@ class ResourceCreate(CreateAPIView):
 
         image = request.data['flyer']
         # if the first part of the string is "data:image/", send to cloudinary
-        if image[0: 5] == "data:":
+        if image != None and image[0: 5] == "data:":
             request.data['flyer'] = cloudinary_url(image)["url"]
             request.data['flyer_id'] = cloudinary_url(image)["public_id"]
 
