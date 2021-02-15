@@ -64,9 +64,23 @@ class ResourceCreate(CreateAPIView):
             if not fieldName in data:
                 data[fieldName] = defaultVal
 
+    def mergeFieldErrors(self, vErrors, sErrors):
+        result = sErrors
+        for (vFieldName,vFieldErrors) in vErrors.items():
+            if vFieldName == 'location':
+                # recursively merge location errors, since it is a foreign key field
+                sLocationErrors = sErrors['location'] if 'location' in sErrors else {}
+                result['location'] = self.mergeFieldErrors(vFieldErrors, sLocationErrors)
+            else:
+                # combine both lists of errors
+                sFieldErrors = sErrors[vFieldName] if vFieldName in sErrors else []
+                result[vFieldName] = sFieldErrors + vFieldErrors
+                
+        return result
+
     def create(self, request, *args, **kwargs): 
         self.fillRequestBlanks(request.data, self.defaultOptionalVals)
-        valErrors = self.inputValidator(request.data)  
+        vErrors = self.inputValidator(request.data)  
 
         #---- retrieve geoCoordinates 
         if 'location' in request.data and request.data['location']:
@@ -87,12 +101,13 @@ class ResourceCreate(CreateAPIView):
 
         serializer = ResourceSerializer(data=request.data)
 
-        if serializer.is_valid() and len(valErrors) == 0:
+        if serializer.is_valid() and len(vErrors) == 0:
             resource = serializer.save()
             serializer = ResourceSerializer(resource)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        errors = self.mergeFieldErrors(vErrors, serializer.errors)
+        return Response(errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ResourceDestroy(DestroyAPIView):
     queryset = Resource.objects.all()
