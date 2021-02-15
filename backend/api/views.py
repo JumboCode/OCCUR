@@ -38,24 +38,24 @@ class ResourceCreate(CreateAPIView):
         errorCatalog = defaultdict(list)
 
         if data['startDate'] > data['endDate']:
-            errorCatalog['startDate'].append('Start date must occur after end date')
+            errorCatalog['startDate'].append('Start date must occur after end date.')
         
         nowStr = datetime.now().strftime('%Y-%m-%d')
         if data['startDate'] < nowStr:
-            errorCatalog['startDate'].append('Start date must occur in the future')
+            errorCatalog['startDate'].append('Start date must occur in the future.')
 
         if data['location'] != {} and data['location'] and len(data['location']['zip_code']) != 5 and len(data['location']['zip_code']) != 0:
             # matching format of error in foreign key field
             errorCatalog['location'] = {}
-            errorCatalog['location']['zip_code'] = ['Invalid zipcode']
+            errorCatalog['location']['zip_code'] = ['Invalid zipcode.']
 
         dataURLPattern = r"data:.+;base64,"
         if data['flyer'] != None and not re.match(dataURLPattern, data['flyer']):
-            errorCatalog['flyer'].append('Data URL for `flyer` is either missing or invalid')
+            errorCatalog['flyer'].append('Data URL for `flyer` is either missing or invalid.')
 
         correctDataURLStart = 'data:image'
         if data['flyer'] != None and not correctDataURLStart == data['flyer'][:len(correctDataURLStart)]:
-            errorCatalog['flyer'].append('The flyer is not a valid image')
+            errorCatalog['flyer'].append('The flyer is not a valid image.')
 
         return dict(errorCatalog)
 
