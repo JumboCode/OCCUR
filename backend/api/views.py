@@ -141,10 +141,11 @@ class ResourceList(ListAPIView):
 
     def get_queryset(self):
         date = self.request.query_params.get('date', None)
-        if date == None:
-            return super.get_queryset()
-
         queryset = Resource.objects.all()
+
+        if date == None:
+            return super().get_queryset()
+
         date_obj = datetime.strptime(date, '%b %d %Y %I:%M%p')
         return queryset.filter(
             startDate__lte = date_obj,
