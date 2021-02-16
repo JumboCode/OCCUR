@@ -146,10 +146,10 @@ class ResourceList(ListAPIView):
         if date == None:
             return super().get_queryset()
 
-        date_obj = datetime.strptime(date, '%b %d %Y %I:%M%p')
+        date_obj = datetime.strptime(date, '%Y-%m-%d')
         return queryset.filter(
             startDate__lte = date_obj,
-            endDate__lte = date_obj,
+            endDate__gte = date_obj,
         )
 
 class LocationList(ListAPIView):
