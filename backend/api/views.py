@@ -140,17 +140,32 @@ class ResourceList(ListAPIView):
     search_fields = ('name', 'organization',)
 
     def get_queryset(self):
-        date = self.request.query_params.get('date', None)
+        start_date_r = self.request.query_params.get('start_date_r', None)
+        end_date_r = self.request.query_params.get('end_date_r', None)
+
         queryset = Resource.objects.all()
 
-        if date == None:
+        if start_date_r == None and end_date_r == None:
             return super().get_queryset()
+        elif start_date_r != None and end_date_r != None:
+            start_date_r = datetime.strptime(start_date_r, '%Y-%m-%d')
+            end_date_r = datetime.strptime(end_date_r, '%Y-%m-%d')
+            q1 = queryset.filter(
+                startDate__lte = end_date_r,
+                endDate__gte = end_date_r,
+            )
+            q2 = queryset.filter(
+                startDate__lte = start_date_r,
+                endDate__gte = start_date_r,
+            )
+            return q1.union(q2)
+        elif start_date_r != None:
+            start_date_r = datetime.strptime(start_date_r, '%Y-%m-%d')
+            return queryset.filter(endDate__gte = start_date_r)     
+        elif end_date_r != None:
+            end_date_r = datetime.strptime(start_date_r, '%Y-%m-%d')
+            return queryset.filter(startDate__lte = end_date_r)
 
-        date_obj = datetime.strptime(date, '%Y-%m-%d')
-        return queryset.filter(
-            startDate__lte = date_obj,
-            endDate__gte = date_obj,
-        )
 
 class LocationList(ListAPIView):
     queryset = Location.objects.all()
