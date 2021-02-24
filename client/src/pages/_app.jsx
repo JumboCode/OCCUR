@@ -10,10 +10,14 @@ import Header from 'components/Header/header.jsx';
 export default function AppContainer({ Component, pageProps }) {
   return (
     <AuthProvider>
-      <div className={styles.base}>
+      <Header />
+
+      <div className={styles.container}>
         <Component {...pageProps} />
       </div>
     </AuthProvider>
+
+
   );
 }
 

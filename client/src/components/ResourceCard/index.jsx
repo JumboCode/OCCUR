@@ -14,7 +14,7 @@ export default function ResourceCard({
   resourceTitle, organization, startDate, endDate, location, imageSrc, startTime, endTime,
 }) {
   return (
-    <div className={styles.container}>
+    <div>
       <div className={styles.ResourceInfo}>
         <div className={styles.leftside} />
 
