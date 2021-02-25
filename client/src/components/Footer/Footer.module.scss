@@ -7,8 +7,37 @@
   justify-content: space-evenly;
   flex-wrap: wrap;
   text-align: center;
+  font-size: 14px;
+  padding-top: 70px;
+  padding-bottom: 40px;
 
   & > * {
     min-width: 200px;
   }
+
+  & > :not(:nth-child(2)) {
+    text-align: left;
+  }
+}
+
+.phoneNumber {
+  color: $orange;
+}
+
+.address {
+  color: $yellow;
+}
+
+.icons {
+  margin-top: 10px;
+}
+
+.icon {
+  height: 35px;
+  width: 35px;
+  border-radius: 50%;
+}
+
+.logo {
+  width: 200px;
 }
