@@ -1,0 +1,43 @@
+.base {
+  display: inline;
+  position: relative;
+}
+
+.shareIcons {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translate(-50%, 10px);
+  display: flex;
+  flex-wrap: nowrap;
+  overflow: hidden;
+  border-radius: 3px;
+  box-shadow: 0 6px 15px -7px rgba(0, 0, 0, 0.25);
+  animation: appear .25s;
+  transform-origin: top center;
+
+  & > span {
+    width: 48px;
+    height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    &.twitter { background: #00acec; }
+    &.facebook { background: #3b5998; }
+    &.instagram { background: #f00075; }
+    &.linkedin { background: #0a66c1; }
+  }
+
+  svg {
+    width: 28px;
+    fill: white;
+  }
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 10px) scale(0.5);
+  }
+}
