@@ -24,6 +24,7 @@ class ResourceCreateTestCase(APITestCase):
         }
     }
         access_token = gen_token.get_token()
+        print("hi")
         print(access_token)
         # get authentication token
         # add token to APIClient
