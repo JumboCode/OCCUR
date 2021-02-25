@@ -42,3 +42,26 @@ else:
         print("You must configure TEST_USERNAME and TEST_PASSWORD in .env to use this script.")
     else:
         print(r.json()["error_description"])
+
+def get_token():
+    username = os.getenv("TEST_USERNAME")
+    password = os.getenv("TEST_PASSWORD")
+
+    r = requests.post('https://occur.us.auth0.com/oauth/token', data={
+        "grant_type": "password",
+        "client_id": "OUr5pR1GCGKp7krFCbcZ1SwkxZLwTYo8",
+        "audience": "occur-api",
+        "username": username,
+        "password": password,
+    });
+
+    # ANSI escape sequences for colorful output
+    set_bold_red = "\033[1m\033[91m"
+    set_bold_green = "\033[1m\033[92m"
+    set_bold_yellow = "\033[1m\033[93m"
+    clear = "\033[0m"
+
+    if r.ok:
+       return data["access_token"]
+    else:
+        None

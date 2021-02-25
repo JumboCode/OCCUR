@@ -1,6 +1,7 @@
 from rest_framework.test import APITestCase
 from api.models import Resource
 from rest_framework.reverse import reverse as api_reverse
+from api import gen_token
 
 class ResourceCreateTestCase(APITestCase):
     def test_create_resource(self):
@@ -22,6 +23,11 @@ class ResourceCreateTestCase(APITestCase):
             "zip_code": "02155"
         }
     }
+        access_token = gen_token.get_token()
+        print(access_token)
+        # get authentication token
+        # add token to APIClient
+
         response = self.client.post('/api/v1/new/resource/', resource_attrs, format='json')
         if response.status_code != 201:
             print(response.data)
@@ -37,6 +43,7 @@ class ResourceCreateTestCase(APITestCase):
             resource_attrs['flyer'],
         )
 
+'''
 # Create your tests here.
 class ResourceDestroyTestCase(APITestCase):
     def test_delete_resource(self):
@@ -93,3 +100,4 @@ class ResourceDestroyTestCase(APITestCase):
 
         # get_response = self.client.delete(rud_url, format='json')
         # self.assertEqual(get_response.status_code, status.HTTP_404_NOT_FOUND)
+'''
