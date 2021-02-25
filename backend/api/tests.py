@@ -2,6 +2,7 @@ from rest_framework.test import APITestCase
 from api.models import Resource
 from rest_framework.reverse import reverse as api_reverse
 from api import gen_token
+from django.core import serializers
 
 class ResourceCreateTestCase(APITestCase):
     def test_create_resource(self):
@@ -23,10 +24,13 @@ class ResourceCreateTestCase(APITestCase):
             "zip_code": "02155"
         }
     }
+        obj = serializers.serialize(“json”, self.client)
+        print(obj)
         access_token = gen_token.get_token()
         print("hi")
         print(access_token)
         # get authentication token
+        self.client.force_authenticate(user=None, token=access_token)
         # add token to APIClient
 
         response = self.client.post('/api/v1/new/resource/', resource_attrs, format='json')
