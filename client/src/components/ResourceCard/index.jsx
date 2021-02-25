@@ -32,8 +32,6 @@ export default function ResourceCard({
             {location}
           </p>
         </div>
-        
-        
       </div>
     </div>
   );
