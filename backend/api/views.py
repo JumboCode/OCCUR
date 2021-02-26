@@ -150,8 +150,7 @@ class ResourceList(ListAPIView):
         queryset = Resource.objects.all()
 
         # Base case, no filters
-        if start_date_r == None and end_date_r == None and min_long == None 
-        and max_long == None and min_lat == None and max_lat == None:
+        if start_date_r == None and end_date_r == None and min_long == None and max_long == None and min_lat == None and max_lat == None:
             return super().get_queryset()
         
         if start_date_r != None and end_date_r != None:
