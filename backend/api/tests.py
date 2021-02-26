@@ -3,10 +3,13 @@ from api.models import Resource
 from rest_framework.reverse import reverse as api_reverse
 from api import gen_token
 from django.core import serializers
+import json
 
 class ResourceCreateTestCase(APITestCase):
     def test_create_resource(self):
         initial_resource_count = Resource.objects.count()
+
+
         resource_attrs = {
         "name": "TEST",
         "organization": "Women in Computer Science",
@@ -14,7 +17,7 @@ class ResourceCreateTestCase(APITestCase):
         "startDate": "2020-12-11",
         "endDate": "2020-12-11",
         "time": "18:00:00",
-        "flyer": "http://res.cloudinary.com/jcoccur/image/upload/v1610738936/cyf3ia074ham8oqhd4yl.jpg",
+        "flyer": "",
         "zoom": "https://tufts.zoom.us/j/91768543077?pwd=Wm1JZDJBV2ZZNDI4UXhYVzUvdWE3Zz09",
         "description": "Come and destress with WiCS!",
         "location": {
@@ -24,13 +27,11 @@ class ResourceCreateTestCase(APITestCase):
             "zip_code": "02155"
         }
     }
-        obj = serializers.serialize(“json”, self.client)
-        print(obj)
+
+        # print(json.dumps(self.client))
         access_token = gen_token.get_token()
-        print("hi")
-        print(access_token)
         # get authentication token
-        self.client.force_authenticate(user=None, token=access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
         # add token to APIClient
 
         response = self.client.post('/api/v1/new/resource/', resource_attrs, format='json')
@@ -59,7 +60,7 @@ class ResourceDestroyTestCase(APITestCase):
         "startDate": "2020-12-11",
         "endDate": "2020-12-11",
         "time": "18:00:00",
-        "flyer": "http://res.cloudinary.com/jcoccur/image/upload/v1610738936/cyf3ia074ham8oqhd4yl.jpg",
+        "flyer": "",
         "zoom": "https://tufts.zoom.us/j/91768543077?pwd=Wm1JZDJBV2ZZNDI4UXhYVzUvdWE3Zz09",
         "description": "Come and destress with WiCS!",
         "location": {
