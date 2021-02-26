@@ -142,12 +142,19 @@ class ResourceList(ListAPIView):
     def get_queryset(self):
         start_date_r = self.request.query_params.get('start_date_r', None)
         end_date_r = self.request.query_params.get('end_date_r', None)
+        min_long = self.request.query_params.get('min_long', None)
+        max_long = self.request.query_params.get('max_long', None)
+        min_lat = self.request.query_params.get('min_lat', None)
+        max_lat = self.request.query_params.get('max_lat', None)
 
         queryset = Resource.objects.all()
 
-        if start_date_r == None and end_date_r == None:
+        # Base case, no filters
+        if start_date_r == None and end_date_r == None and min_long == None 
+        and max_long == None and min_lat == None and max_lat == None:
             return super().get_queryset()
-        elif start_date_r != None and end_date_r != None:
+        
+        if start_date_r != None and end_date_r != None:
             start_date_r = datetime.strptime(start_date_r, '%Y-%m-%d')
             end_date_r = datetime.strptime(end_date_r, '%Y-%m-%d')
             q1 = queryset.filter(
@@ -158,13 +165,19 @@ class ResourceList(ListAPIView):
                 startDate__lte = start_date_r,
                 endDate__gte = start_date_r,
             )
-            return q1.union(q2)
+            queryset = q1.union(q2)
         elif start_date_r != None:
             start_date_r = datetime.strptime(start_date_r, '%Y-%m-%d')
-            return queryset.filter(endDate__gte = start_date_r)     
+            queryset = queryset.filter(endDate__gte = start_date_r)     
         elif end_date_r != None:
             end_date_r = datetime.strptime(start_date_r, '%Y-%m-%d')
-            return queryset.filter(startDate__lte = end_date_r)
+            queryset = queryset.filter(startDate__lte = end_date_r)
+
+        if min_long != None:
+            queryset = queryset.filter(location__longitute__gte = min_long)
+
+        return queryset
+        
 
 
 class LocationList(ListAPIView):
