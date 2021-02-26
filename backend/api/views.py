@@ -173,7 +173,16 @@ class ResourceList(ListAPIView):
             queryset = queryset.filter(startDate__lte = end_date_r)
 
         if min_long != None:
-            queryset = queryset.filter(location__longitute__gte = min_long)
+            queryset = queryset.filter(location__longitude__gte = min_long)
+
+        if max_long != None:
+            queryset = queryset.filter(location__longitude__lte = max_long)
+
+        if min_lat != None:
+            queryset = queryset.filter(location__latitude__gte = min_lat)
+
+        if max_long != None:
+            queryset = queryset.filter(location__latitude__lte = min_long)
 
         return queryset
         
