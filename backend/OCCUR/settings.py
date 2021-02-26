@@ -10,7 +10,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-import django_heroku
+import django_on_heroku
 from dotenv import load_dotenv
 load_dotenv(verbose=True)
 
@@ -158,4 +158,4 @@ STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-django_heroku.settings(locals())
+django_on_heroku.settings(locals())
