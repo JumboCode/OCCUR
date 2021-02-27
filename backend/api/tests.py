@@ -27,13 +27,11 @@ class ResourceCreateTestCase(APITestCase):
             "zip_code": "02155"
         }
     }
-
-        # print(json.dumps(self.client))
+        # Authenticate API Client instance
         access_token = gen_token.get_token()
-        # get authentication token
         self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
-        # add token to APIClient
 
+        # Make request to backend POSt req with resource_attrs
         response = self.client.post('/api/v1/new/resource/', resource_attrs, format='json')
         if response.status_code != 201:
             print(response.data)
@@ -41,13 +39,9 @@ class ResourceCreateTestCase(APITestCase):
             Resource.objects.count(),
             initial_resource_count + 1,
         )
-        # for attr, expected_value in resource_attrs.items():
-        #     self.assertEqual(response.data[attr], expected_value)
+        for attr, expected_value in resource_attrs.items():
+            self.assertEqual(response.data[attr], expected_value)
         self.assertEqual(response.data['name'], "TEST")
-        self.assertEqual(
-            response.data['flyer'],
-            resource_attrs['flyer'],
-        )
 
 '''
 # Create your tests here.
