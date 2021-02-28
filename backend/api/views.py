@@ -184,7 +184,7 @@ class ResourceList(ListAPIView):
             start_date_r = datetime.strptime(start_date_r, '%Y-%m-%d')
             queryset = queryset.filter(endDate__gte = start_date_r)     
         elif end_date_r != None:
-            end_date_r = datetime.strptime(start_date_r, '%Y-%m-%d')
+            end_date_r = datetime.strptime(end_date_r, '%Y-%m-%d')
             queryset = queryset.filter(startDate__lte = end_date_r)
 
         if min_long != None:
