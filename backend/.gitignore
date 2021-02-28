@@ -18,5 +18,6 @@ ENV/
 env.bak/
 venv.bak/
 backendEnv/*
+backendEnv
 .DS_Store
 *.sqlite3
