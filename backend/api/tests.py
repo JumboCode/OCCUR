@@ -11,8 +11,6 @@ import base64
 import os
 import io
 
-
-
 class ResourceCreateTestCase(APITestCase):
     def test_create_resource(self):
         initial_resource_count = Resource.objects.count()
@@ -26,7 +24,6 @@ class ResourceCreateTestCase(APITestCase):
             encoded_image = base64.b64encode(image_file.read()).decode()
         img = 'data:image/png;base64,{}'.format(encoded_image)
             
-
         resource_attrs = {
         "name": "TEST",
         "organization": "Women in Computer Science",
