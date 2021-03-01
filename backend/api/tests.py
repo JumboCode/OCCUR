@@ -2,22 +2,39 @@ from rest_framework.test import APITestCase
 from api.models import Resource
 from rest_framework.reverse import reverse as api_reverse
 from api import gen_token
+from api.serializers import ResourceSerializer
+from api.serializers import LocationSerializer
 from django.core import serializers
-import json
+from rest_framework.parsers import JSONParser
+from rest_framework.renderers import JSONRenderer
+import base64
+import os
+import io
+
+
 
 class ResourceCreateTestCase(APITestCase):
     def test_create_resource(self):
         initial_resource_count = Resource.objects.count()
 
+        # get image from static files
+        my_path = os.path.abspath(os.path.dirname(__file__))
+        path = os.path.join(my_path, "../static/img/Wics_Event.png")
+
+        # retrieve a default image and encode it to base64 encoded image
+        with open(path, "rb") as image_file:
+            encoded_image = base64.b64encode(image_file.read()).decode()
+        img = 'data:image/png;base64,{}'.format(encoded_image)
+            
 
         resource_attrs = {
         "name": "TEST",
         "organization": "Women in Computer Science",
         "category": "MENTAL_HEALTH",
-        "startDate": "2020-12-11",
-        "endDate": "2020-12-11",
+        "startDate": "2021-12-11",
+        "endDate": "2021-12-11",
         "time": "18:00:00",
-        "flyer": "",
+        "flyer": img,
         "zoom": "https://tufts.zoom.us/j/91768543077?pwd=Wm1JZDJBV2ZZNDI4UXhYVzUvdWE3Zz09",
         "description": "Come and destress with WiCS!",
         "location": {
@@ -40,7 +57,23 @@ class ResourceCreateTestCase(APITestCase):
             initial_resource_count + 1,
         )
         for attr, expected_value in resource_attrs.items():
-            self.assertEqual(response.data[attr], expected_value)
+            if attr == "flyer":
+                # Flyer image is stored in cloudinary are stored in database as cloudinary URL
+                continue
+            if attr == "location":
+                # Handles nested location 
+                location = LocationSerializer(response.data[attr])
+                location_data = JSONRenderer().render(location.data)
+                stream = io.BytesIO(location_data)
+                location_data = JSONParser().parse(stream)
+
+                for key, val in location_data.items():
+                    # since id, long and lat are creaeted within POST req they will not
+                    # be fields we need to assert are the same as initial request body
+                    if not (key == 'id' or key == 'latitude' or key == 'longitude'):
+                        self.assertEqual(location_data[key], expected_value[key])
+            else:       
+                self.assertEqual(response.data[attr], expected_value)
         self.assertEqual(response.data['name'], "TEST")
 
 '''
