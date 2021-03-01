@@ -155,6 +155,7 @@ class ResourceList(ListAPIView):
     search_fields = ('name', 'organization',)
 
     def get_queryset(self):
+        # retrieving query params from request
         start_date_r = self.request.query_params.get('start_date_r', None)
         end_date_r = self.request.query_params.get('end_date_r', None)
         min_long = self.request.query_params.get('min_long', None)
@@ -168,9 +169,16 @@ class ResourceList(ListAPIView):
         if start_date_r == None and end_date_r == None and min_long == None and max_long == None and min_lat == None and max_lat == None:
             return super().get_queryset()
         
+        # if both are supplied
         if start_date_r != None and end_date_r != None:
+            # parsing as dates
             start_date_r = datetime.strptime(start_date_r, '%Y-%m-%d')
             end_date_r = datetime.strptime(end_date_r, '%Y-%m-%d')
+
+            if start_date_r > end_date_r:
+                return Resource.objects.none()
+
+            # getting resources with dates in the given range
             q1 = queryset.filter(
                 startDate__lte = end_date_r,
                 endDate__gte = end_date_r,
@@ -179,7 +187,16 @@ class ResourceList(ListAPIView):
                 startDate__lte = start_date_r,
                 endDate__gte = start_date_r,
             )
+            q3 = queryset.filter(
+                startDate__gte = start_date_r,
+                endDate__lte = end_date_r
+            )
+
+            # combining all results
             queryset = q1.union(q2)
+            queryset = queryset.union(q3)
+
+        # if only one date range param is supplied
         elif start_date_r != None:
             start_date_r = datetime.strptime(start_date_r, '%Y-%m-%d')
             queryset = queryset.filter(endDate__gte = start_date_r)     
@@ -187,6 +204,7 @@ class ResourceList(ListAPIView):
             end_date_r = datetime.strptime(end_date_r, '%Y-%m-%d')
             queryset = queryset.filter(startDate__lte = end_date_r)
 
+        # filtering by lat. & long. ranges passed
         if min_long != None:
             queryset = queryset.filter(location__longitude__gte = min_long)
 
