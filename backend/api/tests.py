@@ -74,7 +74,6 @@ class ResourceCreateTestCase(APITestCase):
                         self.assertEqual(location_data[key], expected_value[key])
             else:       
                 self.assertEqual(response.data[attr], expected_value)
-        self.assertEqual(response.data['name'], "TEST")
 
 '''
 # Create your tests here.
