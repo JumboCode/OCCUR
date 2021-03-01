@@ -224,3 +224,25 @@ class ResourceList(ListAPIView):
 class LocationList(ListAPIView):
     queryset = Location.objects.all()
     serializer_class = LocationSerializer
+
+    def get_queryset(self):
+        min_long = self.request.query_params.get('min_long', None)
+        max_long = self.request.query_params.get('max_long', None)
+        min_lat = self.request.query_params.get('min_lat', None)
+        max_lat = self.request.query_params.get('max_lat', None)
+
+        queryset = Location.objects.all()
+
+        if min_long != None:
+            queryset = queryset.filter(longitude__gte = min_long)
+
+        if max_long != None:
+            queryset = queryset.filter(longitude__lte = max_long)
+
+        if min_lat != None:
+            queryset = queryset.filter(latitude__gte = min_lat)
+
+        if max_lat != None:
+            queryset = queryset.filter(latitude__lte = max_lat)
+
+        return queryset
