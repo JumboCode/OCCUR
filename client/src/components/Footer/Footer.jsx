@@ -39,10 +39,19 @@ export default function Footer() {
       <div>
         Contact Us
         <div className={styles.icons}>
-          <img className={styles.icon} src="/images/facebook_icon.png" alt="Facebook" />
-          <img className={styles.icon} src="/images/twitter_icon.png" alt="Twitter" />
-          <img className={styles.icon} src="/images/linkedin_icon.png" alt="Linkedin" />
-          <img className={styles.icon} src="/images/instagram_icon.png" alt="Instagram" />
+
+          <a href="https://www.facebook.com/occurnow/" target="_blank">
+            <img className={styles.icon} src="/images/facebook.svg" alt="Facebook" />
+          </a>
+          <a href="https://twitter.com/occur_now" target="_blank">
+            <img className={styles.icon} src="/images/twitter.svg" alt="Twitter" />
+          </a>
+          <a href="https://www.linkedin.com/company/occurorg/" target="_blank">
+            <img className={styles.icon} src="/images/linkedin.svg" alt="Linkedin" />
+          </a>
+          <a href="https://www.instagram.com/occurnow/" target="_blank">
+            <img className={styles.icon} src="/images/instagram.svg" alt="Instagram" />
+          </a>
         </div>
       </div>
     </div>
