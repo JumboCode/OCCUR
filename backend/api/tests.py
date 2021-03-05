@@ -1,4 +1,4 @@
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase,APISimpleTestCase, APITransactionTestCase, APILiveServerTestCase
 from api.models import Resource
 from rest_framework.reverse import reverse as api_reverse
 from api import gen_token
@@ -74,6 +74,41 @@ class ResourceTest(APITestCase):
 
             
 class ResourceDestroyTestCase(APITestCase):
+
+    def setUp(self):
+        # setting up auth
+        access_token = gen_token.get_token()
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
+
+        my_path = os.path.abspath(os.path.dirname(__file__))
+        path = os.path.join(my_path, "../static/img/Wics_Event.png")
+
+        # retrieve a default image and encode it to base64 encoded image
+        with open(path, "rb") as image_file:
+            encoded_image = base64.b64encode(image_file.read()).decode()
+        img = 'data:image/png;base64,{}'.format(encoded_image)
+            
+        data = {
+        "name": "TEST",
+        "organization": "Test",
+        "category": "MENTAL_HEALTH",
+        "startDate": "2021-12-11",
+        "endDate": "2021-12-11",
+        "time": "18:00:00",
+        "flyer": img,
+        "zoom": "https://tufts.zoom.us/j/91768543077?pwd=Wm1JZDJBV2ZZNDI4UXhYVzUvdWE3Zz09",
+        "description": "Test Data",
+        "location": {
+            "street_address": "Test St",
+            "city": "Test City",
+            "state": "TS",
+            "zip_code": "00000"
+            }
+        }
+        # creating resource before running delete function
+        response = self.client.post('/api/v1/new/resource/', data, format='json')
+
+
     def test_delete_resource(self):
         num_initial_resources = Resource.objects.count()
         print(num_initial_resources)

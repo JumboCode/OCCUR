@@ -73,6 +73,7 @@ class ResourceCreate(CreateAPIView):
             # print(bool(request.data['location']))
             address = request.data['location']
             geoCoordinates = getCoordinates(address)
+            print(geoCoordinates)
 
             request.data['location']['latitude'] = geoCoordinates['lat']
             request.data['location']['longitude'] = geoCoordinates['lng']
