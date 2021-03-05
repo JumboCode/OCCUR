@@ -71,25 +71,16 @@ class ResourceTest(APITestCase):
                         self.assertEqual(location_data[key], expected_value[key])
             else:       
                 self.assertEqual(response.data[attr], expected_value)
-    
-    # def test_delete_resource(self):
-    #     num_initial_resources = Resource.objects.count()
-    #     # print("num objects in database {}".format(num_initial_resources))
-    #     resource_id = Resource.objects.first().id
-
-    #     self.client().delete('api/v1/{}/delete/resource/'.format(resource_id))
-    #     self.assertEqual(Resource.objects.count(),initial_resource_count - 1)
 
             
+class ResourceDestroyTestCase(APITestCase):
+    def test_delete_resource(self):
+        num_initial_resources = Resource.objects.count()
+        print(num_initial_resources)
+        resource_id = Resource.objects.first().id
 
-# class ResourceDestroyTestCase(APITestCase):
-    # def test_delete_resource(self):
-    #     num_initial_resources = Resource.objects.count()
-    #     print(num_initial_resources)
-    #     resource_id = Resource.objects.first().id
-
-    #     self.client().delete('api/v1/{}/delete/resource/'.format(resource_id))
-    #     self.assertEqual(Resource.objects.count(),initial_resource_count - 1)
+        self.client().delete('api/v1/{}/delete/resource/'.format(resource_id))
+        self.assertEqual(Resource.objects.count(),initial_resource_count - 1)
 
 '''
 # Create your tests here.

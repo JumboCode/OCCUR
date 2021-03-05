@@ -70,7 +70,7 @@ class ResourceCreate(CreateAPIView):
 
         #---- retrieve geoCoordinates 
         if 'location' in request.data and request.data['location']:
-            print(bool(request.data['location']))
+            # print(bool(request.data['location']))
             address = request.data['location']
             geoCoordinates = getCoordinates(address)
 
