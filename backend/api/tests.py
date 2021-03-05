@@ -11,7 +11,7 @@ import base64
 import os
 import io
 
-class ResourceCreateTestCase(APITestCase):
+class ResourceTest(APITestCase):
     def test_create_resource(self):
         initial_resource_count = Resource.objects.count()
 
@@ -57,7 +57,7 @@ class ResourceCreateTestCase(APITestCase):
             if attr == "flyer":
                 # Flyer image is stored in cloudinary are stored in database as cloudinary URL
                 continue
-            if attr == "location":
+            elif attr == "location":
                 # Handles nested location 
                 location = LocationSerializer(response.data[attr])
                 location_data = JSONRenderer().render(location.data)
@@ -71,6 +71,25 @@ class ResourceCreateTestCase(APITestCase):
                         self.assertEqual(location_data[key], expected_value[key])
             else:       
                 self.assertEqual(response.data[attr], expected_value)
+    
+    # def test_delete_resource(self):
+    #     num_initial_resources = Resource.objects.count()
+    #     # print("num objects in database {}".format(num_initial_resources))
+    #     resource_id = Resource.objects.first().id
+
+    #     self.client().delete('api/v1/{}/delete/resource/'.format(resource_id))
+    #     self.assertEqual(Resource.objects.count(),initial_resource_count - 1)
+
+            
+
+# class ResourceDestroyTestCase(APITestCase):
+    # def test_delete_resource(self):
+    #     num_initial_resources = Resource.objects.count()
+    #     print(num_initial_resources)
+    #     resource_id = Resource.objects.first().id
+
+    #     self.client().delete('api/v1/{}/delete/resource/'.format(resource_id))
+    #     self.assertEqual(Resource.objects.count(),initial_resource_count - 1)
 
 '''
 # Create your tests here.
