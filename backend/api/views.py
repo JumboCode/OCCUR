@@ -4,6 +4,8 @@ from rest_framework.parsers import JSONParser
 from rest_framework.renderers import JSONRenderer
 # Create your views here.
 from rest_framework.generics import CreateAPIView, ListAPIView, DestroyAPIView
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
 from api.serializers import ResourceSerializer
 from api.serializers import LocationSerializer
@@ -148,7 +150,99 @@ class LocationDestroy(DestroyAPIView):
 class ResourceList(ListAPIView):
     queryset = Resource.objects.all()
     serializer_class = ResourceSerializer
+    filter_backends = (DjangoFilterBackend, SearchFilter)
+    filter_fields = ('id','category',)
+    search_fields = ('name', 'organization',)
+
+    def get_queryset(self):
+        # retrieving query params from request
+        start_date_r = self.request.query_params.get('start_date_r', None)
+        end_date_r = self.request.query_params.get('end_date_r', None)
+        min_long = self.request.query_params.get('min_long', None)
+        max_long = self.request.query_params.get('max_long', None)
+        min_lat = self.request.query_params.get('min_lat', None)
+        max_lat = self.request.query_params.get('max_lat', None)
+
+        queryset = Resource.objects.all()
+
+        # Base case, no filters
+        if start_date_r == None and end_date_r == None and min_long == None and max_long == None and min_lat == None and max_lat == None:
+            return super().get_queryset()
+        
+        # if both are supplied
+        if start_date_r != None and end_date_r != None:
+            # parsing as dates
+            start_date_r = datetime.strptime(start_date_r, '%Y-%m-%d')
+            end_date_r = datetime.strptime(end_date_r, '%Y-%m-%d')
+
+            if start_date_r > end_date_r:
+                return Resource.objects.none()
+
+            # getting resources with dates in the given range
+            q1 = queryset.filter(
+                startDate__lte = end_date_r,
+                endDate__gte = end_date_r,
+            )
+            q2 = queryset.filter(
+                startDate__lte = start_date_r,
+                endDate__gte = start_date_r,
+            )
+            q3 = queryset.filter(
+                startDate__gte = start_date_r,
+                endDate__lte = end_date_r
+            )
+
+            # combining all results
+            queryset = q1.union(q2)
+            queryset = queryset.union(q3)
+
+        # if only one date range param is supplied
+        elif start_date_r != None:
+            start_date_r = datetime.strptime(start_date_r, '%Y-%m-%d')
+            queryset = queryset.filter(endDate__gte = start_date_r)     
+        elif end_date_r != None:
+            end_date_r = datetime.strptime(end_date_r, '%Y-%m-%d')
+            queryset = queryset.filter(startDate__lte = end_date_r)
+
+        # filtering by lat. & long. ranges passed
+        if min_long != None:
+            queryset = queryset.filter(location__longitude__gte = min_long)
+
+        if max_long != None:
+            queryset = queryset.filter(location__longitude__lte = max_long)
+
+        if min_lat != None:
+            queryset = queryset.filter(location__latitude__gte = min_lat)
+
+        if max_lat != None:
+            queryset = queryset.filter(location__latitude__lte = max_lat)
+
+        return queryset
+        
+
 
 class LocationList(ListAPIView):
     queryset = Location.objects.all()
     serializer_class = LocationSerializer
+
+    def get_queryset(self):
+        min_long = self.request.query_params.get('min_long', None)
+        max_long = self.request.query_params.get('max_long', None)
+        min_lat = self.request.query_params.get('min_lat', None)
+        max_lat = self.request.query_params.get('max_lat', None)
+
+        queryset = Location.objects.all()
+
+        if min_long != None:
+            queryset = queryset.filter(longitude__gte = min_long)
+
+        if max_long != None:
+            queryset = queryset.filter(longitude__lte = max_long)
+
+        if min_lat != None:
+            queryset = queryset.filter(latitude__gte = min_lat)
+
+        if max_lat != None:
+            queryset = queryset.filter(latitude__lte = max_lat)
+
+        return queryset
