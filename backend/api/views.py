@@ -83,7 +83,6 @@ class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
         return response
 
 
-
 class LocationRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     queryset = Location.objects.all()
     lookup_field = 'id'
@@ -112,7 +111,6 @@ class LocationRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
                 'longitude': Location['longitude'],
             })
         return response
-
 
 class ResourceList(ListAPIView):
     queryset = Resource.objects.all()

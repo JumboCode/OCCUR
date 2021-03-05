@@ -26,3 +26,13 @@ class ResourceSerializer(serializers.ModelSerializer):
         location_validated_data['resource'] = resource
         locations = location_serializer.create(location_validated_data)
         return resource
+
+    def update(self, validated_data):
+        location_validated_data = validated_data.pop('location')
+        resource = Resource.objects.update(**validated_data)
+        location_serializer = self.fields['location']
+
+        #---- if location is null, create a new one
+
+
+

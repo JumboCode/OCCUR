@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-import django_heroku
+#import django_heroku
 from dotenv import load_dotenv
 load_dotenv(verbose=True)
 
@@ -28,9 +28,9 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    'occur-backend.herokuapp.com'
-]
+#ALLOWED_HOSTS = [
+#    'occur-backend.herokuapp.com'
+#]
 
 
 # Application definition
@@ -83,7 +83,7 @@ WSGI_APPLICATION = 'OCCUR.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'occurdb',
         'USER': os.getenv('DB_USER'),
         'PASSWORD': os.getenv('DB_PASSWORD'),
@@ -132,4 +132,4 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-django_heroku.settings(locals())
+#django_heroku.settings(locals())
