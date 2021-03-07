@@ -5,14 +5,19 @@ import { AuthProvider } from '../auth';
 
 import 'styles/base.scss';
 import styles from './app.module.scss';
+import Header from 'components/Header/header.jsx';
 
 export default function AppContainer({ Component, pageProps }) {
   return (
     <AuthProvider>
-      <div className={styles.base}>
+      <Header />
+
+      <div className={styles.container}>
         <Component {...pageProps} />
       </div>
     </AuthProvider>
+
+
   );
 }
 
