@@ -1,10 +1,12 @@
 from rest_framework.test import APITestCase,APISimpleTestCase, APITransactionTestCase, APILiveServerTestCase
 from api.models import Resource
+from api.models import Location
 from rest_framework.reverse import reverse as api_reverse
 from api import gen_token
 from api.serializers import ResourceSerializer
 from api.serializers import LocationSerializer
 from django.core import serializers
+from rest_framework import status
 from rest_framework.parsers import JSONParser
 from rest_framework.renderers import JSONRenderer
 import base64
@@ -23,23 +25,24 @@ class ResourceTest(APITestCase):
         with open(path, "rb") as image_file:
             encoded_image = base64.b64encode(image_file.read()).decode()
         img = 'data:image/png;base64,{}'.format(encoded_image)
-            
+        
+        # resource data
         resource_attrs = {
-        "name": "TEST",
-        "organization": "Women in Computer Science",
-        "category": "MENTAL_HEALTH",
-        "startDate": "2021-12-11",
-        "endDate": "2021-12-11",
-        "time": "18:00:00",
-        "flyer": img,
-        "zoom": "https://tufts.zoom.us/j/91768543077?pwd=Wm1JZDJBV2ZZNDI4UXhYVzUvdWE3Zz09",
-        "description": "Come and destress with WiCS!",
-        "location": {
-            "street_address": "20 Professor's Row",
-            "city": "Medford",
-            "state": "MA",
-            "zip_code": "02155"
-        }
+            "name": "TEST",
+            "organization": "Women in Computer Science",
+            "category": "MENTAL_HEALTH",
+            "startDate": "2021-12-11",
+            "endDate": "2021-12-11",
+            "time": "18:00:00",
+            "flyer": img,
+            "zoom": "https://tufts.zoom.us/j/91768543077?pwd=Wm1JZDJBV2ZZNDI4UXhYVzUvdWE3Zz09",
+            "description": "Come and destress with WiCS!",
+            "location": {
+                "street_address": "20 Professor's Row",
+                "city": "Medford",
+                "state": "MA",
+                "zip_code": "02155"
+            }
     }
         # Authenticate API Client instance
         access_token = gen_token.get_token()
@@ -74,12 +77,17 @@ class ResourceTest(APITestCase):
 
             
 class ResourceDestroyTestCase(APITestCase):
-
+    # 
+    # 
+    # 
     def setUp(self):
-        # setting up auth
-        access_token = gen_token.get_token()
-        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
+        ###---- 1. Resource without nested location data ----###
 
+        # Add resource to test case that will be deleted
+        resource = Resource.objects.create(name="Oakland FoodBank", organization="Food 4 Food", category="FOOD", link="https://www.cs.tufts.edu/comp/11/", description="A resource for finding free communal food in Oakland and wider area")
+
+        ###---- 2. Resource with all possible fields ----###
+        # gets image from static files
         my_path = os.path.abspath(os.path.dirname(__file__))
         path = os.path.join(my_path, "../static/img/Wics_Event.png")
 
@@ -87,91 +95,61 @@ class ResourceDestroyTestCase(APITestCase):
         with open(path, "rb") as image_file:
             encoded_image = base64.b64encode(image_file.read()).decode()
         img = 'data:image/png;base64,{}'.format(encoded_image)
-            
-        data = {
-        "name": "TEST",
-        "organization": "Test",
-        "category": "MENTAL_HEALTH",
-        "startDate": "2021-12-11",
-        "endDate": "2021-12-11",
-        "time": "18:00:00",
-        "flyer": img,
-        "zoom": "https://tufts.zoom.us/j/91768543077?pwd=Wm1JZDJBV2ZZNDI4UXhYVzUvdWE3Zz09",
-        "description": "Test Data",
-        "location": {
-            "street_address": "Test St",
-            "city": "Test City",
-            "state": "TS",
-            "zip_code": "00000"
-            }
-        }
-        # creating resource before running delete function
-        response = self.client.post('/api/v1/new/resource/', data, format='json')
-
-
-    def test_delete_resource(self):
-        num_initial_resources = Resource.objects.count()
-        print(num_initial_resources)
-        resource_id = Resource.objects.first().id
-
-        self.client().delete('api/v1/{}/delete/resource/'.format(resource_id))
-        self.assertEqual(Resource.objects.count(),initial_resource_count - 1)
-
-'''
-# Create your tests here.
-class ResourceDestroyTestCase(APITestCase):
-    def test_delete_resource(self):
+        
+        # resource data
         resource_attrs = {
-        "name": "TEST",
-        "organization": "Women in Computer Science",
-        "category": "MENTAL_HEALTH",
-        "startDate": "2020-12-11",
-        "endDate": "2020-12-11",
-        "time": "18:00:00",
-        "flyer": "",
-        "zoom": "https://tufts.zoom.us/j/91768543077?pwd=Wm1JZDJBV2ZZNDI4UXhYVzUvdWE3Zz09",
-        "description": "Come and destress with WiCS!",
-        "location": {
-            "street_address": "20 Professor's Row",
-            "city": "Medford",
-            "state": "MA",
-            "zip_code": "02155"
+            "name": "Resource with All Fields",
+            "organization": "Women in Computer Science",
+            "category": "MENTAL_HEALTH",
+            "startDate": "2021-12-11",
+            "endDate": "2021-12-11",
+            "time": "18:00:00",
+            "flyer": img,
+            "zoom": "https://tufts.zoom.us/j/91768543077?pwd=Wm1JZDJBV2ZZNDI4UXhYVzUvdWE3Zz09",
+            "description": "Come and destress with WiCS!",
+            "location": {
+                "street_address": "20 Professor's Row",
+                "city": "Medford",
+                "state": "MA",
+                "zip_code": "02155"
             }
         }
+        
+        # Authenticate API Client instance
+        access_token = gen_token.get_token()
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
+
+        # Make POST req with resource_attrs to create new resource
         response = self.client.post('/api/v1/new/resource/', resource_attrs, format='json')
-        data = response.data
-        data_id = data.get('id')
-        print("data id:", data_id)
-        initial_resource_count = Resource.objects.count()
 
-        rud_url = api_reverse('api:detail', kwargs={'id': data_id})
+    # 
+    # 
+    # 
+    def test_delete_default_resource(self):
+        num_initial_resources = Resource.objects.count()
 
-        delete_response = self.client.delete(rud_url, data_id, format='json')
+        # retrieve id of default resource
+        resource_id = Resource.objects.get(name__exact="Oakland FoodBank").id
 
-        # print("*******", Resource.objects.count())
-        # resource_id = Resource.objects.first().id
-        # print("Resource Id: ", resource_id)
-        # path = 'api/v1/' + str(resource_id) +'/delete/resource/'
-        # print("Path:", path)
+        # Authorizing endpoint
+        response = self.client.delete('/api/v1/{}/delete/resource'.format(resource_id),format='json')
+        # Check that resource ID is no longer in database and that 
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertRaises(Resource.DoesNotExist,Resource.objects.get, id=resource_id)
+        self.assertEqual(Resource.objects.count(), num_initial_resources - 1)
 
-        # response = self.client.delete(path)
-        print("Delete response: ", delete_response)
-        self.assertEqual(
-            Resource.objects.count(),
-            initial_resource_count - 1,
-        )
-        # self.assertRaises(
-        #     Resource.DoesNotExist,
-        #     Resource.objects.get, id=resource_id,
-        # )
+    # 
+    # 
+    # 
+    def test_delete_all_fields(self):
+        num_initial_resources = Resource.objects.count()
 
-        # data = self.create_item()
-        # data_id = data.get('id')
-        # rud_url = api_reverse('student:detail', kwargs={'pk': data_id})
+        # retrieve id of default resource
+        resource_id = Resource.objects.get(name__exact="Resource with All Fields").id
 
-        # delete_response = self.client.delete(rud_url, data_id, format='json')
-        # self.assertEqual(delete_response.status_code, status.HTTP_204_NO_CONTENT)
-
-        # get_response = self.client.delete(rud_url, format='json')
-        # self.assertEqual(get_response.status_code, status.HTTP_404_NOT_FOUND)
-'''
+        # Authorizing endpoint
+        response = self.client.delete('/api/v1/{}/delete/resource'.format(resource_id),format='json')
+        # Check that resource ID is no longer in database and that 
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertRaises(Resource.DoesNotExist,Resource.objects.get, id=resource_id)
+        self.assertEqual(Resource.objects.count(), num_initial_resources - 1)

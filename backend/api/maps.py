@@ -26,5 +26,5 @@ def getCoordinates(address):
     if response['status'] == "OK":
         coordinates['lat'] = response['results'][0]['geometry']['location']['lat']
         coordinates['lng'] = response['results'][0]['geometry']['location']['lng']
-    
+        
     return coordinates

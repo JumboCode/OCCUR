@@ -16,7 +16,8 @@ class Resource(models.Model):
 
     name            = models.CharField(max_length=30, blank=False)
     organization    = models.CharField(max_length=30, blank=False)
-    category        = models.CharField(choices=RESOURCE_CATEGORIES, default='OTHER', max_length=20, null=True, blank=False)
+    category        = models.CharField(choices=RESOURCE_CATEGORIES, default='OTHER', max_length=20, 
+                                        null=True, blank=False)
     startDate       = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True)
     endDate         = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True)
     time            = models.TimeField(auto_now=False, auto_now_add=False, null=True, blank=True)
