@@ -29,7 +29,7 @@
   margin: 0;
   margin-top: .5em;
 
-  svg {
+  & > svg {
     width: 1.15em;
     height: 1.15em;
     margin-right: .5em;
@@ -46,6 +46,8 @@
   margin: 20px;
   overflow: hidden;
   width: 700px;
+  height: 190px;
+  position: relative;
 
 }
 
@@ -56,4 +58,69 @@
   font-weight: 400;
   letter-spacing: 1px;
   font-size: .8rem;
+}
+
+.shareicon{
+  display: block;
+  margin: 0 auto;
+  text-align: center;
+  bottom: 10px;
+  right: 10px;
+  position: absolute;
+  svg {
+    width: 1.5em;
+    height: 1.5em;
+  }
+}
+
+.calendaricon{
+  display: block;
+  margin: 0 auto;
+  text-align: center;
+  bottom: 10px;
+  right: 75px;
+  position: absolute;
+
+  svg {
+    width: 1.5em;
+    height: 1.5em;
+  }
+}
+
+.viewicon{
+  margin: 0 auto;
+  top: 0px;
+  right: 10px;
+  position: absolute;
+  border-style: solid;
+  border-width: 0.1px;
+  border-radius: 0.2em;
+  padding: 10px;
+  border-color: lightgrey;
+  margin-top: 15px;
+
+  display: flex;
+  align-items: center;
+}
+
+
+.shareicon, .calendaricon a {
+  color: black;
+}
+
+.viewicon a {
+  color: black;
+  text-decoration: none;
+}
+.viewicon svg {
+  width: 1.15em;
+  height: 1.15em;
+  margin-left: .5em;
+}
+
+.caption {
+  display: block;
+  padding: 10px;
+  padding-left: 2px;
+
 }

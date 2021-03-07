@@ -36,13 +36,23 @@ export default function ResourceCard({
             {location}
           </p>
           <p>
-            <ShareIcon />
+            <div className={styles.shareicon}>
+              <ShareIcon />
+              <a className={styles.caption} href="https://www.w3schools.com/">Share</a>
+            </div>
           </p>
           <p>
-            <ViewIcon />
+            <div className={styles.viewicon}>
+              <a className={styles.caption2} href="https://www.w3schools.com/">View more</a>
+              <ViewIcon />
+            </div>
+
           </p>
           <p>
-            <Calendar2Icon />
+            <div className={styles.calendaricon}>
+              <Calendar2Icon />
+              <a className={styles.caption} href="https://www.w3schools.com/">Add to Calendar</a>
+            </div>
           </p>
         </div>
       </div>
