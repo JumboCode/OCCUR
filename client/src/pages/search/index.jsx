@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-
 import ResourceCard from 'components/ResourceCard';
+import Header from 'components/Header/header';
 
 const searchResults = [
   { name: 'My first result', description: 'hi' },
@@ -12,6 +12,7 @@ export default function SearchPage() {
 
   return (
     <div>
+      <Header />
       <h1>Search</h1>
       <input
         type="text"
