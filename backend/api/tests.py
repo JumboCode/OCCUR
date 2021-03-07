@@ -13,6 +13,8 @@ import base64
 import os
 import io
 
+#---------------------------- Resource Create Tests ---------------------------#
+
 class ResourceTest(APITestCase):
     def test_create_resource(self):
         initial_resource_count = Resource.objects.count()
@@ -74,12 +76,13 @@ class ResourceTest(APITestCase):
                         self.assertEqual(location_data[key], expected_value[key])
             else:       
                 self.assertEqual(response.data[attr], expected_value)
+                
 
+#---------------------------- Resource Delete Tests ---------------------------#
             
 class ResourceDestroyTestCase(APITestCase):
-    # 
-    # 
-    # 
+    # setUp
+    # Purpose: Add resources to default database and authenticate client
     def setUp(self):
         ###---- 1. Resource without nested location data ----###
 
@@ -97,7 +100,7 @@ class ResourceDestroyTestCase(APITestCase):
         img = 'data:image/png;base64,{}'.format(encoded_image)
         
         # resource data
-        resource_attrs = {
+        resource_all_fields = {
             "name": "Resource with All Fields",
             "organization": "Women in Computer Science",
             "category": "MENTAL_HEALTH",
@@ -106,6 +109,42 @@ class ResourceDestroyTestCase(APITestCase):
             "time": "18:00:00",
             "flyer": img,
             "zoom": "https://tufts.zoom.us/j/91768543077?pwd=Wm1JZDJBV2ZZNDI4UXhYVzUvdWE3Zz09",
+            "link": "https://google.com",
+            "description": "Come and destress with WiCS!",
+            "location": {
+                "street_address": "20 Professor's Row",
+                "city": "Medford",
+                "state": "MA",
+                "zip_code": "02155"
+            }
+        }
+        resource_missing_flyer = {
+            "name": "Resource with All Fields",
+            "organization": "Women in Computer Science",
+            "category": "MENTAL_HEALTH",
+            "startDate": "2021-12-11",
+            "endDate": "2021-12-11",
+            "time": "18:00:00",
+            "flyer": "",
+            "zoom": "https://tufts.zoom.us/j/91768543077?pwd=Wm1JZDJBV2ZZNDI4UXhYVzUvdWE3Zz09",
+            "description": "Come and destress with WiCS!",
+            "location": {
+                "street_address": "20 Professor's Row",
+                "city": "Medford",
+                "state": "MA",
+                "zip_code": "02155"
+            }
+        }
+        resource_missing_dates = {
+            "name": "Resource with all fields",
+            "organization": "Women in Computer Science",
+            "category": "MENTAL_HEALTH",
+            "startDate": "",
+            "endDate": "",
+            "time": "18:00:00",
+            "flyer": img,
+            "zoom": "https://tufts.zoom.us/j/91768543077?pwd=Wm1JZDJBV2ZZNDI4UXhYVzUvdWE3Zz09",
+            "link": "https://google.com",
             "description": "Come and destress with WiCS!",
             "location": {
                 "street_address": "20 Professor's Row",
@@ -120,11 +159,10 @@ class ResourceDestroyTestCase(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
 
         # Make POST req with resource_attrs to create new resource
-        response = self.client.post('/api/v1/new/resource/', resource_attrs, format='json')
+        response = self.client.post('/api/v1/new/resource/', resource_all_fields, format='json')
 
-    # 
-    # 
-    # 
+    # test_delete_default_resource
+    # Purpose: 
     def test_delete_default_resource(self):
         num_initial_resources = Resource.objects.count()
 
@@ -138,14 +176,13 @@ class ResourceDestroyTestCase(APITestCase):
         self.assertRaises(Resource.DoesNotExist,Resource.objects.get, id=resource_id)
         self.assertEqual(Resource.objects.count(), num_initial_resources - 1)
 
-    # 
-    # 
-    # 
+    # test_delete_default_resource
+    # Purpose: 
     def test_delete_all_fields(self):
         num_initial_resources = Resource.objects.count()
 
         # retrieve id of default resource
-        resource_id = Resource.objects.get(name__exact="Resource with All Fields").id
+        resource_id = Resource.objects.get(name__exact="Resource with all fields").id
 
         # Authorizing endpoint
         response = self.client.delete('/api/v1/{}/delete/resource'.format(resource_id),format='json')
@@ -153,3 +190,6 @@ class ResourceDestroyTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertRaises(Resource.DoesNotExist,Resource.objects.get, id=resource_id)
         self.assertEqual(Resource.objects.count(), num_initial_resources - 1)
+
+#---------------------------- Resource List Tests ---------------------------#
+
