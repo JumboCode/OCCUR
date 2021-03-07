@@ -50,7 +50,7 @@ class ResourceTest(APITestCase):
         access_token = gen_token.get_token()
         self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
 
-        # Make request to backend POSt req with resource_attrs
+        # Make request to backend POST req with resource_attrs
         response = self.client.post('/api/v1/new/resource/', resource_attrs, format='json')
         if response.status_code != 201:
             print(response.data)
@@ -101,7 +101,7 @@ class ResourceDestroyTestCase(APITestCase):
         
         # resource data
         resource_all_fields = {
-            "name": "Resource with All Fields",
+            "name": "Resource with all fields",
             "organization": "Women in Computer Science",
             "category": "MENTAL_HEALTH",
             "startDate": "2021-12-11",
@@ -119,7 +119,7 @@ class ResourceDestroyTestCase(APITestCase):
             }
         }
         resource_missing_flyer = {
-            "name": "Resource with All Fields",
+            "name": "Resource with all fields",
             "organization": "Women in Computer Science",
             "category": "MENTAL_HEALTH",
             "startDate": "2021-12-11",
@@ -169,7 +169,7 @@ class ResourceDestroyTestCase(APITestCase):
         # retrieve id of default resource
         resource_id = Resource.objects.get(name__exact="Oakland FoodBank").id
 
-        # Authorizing endpoint
+        # Delete given resource
         response = self.client.delete('/api/v1/{}/delete/resource'.format(resource_id),format='json')
         # Check that resource ID is no longer in database and that 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
@@ -184,7 +184,7 @@ class ResourceDestroyTestCase(APITestCase):
         # retrieve id of default resource
         resource_id = Resource.objects.get(name__exact="Resource with all fields").id
 
-        # Authorizing endpoint
+        # EDlete given resource
         response = self.client.delete('/api/v1/{}/delete/resource'.format(resource_id),format='json')
         # Check that resource ID is no longer in database and that 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
