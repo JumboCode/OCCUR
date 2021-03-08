@@ -193,3 +193,14 @@ class ResourceDestroyTestCase(APITestCase):
 
 #---------------------------- Resource List Tests ---------------------------#
 
+class ResourceListTestCase(APITestCase):
+    def test_list_resources(self):
+        resources_count = Resource.objects.count()
+        response = self.client.get('/api/v1/resources/')
+        self.assertIsNone(response.status_code['next'])
+        self.assertIsNone(response.status_code['previous'])
+        self.assertEqual(response.status_code['count'], resources_count)
+        self.assertEqual(len(response.status_code['results']), resources_count)
+
+
+
