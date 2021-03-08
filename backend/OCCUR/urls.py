@@ -16,6 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from api import views
+from api import admin_views
+
 urlpatterns = [
     path('',views.apiUrlsList, name="apiUrlsList" ),
     path('api/v1/new/resource/', views.ResourceCreate.as_view()),
