@@ -11,7 +11,7 @@ import ShareIcon from '../../../public/share.svg';
 
 
 export default function ResourceCard({
-  resourceTitle, organization, startDate, endDate, location, imageSrc, startTime, endTime,
+  resourceTitle, organization, startDate, location, imageSrc, startTime, endTime,
 }) {
   return (
     <div>
