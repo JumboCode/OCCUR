@@ -12,7 +12,6 @@ export default function SearchPage() {
 
   return (
     <div>
-      <Header />
       <h1>Search</h1>
       <input
         type="text"
