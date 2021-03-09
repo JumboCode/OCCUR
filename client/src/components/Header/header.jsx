@@ -7,7 +7,7 @@ import Link from 'next/link';
 export default function Header() {
   return (
     <nav className={styles.navbar}>
-      <img className={styles.logo} src="/logo.png" />
+      <img alt="OCCUR logo" className={styles.logo} src="/logo.png" />
 
       <SearchBar />
       <Link href="/"><a>Home</a></Link>
