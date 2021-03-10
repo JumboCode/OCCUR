@@ -10,7 +10,6 @@ media
 .pk
 .pem
 .pub
-.env
 .venv
 env/
 venv/
