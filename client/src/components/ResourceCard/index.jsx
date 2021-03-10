@@ -15,7 +15,7 @@ export default function ResourceCard({
 }) {
   return (
     <div className={styles.base}>
-      <div className={styles.leftside} />
+      <div className={styles.leftside} style={imageSrc && { backgroundImage: `url(${imageSrc})` }} />
 
       <div className={styles.rightside}>
         <div className={styles.content}>
@@ -59,11 +59,15 @@ export default function ResourceCard({
 
 ResourceCard.propTypes = {
   resourceTitle: PropTypes.string.isRequired,
+  imageSrc: PropTypes.string,
   organization: PropTypes.string.isRequired,
   startDate: PropTypes.instanceOf(Date).isRequired,
   endDate: PropTypes.instanceOf(Date).isRequired,
   location: PropTypes.string.isRequired,
   startTime: PropTypes.instanceOf(Date).isRequired,
   endTime: PropTypes.instanceOf(Date).isRequired,
+};
 
+ResourceCard.defaultProps = {
+  imageSrc: null,
 };
