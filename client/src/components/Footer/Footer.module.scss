@@ -30,13 +30,13 @@
 
 .icons {
   margin-top: 10px;
+  svg {
+    height: 35px;
+    width: 35px;
+    margin-right: 10px;
+  }
 }
 
-.icon {
-  height: 35px;
-  width: 35px;
-  // border-radius: 50%;
-}
 
 .logo {
   width: 200px;

@@ -1,6 +1,11 @@
 import React from 'react';
 import styles from './Footer.module.scss';
 
+import FacebookIcon from '../../../public/icons/facebook.svg';
+import InstagramIcon from '../../../public/icons/instagram.svg';
+import LinkedinIcon from '../../../public/icons/linkedin.svg';
+import TwitterIcon from '../../../public/icons/twitter.svg';
+
 export default function Footer() {
   return (
     <div className={styles.base}>
@@ -40,17 +45,17 @@ export default function Footer() {
         Contact Us
         <div className={styles.icons}>
 
-          <a href="https://www.facebook.com/occurnow/" target="_blank">
-            <img className={styles.icon} src="/images/facebook.svg" alt="Facebook" />
+          <a href="https://www.facebook.com/occurnow/" target="_blank" rel="noopener noreferrer">
+            <FacebookIcon />
           </a>
-          <a href="https://twitter.com/occur_now" target="_blank">
-            <img className={styles.icon} src="/images/twitter.svg" alt="Twitter" />
+          <a href="https://twitter.com/occur_now" target="_blank" rel="noopener noreferrer">
+            <TwitterIcon />
           </a>
-          <a href="https://www.linkedin.com/company/occurorg/" target="_blank">
-            <img className={styles.icon} src="/images/linkedin.svg" alt="Linkedin" />
+          <a href="https://www.linkedin.com/company/occurorg/" target="_blank" rel="noopener noreferrer">
+            <LinkedinIcon />
           </a>
-          <a href="https://www.instagram.com/occurnow/" target="_blank">
-            <img className={styles.icon} src="/images/instagram.svg" alt="Instagram" />
+          <a href="https://www.instagram.com/occurnow/" target="_blank" rel="noopener noreferrer">
+            <InstagramIcon />
           </a>
         </div>
       </div>
