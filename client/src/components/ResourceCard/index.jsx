@@ -14,46 +14,43 @@ export default function ResourceCard({
   resourceTitle, organization, startDate, location, imageSrc, startTime, endTime,
 }) {
   return (
-    <div>
-      <div className={styles.ResourceInfo}>
-        <div className={styles.leftside} />
+    <div className={styles.base}>
+      <div className={styles.leftside} />
 
-        <div className={styles.rightside}>
+      <div className={styles.rightside}>
+        <div className={styles.content}>
           <h3>{resourceTitle}</h3>
-          <h6>{organization}</h6>
-          <p>
+          <p className={styles.subtitle}>{organization}</p>
+          <p className={styles['icon-line']}>
             <CalendarIcon />
             {startDate.toLocaleDateString()}
           </p>
-          <p>
+          <p className={styles['icon-line']}>
             <ClockIcon />
             {startTime.toLocaleTimeString('en-US')}
             {' to '}
             {endTime.toLocaleTimeString('en-US')}
           </p>
-          <p>
+          <p className={styles['icon-line']}>
             <PinIcon />
             {location}
           </p>
-          <p>
-            <div className={styles.shareicon}>
-              <ShareIcon />
-              <a className={styles.caption} href="https://www.w3schools.com/">Share</a>
-            </div>
-          </p>
-          <p>
-            <div className={styles.viewicon}>
-              <a className={styles.caption2} href="https://www.w3schools.com/">View more</a>
-              <ViewIcon />
-            </div>
+        </div>
 
-          </p>
-          <p>
-            <div className={styles.calendaricon}>
-              <Calendar2Icon />
-              <a className={styles.caption} href="https://www.w3schools.com/">Add to Calendar</a>
-            </div>
-          </p>
+        <a className={styles.cta}>
+          View more
+          <ViewIcon />
+        </a>
+
+        <div className={styles.buttons}>
+          <button type="button">
+            <Calendar2Icon />
+            Add to Calendar
+          </button>
+          <button type="button">
+            <ShareIcon />
+            Share
+          </button>
         </div>
       </div>
     </div>
