@@ -3,20 +3,28 @@
 .base {
   background-color: $dark-blue;
   color: white;
+  font-size: 14px;
+  padding: 70px 20px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.columns {
   display: flex;
   justify-content: space-evenly;
   flex-wrap: wrap;
   text-align: center;
-  font-size: 14px;
-  padding-top: 70px;
-  padding-bottom: 40px;
+  width: 100%;
 
   & > * {
     min-width: 200px;
+    margin-bottom: 1em;
   }
 
-  & > :not(:nth-child(2)) {
-    text-align: left;
+  p {
+    margin-top: 0;
+    margin-bottom: 1em;
   }
 }
 
@@ -30,13 +38,16 @@
 
 .icons {
   margin-top: 10px;
+
+  a:not(:last-child) {
+    margin-right: 10px;
+  }
+
   svg {
     height: 35px;
     width: 35px;
-    margin-right: 10px;
   }
 }
-
 
 .logo {
   width: 200px;
