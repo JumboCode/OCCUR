@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import ResourceCard from 'components/ResourceCard';
-import Header from 'components/Header/header';
 
 const searchResults = [
   { name: 'My first result', description: 'hi' },
@@ -22,6 +21,8 @@ export default function SearchPage() {
 
       <ResourceCard
         resourceTitle="Oakland Food Drive"
+        imageSrc="https://source.unsplash.com/random/600x800?dummy=1"
+        href="/"
         organization="Food4Food"
         startDate={new Date('2021-03-17T08:00:00Z')}
         endDate={new Date('2021-03-17T05:00:00Z')}
@@ -31,6 +32,8 @@ export default function SearchPage() {
       />
       <ResourceCard
         resourceTitle="Oakland Food Drive"
+        imageSrc="https://source.unsplash.com/random/600x800?dummy=2"
+        href="https://occurnow.org/"
         organization="Food4Food"
         startDate={new Date('2021-03-17T08:00:00Z')}
         endDate={new Date('2021-03-17T05:00:00Z')}
