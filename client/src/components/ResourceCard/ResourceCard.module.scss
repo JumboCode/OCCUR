@@ -15,6 +15,7 @@
 .leftside {
   background-color: #C4C4C4;
   background-size: cover;
+  background-position: center;
   color: #fff;
   padding: 30px;
   max-width: 100%;
@@ -69,6 +70,11 @@ p.subtitle {
   position: absolute;
   top: 30px;
   right: 30px;
+
+  color: inherit;
+  text-decoration: none;
+
+  &:not(:link) { cursor: default; }
 
   svg {
     width: 1.15em;

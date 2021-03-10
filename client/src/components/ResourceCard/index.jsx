@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styles from './ResourceCard.module.scss';
 
+import MaybeLink from 'components/MaybeLink';
+
 import ClockIcon from '../../../public/clock.svg';
 import PinIcon from '../../../public/pin.svg';
 import CalendarIcon from '../../../public/calendar.svg';
@@ -11,7 +13,7 @@ import ShareIcon from '../../../public/share.svg';
 
 
 export default function ResourceCard({
-  resourceTitle, organization, startDate, location, imageSrc, startTime, endTime,
+  resourceTitle, organization, startDate, location, imageSrc, startTime, endTime, href, as,
 }) {
   return (
     <div className={styles.base}>
@@ -37,10 +39,10 @@ export default function ResourceCard({
           </p>
         </div>
 
-        <a className={styles.cta}>
+        <MaybeLink href={href} as={as} className={styles.cta}>
           View more
           <ViewIcon />
-        </a>
+        </MaybeLink>
 
         <div className={styles.buttons}>
           <button type="button">
