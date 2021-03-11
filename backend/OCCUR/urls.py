@@ -25,6 +25,7 @@ urlpatterns = [
     path('api/v1/<int:id>/delete/resource', views.ResourceDestroy.as_view()),
     path('api/v1/list/resource', views.ResourceList.as_view()),
     path('api/v1/list/location', views.LocationList.as_view()),
+    path('api/v1/list/admin', admin_views.get_admins),
     path('admin/', admin.site.urls
     ),
 ]
