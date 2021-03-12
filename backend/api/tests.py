@@ -15,7 +15,7 @@ import io
 
 #---------------------------- Resource Create Tests ---------------------------#
 
-class ResourceTest(APITestCase):
+class ResourceCreateTestCase(APITestCase):
     def test_create_resource(self):
         initial_resource_count = Resource.objects.count()
 
@@ -194,13 +194,29 @@ class ResourceDestroyTestCase(APITestCase):
 #---------------------------- Resource List Tests ---------------------------#
 
 class ResourceListTestCase(APITestCase):
+    def setUp(self):
+        ###---- 1. Resource without nested location data ----###
+
+        # Add resource to test case that will be deleted
+        resource_food = Resource.objects.create(name="Oakland FoodBank", organization="Food 4 Food", category="FOOD", link="https://www.cs.tufts.edu/comp/11/", description="A resource for finding free communal food in Oakland and wider area")
+
+        # Add resource to test case that will be deleted
+        resource_mental_health = Resource.objects.create(name="Oakland Mental Health Resource", organization="Mental Health Resource", category="MENTAL_HEALTH", link="https://www.cs.tufts.edu/comp/11/", description="A resource for finding free communal fMental Health Services")
+
+        # Add resource to test case that will be deleted
+        resource_info = Resource.objects.create(name="Oakland Info Session", organization="Info Session Resource", category="INFO", link="https://www.cs.tufts.edu/comp/11/", description="An info session")
+
+
     def test_list_resources(self):
         resources_count = Resource.objects.count()
-        response = self.client.get('/api/v1/resources/')
-        self.assertIsNone(response.status_code['next'])
-        self.assertIsNone(response.status_code['previous'])
-        self.assertEqual(response.status_code['count'], resources_count)
-        self.assertEqual(len(response.status_code['results']), resources_count)
+        response = self.client.get('/api/v1/list/resource')
+
+        print(response)
+
+        self.assertIsNone(response.data['next'])
+        self.assertIsNone(response.data['previous'])
+        self.assertEqual(response.data['count'], resources_count)
+        self.assertEqual(len(response.data['results']), resources_count)
 
 
 
