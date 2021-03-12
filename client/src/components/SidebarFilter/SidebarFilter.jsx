@@ -50,12 +50,12 @@ export default function SidebarFilter() {
           <div className={styles.checkbox} />
           OCCUR
         </label>
-        <label>
+        <label className={styles.orange}>
           <input type="checkbox" />
           <div className={styles.checkbox} />
           Community Offerings
         </label>
-        <label>
+        <label className={styles.yellow}>
           <input type="checkbox" />
           <div className={styles.checkbox} />
           Free Wi-Fi Hotspots

@@ -51,5 +51,15 @@
       transform-origin: left center;
       transform: scale(.5);
     }
+
+    &.orange {
+      div { border-color: $orange; }
+      input:checked + div::before { background-color: $orange; }
+    }
+
+    &.yellow {
+      div { border-color: $yellow; }
+      input:checked + div::before { background-color: $yellow; }
+    }
   }
 }
