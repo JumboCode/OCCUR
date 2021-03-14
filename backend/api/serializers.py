@@ -38,23 +38,65 @@ class ResourceSerializer(serializers.ModelSerializer):
         return resource
 
     def update(self, instance, validated_data):
+
+        
+        location_validated_data = validated_data.pop('location')
+        # Step 1. Update location_validated_data to be equal to an empty dict {}, if all fields in validated_data['location'] are None or empty strings
+
+        # Step 2. Update all fields in a given resource  
+        resource = super().update(instance, validated_data)
+
+        # Step 3. Handle case where instance doesn't have a location
+        # and validated_data['location'] does have location data
+        # Then --> create new location with location validated data & resource
+        # assigned as location's resource
+
+
+        # Step 4. Handle case where validated data does have a location and 
+        # there is an existing location with a key to the resource
+        # Then --> call update function for locations and pass in
+        # the location instance and location_validated date
+        # code will be similar to location = super().update(location_instance, location_validated_data) 
+
+        # instance.name = validated_data.get('name', instance.name)
+        # instance.organization = validated_data.get('organization', instance.organization)
+        # instance.category = validated_data.get('category', instance.category)
+        # instance.startDate = validated_data.get('startDate', instance.startDate)
+        # instance.endDate = validated_data.get('endDate', instance.endDate)
+        # instance.time = validated_data.get('time', instance.time)
+
+        # Note: The resource flyer might have to be handled differently in the future. To be explained
+        # instance.flyer = validated_data.get('flyer', instance.flyer)
+        # instance.zoom = validated_data.get('zoom', instance.zoom)
+        # instance.description = validated_data.get('description', instance.description)
+
+
         #---- new location not null && new location in validated data
         if 'location' in validated_data and validated_data['location']:
             location_validated_data = validated_data.pop('location')
+            print(instance.id)
+            print('validated location data:\n{}'.format(location_validated_data))
             # resource = Resource.objects.get(validated_data['id']).update(validated_data)
             # resource = Resource.objects.get(validated_data['id'])
-            instance.name = validated_data.get('name', instance.name)
-            instance.organization = validated_data.get('organization', instance.organization)
-            instance.category = validated_data.get('category', instance.category)
-            instance.startDate = validated_data.get('startDate', instance.startDate)
-            instance.endDate = validated_data.get('endDate', instance.endDate)
-            instance.time = validated_data.get('time', instance.time)
-            instance.flyer = validated_data.get('flyer', instance.flyer)
-            instance.zoom = validated_data.get('zoom', instance.zoom)
-            instance.description = validated_data.get('description', instance.description)
-            instance.location = validated_data.get('location', instance.location)
-            return instance
+            # instance.location = validated_data.get('location', instance.location)
 
+        return resource
+
+
+
+'''
+    1. Update location_validated_data
+        - if fields are all empty or None -> reassign location_validated_data = {} (add as helper function - iterate)
+    2. Update all fields for resource (DONE)
+    3. if location_validated_data isn't empty and there does not exist a location with a key to the given resource instance
+        -> create a new location
+        -> assign resource as parent resource of the new location
+    4. if location_validated_data isn't empty and there exists a location with a key to the given resource instance
+        -> get that location instance
+        -> update that location with the fields in location_validated_data
+        -> syntax: super().update(location_instance, location_validated_data)
+
+'''
 
 
 
