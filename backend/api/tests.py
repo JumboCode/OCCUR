@@ -205,18 +205,18 @@ class ResourceListTestCase(APITestCase):
 
         # Add resource to test case that will be deleted
         resource_info = Resource.objects.create(name="Oakland Info Session", organization="Info Session Resource", category="INFO", link="https://www.cs.tufts.edu/comp/11/", description="An info session")
+        
+        # resources_added = 3
 
 
     def test_list_resources(self):
         resources_count = Resource.objects.count()
-        response = self.client.get('/api/v1/list/resource')
+        response = self.client.get('/api/v1/list/resource', format='json')
 
-        print(response)
+        print(response.data)
+        # Check that the response is 200 OK.
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        self.assertIsNone(response.data['next'])
-        self.assertIsNone(response.data['previous'])
-        self.assertEqual(response.data['count'], resources_count)
-        self.assertEqual(len(response.data['results']), resources_count)
 
 
 
