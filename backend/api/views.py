@@ -63,12 +63,13 @@ class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
         return response
 
     def update(self, request, *args, **kwargs):
+        Resource_id = request.data.get('id')
         response = super().update(request, *args, **kwargs)
         if response.status_code == 200:
             from django.core.cache import cache
             Resource = response.data
             cache.set('resource_data_{}'.format(Resource_id), {
-                # 'id': Resource['id'], **** just making sure this is read only
+                # 'id': Resource['id'], **** read only
                 'name': Resource['name'],
                 'organization': Resource['organization'],
                 'category': Resource['category'],
@@ -97,12 +98,13 @@ class LocationRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
         return response
 
     def update(self, request, *args, **kwargs):
+        Location_id = request.data.get('id')
         response = super().update(request, *args, **kwargs)
         if response.status_code == 200:
             from django.core.cache import cache
             Location = response.data
             cache.set('location_data_{}'.format(Location_id), {
-                # 'id': Location['id'], **** just making sure this is read only
+                # 'id': Location['id'], **** read only
                 'street_address': Location['street_address'],
                 'city': Location['city'],
                 'state': Location['state'],
