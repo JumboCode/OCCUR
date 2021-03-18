@@ -9,16 +9,6 @@ class LocationSerializer(serializers.ModelSerializer):
         )
         read_only_fields = ('id',)
 
-    def update(self, instance, validated_data):
-       
-        instance.street_address = validated_data.get('street_address', instance.street_address)
-        instance.city = validated_data.get('city', instance.city)
-        instance.state = validated_data.get('state', instance.state)
-        instance.zip_code = validated_data.get('zip_code', instance.zip_code)
-        instance.latitude = validated_data.get('latitude', instance.latitude)
-        instance.longitude = validated_data.get('longitude', instance.longitude)
-        return instance
-
 
 class ResourceSerializer(serializers.ModelSerializer):
     location = LocationSerializer(many=False)
@@ -66,13 +56,21 @@ class ResourceSerializer(serializers.ModelSerializer):
         # and validated_data['location'] does have location data
         # Then --> create new location with location validated data & resource
         # assigned as location's resource
+        try:
+            location_instance = Location.objects.get(**{'resource':instance})
+        except Location.DoesNotExist:
+            location_instance = None
         
-        location_instance = Location.objects.get(**{'resource':instance})
-        print(location_instance)
-        # Location.objects.get('id')
-        # location_serializer = self.fields['location']
-        # location_validated_data['resource'] = resource
-        # locations = location_serializer.create(location_validated_data)
+        # Step 3. CREATE LOCATION CASE
+        if location_instance is None:
+            location_serializer = self.fields['location']
+            location_validated_data['resource'] = resource
+            locations = location_serializer.create(location_validated_data)
+        # Step 4. UPDATE LOCATION CASE
+        else:
+            location_serializer = self.fields['location']
+            location_validated_data['resource'] = resource
+            locations = location_serializer.update(location_instance, location_validated_data)
 
 
         # Step 4. Handle case where validated data does have a location and 
@@ -95,10 +93,10 @@ class ResourceSerializer(serializers.ModelSerializer):
 
 
         #---- new location not null && new location in validated data
-        if 'location' in validated_data and validated_data['location']:
-            location_validated_data = validated_data.pop('location')
-            print(instance.id)
-            print('validated location data:\n{}'.format(location_validated_data))
+        # if 'location' in validated_data and validated_data['location']:
+        #     location_validated_data = validated_data.pop('location')
+        #     print(instance.id)
+        #     print('validated location data:\n{}'.format(location_validated_data))
             # resource = Resource.objects.get(validated_data['id']).update(validated_data)
             # resource = Resource.objects.get(validated_data['id'])
             # instance.location = validated_data.get('location', instance.location)

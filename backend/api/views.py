@@ -33,7 +33,6 @@ class ResourceCreate(CreateAPIView):
         # TO DO:
         # check that a valid lat and lng returned
         # set default lat and lng if nothing is returned
-        print (geoCoordinates)
         request.data['location']['latitude'] = geoCoordinates['lat']
         request.data['location']['longitude'] = geoCoordinates['lng']
 
@@ -63,7 +62,16 @@ class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
         return response
 
     def update(self, request, *args, **kwargs):
+        address = request.data['location']
+
+        #---- retrieve geoCoordinates 
+        geoCoordinates = getCoordinates(address)
+
+        request.data['location']['latitude'] = geoCoordinates['lat']
+        request.data['location']['longitude'] = geoCoordinates['lng']
+
         response = super().update(request, *args, **kwargs)
+        
         if response.status_code == 200:
             from django.core.cache import cache
             Resource = response.data
