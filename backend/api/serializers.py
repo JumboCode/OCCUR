@@ -67,6 +67,8 @@ class ResourceSerializer(serializers.ModelSerializer):
         # Then --> create new location with location validated data & resource
         # assigned as location's resource
         
+        location_instance = Location.objects.get(**{'resource':instance})
+        print(location_instance)
         # Location.objects.get('id')
         # location_serializer = self.fields['location']
         # location_validated_data['resource'] = resource
