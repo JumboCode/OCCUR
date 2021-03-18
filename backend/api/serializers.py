@@ -43,13 +43,34 @@ class ResourceSerializer(serializers.ModelSerializer):
         location_validated_data = validated_data.pop('location')
         # Step 1. Update location_validated_data to be equal to an empty dict {}, if all fields in validated_data['location'] are None or empty strings
 
+        # bool to track if location_validated_data is empty
+        # if all fields are "" or "None" set location validated data to an empty dictionary?
+        location_validated_data_empty = True
+        for key, item in location_validated_data.items():
+            if not (item is "" or item is None):
+                print("item is {}".format(item))
+                location_validated_data_empty = False
+        
+        # if all fields are empty or None, set location_validated_data to empty dictionary?
+        if location_validated_data_empty:
+            location_validated_data = {}
+        
+        print(location_validated_data)
+
+
         # Step 2. Update all fields in a given resource  
         resource = super().update(instance, validated_data)
 
-        # Step 3. Handle case where instance doesn't have a location
+        # Step 3. CREATE CASE
+        # Handle case where instance doesn't have a location
         # and validated_data['location'] does have location data
         # Then --> create new location with location validated data & resource
         # assigned as location's resource
+        
+        # Location.objects.get('id')
+        # location_serializer = self.fields['location']
+        # location_validated_data['resource'] = resource
+        # locations = location_serializer.create(location_validated_data)
 
 
         # Step 4. Handle case where validated data does have a location and 
