@@ -1,4 +1,6 @@
 from django.db import models
+from django import forms
+from multiselectfield import MultiSelectField
 
 # Models
 class Resource(models.Model):
@@ -23,16 +25,15 @@ class Resource(models.Model):
         ('FRI', 'Friday'),
         ('SAT', 'Saturday')
     ]
-
     name            = models.CharField(max_length=30, blank=False)
     organization    = models.CharField(max_length=30, blank=False)
-    category        = models.CharField(choices=RESOURCE_CATEGORIES, default='OTHER', max_length=20, null=True, blank=False)
+    category        = models.CharField(max_length=30, choices=RESOURCE_CATEGORIES, null=True, blank=True)
     startDate       = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True)
     endDate         = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True)
     startTime       = models.TimeField(auto_now=False, auto_now_add=False, null=True, blank=True)
     endTime         = models.TimeField(auto_now=False, auto_now_add=False, null=True, blank=True)
-    isRecurring     = modules.BooleanField(null=True, blank=True)
-    recurrenceDays  = modules.MultipleChoiceField(choices=DAYS_OF_WEEK,null=True, blank=False, default=[])
+    isRecurring     = models.BooleanField(null=True, blank=True)
+    recurrenceDays  = MultiSelectField(choices=DAYS_OF_WEEK, default=[])
     flyer           = models.URLField(null=True, blank=True)
     flyerId         = models.CharField(max_length=30, null=True, blank=True)
     link            = models.URLField(null=True, blank=True)
