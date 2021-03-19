@@ -4,14 +4,21 @@ import json
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 import http.client
+import dotenv
+import os
+
 def get_token():
+    dotenv.load_dotenv()
+    # get private info from .env
+    client_id = os.getenv("MANAGEMENT_ID")
+    secret = os.getenv("MANAGEMENT_SECRET")
     conn = http.client.HTTPSConnection("dev-9c5bh9r5.us.auth0.com")
-    payload = "{\"client_id\":\"Rnnb0iqZ4b1ohSQAU7ubmCisTOFqN6Lg\",\"client_secret\":\"Xm2u3A_59jdJWvP3VrnwlbiBTpK_5JEOX4ZYgXaMvzf7Vnxsqj3NwUsJcXsmBZhR\",\"audience\":\"https://dev-9c5bh9r5.us.auth0.com/api/v2/\",\"grant_type\":\"client_credentials\"}"
+    # request a token to access management api
+    payload = "{\"client_id\":\"" + client_id+ "\",\"client_secret\":\"" + secret + "\",\"audience\":\"https://dev-9c5bh9r5.us.auth0.com/api/v2/\",\"grant_type\":\"client_credentials\"}"
     headers = { 'content-type': "application/json" }
     conn.request("POST", "/oauth/token", payload, headers)
     res = conn.getresponse()
     data = json.loads(res.read().decode("utf-8"))
-    print(data)
     return data['access_token']
 
 
@@ -20,28 +27,42 @@ def get_token():
 # but we don't want just anyone seeing all of our admins' info
 @permission_classes([IsAuthenticated])
 def get_admins(request):
-    # now we would perform different actions based on request method
-    # payload = request.data
-    # email = payload["email"]
+    # Get management api token
     token = 'Bearer ' + get_token()
+    # add token to header
     headers = {"content-type":"application/json",
-    'Authorization': token}
-    # response = {
-    #     "email": email,
-    #     "user_metadata": {},
-    #     "blocked": False,
-    #     "email_verified": False,
-    #     "phone_verified": False,
-    #     "app_metadata": {},
-    #     "name": "John Doe",
-    #     "connection": "email",
-    #     "verify_email": False,
-    # }
-    # print(response)
-    print(headers)
-    
-    r = requests.get('https://dev-9c5bh9r5.us.auth0.com/api/v2/users', headers=headers)
-    print(r.content)
-    #     r = requests.delete('https://occur.us.auth0.com/api/v2/users/{id}')
-    #     r = requests.patch('https://occur.us.auth0.com/api/v2/users/{id}')
-    return JsonResponse({'message': 'Hello World!'})
+                'Authorization': token}  
+    if request.method =='GET':
+        # send request to management api to get list of users
+        r = requests.get('https://dev-9c5bh9r5.us.auth0.com/api/v2/users', headers=headers)
+        return JsonResponse(r.text, safe=False)
+    if request.method == 'POST':
+        payload = request.data
+        email = payload["email"]
+        name = payload["name"]
+        payload = {
+            "email": email,
+            "user_metadata": {},
+            "blocked": False,
+            "email_verified": False,
+            "app_metadata": {},
+            "name": name,
+            "connection": "email",
+            "verify_email": False
+        }
+        # Get management api token
+        token = 'Bearer ' + get_token()
+        # add token to header
+        headers = {"content-type":"application/json",
+                    'Authorization': token}    
+        conn = http.client.HTTPSConnection("dev-9c5bh9r5.us.auth0.com")
+        conn.request("POST", "/api/v2/users", json.dumps(payload), headers)
+        res = conn.getresponse()
+        r = json.loads(res.read().decode("utf-8"))
+        # send request to management api to get list of users
+        # r = requests.post('https://dev-9c5bh9r5.us.auth0.com/api/v2/users', json=json, headers=headers)
+        return JsonResponse(r, safe=False)
+ 
+#     r = requests.delete('https://occur.us.auth0.com/api/v2/users/{id}')
+#     r = requests.patch('https://occur.us.auth0.com/api/v2/users/{id}')
+
