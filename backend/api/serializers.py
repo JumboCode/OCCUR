@@ -37,7 +37,7 @@ class ResourceSerializer(serializers.ModelSerializer):
         # if all fields are "" or "None" set location validated data to an empty dictionary
         for key, item in location_validated_data.items():
             if not (item is "" or item is None):
-                print("item is {}".format(item))
+                #print("item is {}".format(item))
                 location_validated_data_empty = False
         
         # if all fields are empty or None, set location_validated_data to empty dictionary
