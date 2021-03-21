@@ -33,7 +33,7 @@ class Resource(models.Model):
     startTime       = models.TimeField(auto_now=False, auto_now_add=False, null=True, blank=True)
     endTime         = models.TimeField(auto_now=False, auto_now_add=False, null=True, blank=True)
     isRecurring     = models.BooleanField(null=True, blank=True)
-    recurrenceDays  = MultiSelectField(choices=DAYS_OF_WEEK, default=[])
+    recurrenceDays  = MultiSelectField(choices=DAYS_OF_WEEK, default=[], null=True, blank=True)
     flyer           = models.URLField(null=True, blank=True)
     flyerId         = models.CharField(max_length=30, null=True, blank=True)
     link            = models.URLField(null=True, blank=True)
