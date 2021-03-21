@@ -29,6 +29,7 @@ class ResourceSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
 
+        # *** ADD IF STATEMENT
         # Update location_validated_data to be equal to an empty dict {}, if all fields in validated_data['location'] are None or empty strings
         location_validated_data = validated_data.pop('location')
         
@@ -70,7 +71,7 @@ class ResourceSerializer(serializers.ModelSerializer):
 
     # 1. Update location_validated_data
     #     - if fields are all empty or None -> reassign location_validated_data = {} (add as helper function - iterate)
-    # 2. Update all fields for resource (DONE)
+    # 2. Update all fields for resource
     # 3. if location_validated_data isn't empty and there does not exist a location with a key to the given resource instance
     #     -> create a new location
     #     -> assign resource as parent resource of the new location
