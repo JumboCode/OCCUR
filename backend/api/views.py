@@ -3,7 +3,7 @@ import io
 from rest_framework.parsers import JSONParser
 from rest_framework.renderers import JSONRenderer
 # Create your views here.
-from rest_framework.generics import CreateAPIView, ListAPIView, DestroyAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
@@ -30,6 +30,8 @@ def apiUrlsList(request):
         'delete a resource': 'api/v1/<int:id>/delete/resource',
     }
     return Response(Urls)
+
+#class ResourceRetrieveUpdate
 
 class ResourceCreate(CreateAPIView):
 
@@ -94,7 +96,6 @@ class ResourceCreate(CreateAPIView):
             request.data['location']['longitude'] = geoCoordinates['lng']
 
         #---- convert image to url reference
-
         image = request.data['flyer']
         # if optional flyer was not passed or this object will not
         # go on to be added to DB, don't add img to cloudinary
@@ -112,7 +113,7 @@ class ResourceCreate(CreateAPIView):
         errors = self.mergeFieldErrors(vErrors, serializer.errors)
         return Response(errors, status=status.HTTP_400_BAD_REQUEST)
 
-class ResourceDestroy(DestroyAPIView):
+class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     queryset = Resource.objects.all()
     lookup_field = 'id'
     serializer_class = ResourceSerializer
@@ -132,11 +133,39 @@ class ResourceDestroy(DestroyAPIView):
             cache.delete('resource_data_{}'.format(resource_id))
         return response
 
+    def update(self, request, *args, **kwargs):
+        address = request.data['location']
+
+        #---- retrieve geoCoordinates 
+        geoCoordinates = getCoordinates(address)
+
+        request.data['location']['latitude'] = geoCoordinates['lat']
+        request.data['location']['longitude'] = geoCoordinates['lng']
+
+        response = super().update(request, *args, **kwargs)
+        
+        if response.status_code == 200:
+            from django.core.cache import cache
+            Resource = response.data
+            cache.set('Resource_data_{}'.format(Resource['id']), {
+                'name': Resource['name'],
+                'organization': Resource['organization'],
+                'category': Resource['category'],
+                'startDate': Resource['startDate'],
+                'endDate': Resource['endDate'],
+                'time': Resource['time'],
+                'flyer': Resource['flyer'],
+                'zoom': Resource['zoom'],
+                'description': Resource['description'],
+                'location': Resource['location'],
+            })
+        return response
 
 
-class LocationDestroy(DestroyAPIView):
+class LocationRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     queryset = Location.objects.all()
     lookup_field = 'id'
+    serializer_class = LocationSerializer
 
     def delete(self, request, *args, **kwargs):
         Location_id = request.data.get('id')
@@ -146,6 +175,20 @@ class LocationDestroy(DestroyAPIView):
             cache.delete('location_data_{}'.format(Location_id))
         return response
 
+    def update(self, request, *args, **kwargs):
+        response = super().update(request, *args, **kwargs)
+        if response.status_code == 200:
+            from django.core.cache import cache
+            Location = response.data
+            cache.set('Location_data_{}'.format(Location['id']), {
+                'street_address': Location['street_address'],
+                'city': Location['city'],
+                'state': Location['state'],
+                'zip_code': Location['zip_code'],
+                'latitude': Location['latitude'],
+                'longitude': Location['longitude'],
+            })
+        return response
 
 class ResourceList(ListAPIView):
     queryset = Resource.objects.all()
