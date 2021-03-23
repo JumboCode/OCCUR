@@ -11,7 +11,7 @@ export default function Header() {
 
       <SearchBar />
       <Link href="/"><a>Home</a></Link>
-      <a>Resources</a>
+      <Link href="/resources"><a>Resources</a></Link>
       <a>Wifi Hotspot</a>
       <a>Contact</a>
     </nav>
