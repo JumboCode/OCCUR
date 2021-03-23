@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ResourceCard from 'components/ResourceCard';
 import SidebarFilter from 'components/SidebarFilter/SidebarFilter';
 
@@ -6,10 +6,16 @@ import styles from './search.module.scss';
 
 
 export default function SearchPage() {
+  const [values, setValues] = useState(new Array(10).fill(false));
+
+  const onChange = (e) => {
+    setValues(values.map((val, i) => (i === e.index ? e.value : val)));
+  };
+
   return (
     <div className={styles.base}>
       <div className={styles.left}>
-        <SidebarFilter />
+        <SidebarFilter values={values} onChange={onChange} />
       </div>
       <div className={styles.right}>
         <h1>Search</h1>

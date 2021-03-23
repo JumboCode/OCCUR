@@ -1,8 +1,9 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React from 'react';
+import PropTypes from 'prop-types';
 import styles from './SidebarFilter.module.scss';
 
-export default function SidebarFilter() {
+export default function SidebarFilter({ values, onChange }) {
   return (
     <div className={styles.base}>
       <div className={styles.group}>
@@ -65,3 +66,7 @@ export default function SidebarFilter() {
     </div>
   );
 }
+SidebarFilter.propTypes = {
+  values: PropTypes.arrayOf(PropTypes.bool).isRequired,
+  onChange: PropTypes.func.isRequired,
+};
