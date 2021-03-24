@@ -38,7 +38,11 @@ def get_admins(request):
 
 @api_view(['DELETE'])
 def delete_admin(request, id):
-    return HttpResponse({"id": id})
+    url = 'https://occur.us.auth0.com/api/v2/users/email|' + id 
+    print(url)
+    print(type(url))
+    r = requests.delete(url, headers=get_header())
+    return HttpResponse(r)
 
 def new_admin(request):
     payload = request.data
