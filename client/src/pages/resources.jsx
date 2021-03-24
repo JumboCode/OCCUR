@@ -6,8 +6,6 @@ import { get } from 'api';
 export default function ResourcesPage({ data }) {
   return (
     <div>
-      <h1>Resources</h1>
-
       { data.map((r) => (
         <ResourceCard
           key={r.id}
@@ -28,8 +26,10 @@ ResourcesPage.propTypes = {
   data: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
 };
 
-export async function getServerSideProps() {
-  const data = await get('/list/resource');
+export async function getServerSideProps(context) {
+  const data = await get('/list/resource', {
+    search: context.query.search,
+  });
 
   return {
     props: { data },
