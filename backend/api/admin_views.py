@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 import http.client
 import dotenv
 import os
+from django.views.decorators.csrf import csrf_protect
 
 def get_header():
     dotenv.load_dotenv()
@@ -25,8 +26,6 @@ def get_header():
     headers = {"content-type":"application/json",
                 'Authorization': token}  
     return headers
-
-
 @api_view(['GET'])
 # special permissions needed because GET is usually readonly (and therefore visible to all),
 # but we don't want just anyone seeing all of our admins' info
@@ -44,6 +43,7 @@ def delete_admin(request, id):
     r = requests.delete(url, headers=get_header())
     return HttpResponse(r)
 
+@api_view(['POST'])
 def new_admin(request):
     payload = request.data
     email = payload["email"]
@@ -61,8 +61,26 @@ def new_admin(request):
     conn = http.client.HTTPSConnection("occur.us.auth0.com")
     conn.request("POST", "/api/v2/users", json.dumps(payload), get_header())
     res = conn.getresponse()
+    # r = requests.post("https://occur.us.auth0.com/api/v2/users/", data=payload, headers=get_header())
+    return HttpResponse(res)
+
+@api_view(['PUT'])
+def update_admin(request, id):
+    payload = request.data
+    email = payload["email"]
+    name = payload["name"]
+    payload = {
+        "email": email,
+        "user_metadata": {},
+        "blocked": False,
+        "email_verified": False,
+        "app_metadata": {},
+        "name": name,
+        "connection": "email",
+        "verify_email": False
+    }
+    conn = http.client.HTTPSConnection("occur.us.auth0.com")
+    conn.request("PATCH", "/api/v2/users/email|" + id, json.dumps(payload), get_header())
+    res = conn.getresponse()
     r = res.read().decode("utf-8")
     return HttpResponse(r)
-
-def update_admin(request):
-    return {}
