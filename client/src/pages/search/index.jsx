@@ -6,16 +6,12 @@ import styles from './search.module.scss';
 
 
 export default function SearchPage() {
-  const [values, setValues] = useState(new Array(10).fill(false));
-
-  const onChange = (e) => {
-    setValues(values.map((val, i) => (i === e.index ? e.value : val)));
-  };
+  const [values, setValues] = useState([]);
 
   return (
     <div className={styles.base}>
       <div className={styles.left}>
-        <SidebarFilter values={values} onChange={onChange} />
+        <SidebarFilter values={values} onChange={setValues} />
       </div>
       <div className={styles.right}>
         <h1>Search</h1>
