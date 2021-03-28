@@ -1,0 +1,54 @@
+@import 'styles/colors';
+
+.base {
+  background-color: $dark-blue;
+  color: white;
+  font-size: 14px;
+  padding: 70px 20px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.columns {
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  text-align: center;
+  width: 100%;
+
+  & > * {
+    min-width: 200px;
+    margin-bottom: 1em;
+  }
+
+  p {
+    margin-top: 0;
+    margin-bottom: 1em;
+  }
+}
+
+.phoneNumber {
+  color: $orange;
+}
+
+.address {
+  color: $yellow;
+}
+
+.icons {
+  margin-top: 10px;
+
+  a:not(:last-child) {
+    margin-right: 10px;
+  }
+
+  svg {
+    height: 35px;
+    width: 35px;
+  }
+}
+
+.logo {
+  width: 200px;
+}
