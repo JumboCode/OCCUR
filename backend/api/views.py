@@ -97,7 +97,6 @@ class ResourceCreate(CreateAPIView):
             request.data['location']['longitude'] = geoCoordinates['lng']
 
         #---- convert image to url reference
-
         image = request.data['flyer']
         # if optional flyer was not passed or this object will not
         # go on to be added to DB, don't add img to cloudinary
