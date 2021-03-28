@@ -179,14 +179,17 @@ class ResourceList(ListAPIView):
                 return Resource.objects.none()
 
             # getting resources with dates in the given range
+            # all resources whose duration contains the range end date
             q1 = queryset.filter(
                 startDate__lte = end_date_r,
                 endDate__gte = end_date_r,
             )
+            # all resources whose duration contains the range start date
             q2 = queryset.filter(
                 startDate__lte = start_date_r,
                 endDate__gte = start_date_r,
             )
+            # all resources whose durations are contained within the passed range
             q3 = queryset.filter(
                 startDate__gte = start_date_r,
                 endDate__lte = end_date_r
