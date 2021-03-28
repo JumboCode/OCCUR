@@ -151,7 +151,7 @@ class ResourceList(ListAPIView):
     queryset = Resource.objects.all()
     serializer_class = ResourceSerializer
     filter_backends = (DjangoFilterBackend, SearchFilter)
-    filter_fields = ('id','category',)
+    filter_fields = ('id',)
     search_fields = ('name', 'organization',)
 
     def get_queryset(self):
@@ -162,12 +162,21 @@ class ResourceList(ListAPIView):
         max_long = self.request.query_params.get('max_long', None)
         min_lat = self.request.query_params.get('min_lat', None)
         max_lat = self.request.query_params.get('max_lat', None)
+        cats = self.request.query_params.get('category', None)
 
         queryset = Resource.objects.all()
 
         # Base case, no filters
-        if start_date_r == None and end_date_r == None and min_long == None and max_long == None and min_lat == None and max_lat == None:
+        if start_date_r == None and end_date_r == None and min_long == None and max_long == None and min_lat == None and max_lat == None and cats == None:
             return super().get_queryset()
+
+        if cats != None:
+            # getting list of categories passed
+            cats = cats.split(',')
+
+            queryset = queryset.filter(
+                category__in = cats
+            )
         
         # if both are supplied
         if start_date_r != None and end_date_r != None:
