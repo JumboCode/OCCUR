@@ -140,8 +140,11 @@ class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
         #---- retrieve geoCoordinates 
         geoCoordinates = getCoordinates(address)
 
-        request.data['location']['latitude'] = geoCoordinates['lat']
-        request.data['location']['longitude'] = geoCoordinates['lng']
+        if geoCoordinates:
+            request.data['location']['latitude'] = geoCoordinates['lat']
+            request.data['location']['longitude'] = geoCoordinates['lng']
+        else:
+            request.data['location'] = {}
 
         response = super().update(request, *args, **kwargs)
         
