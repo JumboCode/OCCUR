@@ -1,20 +1,18 @@
-import jwtDecode from 'jwt-decode';
 import React from 'react';
 
-import { doLogin, useAuth } from '../auth';
 import styles from './homepage.module.scss';
-import Fists from '../../public/images/fists_on_screen.svg';
-import People_at_computer from '../../public/images/people_at_screen.svg';
-import Person_at_computer from '../../public/images/person_at_computer.svg';
+import SearchBar from '../components/SearchBar/SearchBar';
+// import Fists from '../../public/images/illustrations/fists_on_screen.png';
+// import People_at_computer from '../../public/images/illustrations/people_at_laptop.png';
+// import Person_at_computer from '../../public/images/illustrations/person_at_computer.png';
 
 export default function Home() {
-  const auth = useAuth();
-
   return (
     <div className = {styles.base}>
       <div className = {styles.searchBanner}>
-        <div className = {styles.peopleComputer}>
-          <People_at_computer />
+        <img className={styles.peopleComputer} src="/images/illustrations/people_at_laptop.png" />
+        <div className = {styles.searchBar}>
+          <SearchBar/>
         </div>
       </div>
       <div className = {styles.mission}>
@@ -26,21 +24,33 @@ export default function Home() {
           opportunities to support the well-being, economic development, and 
           civic inclusion of marginzalized communities.
         </p>
-        <div className={styles.fists}>
-          <Fists />
-        </div>
+        <img className={styles.fists} src="/images/illustrations/fists_on_screen.png" />
       </div>
       <div className = {styles.resources}>
-        Resources
+        <h4>
+          OCCUR Resources Happening Soon
+        </h4>
+        <h4>
+          Free Wifi Hotspots Near Oakland
+        </h4>
       </div>
       <div className = {styles.donate}>
-        Donate
+        <h4>
+          Please Support Our Efforts
+        </h4>
+        <p>
+          Your generous support enables OCCUR to continue to provide
+          effective capacity building programs and services.
+        </p>
+        Donate Today
       </div>
-      <div className = {styles.contact}>
+      <div className = {styles.contact}> 
+        <h4>
+          Stay Connected: Join the OCCUR Newsletter Today
+        </h4>
+       <img className={styles.personComputer} src="/images/illustrations/person_at_computer.png" />
         Contact Us
-        <Person_at_computer />
       </div>
-
     </div>
   );
 }

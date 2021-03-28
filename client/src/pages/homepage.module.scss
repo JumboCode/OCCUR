@@ -3,15 +3,39 @@
 .base {
     display: flex;
     flex-direction: column;
-    text-align: center;
-    
-    svg {
-        height: 200px;
+}
+
+.searchBanner{
+    background: #FFF1E8;
+    width: 100%;
+    border: 1px solid black;
+
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    align-items: center;
+    flex-direction: row;
+
+    .peopleComputer {
+        margin-left: 12.18%;
+        width: 25.2%;
+        margin-top: 5%;
+        margin-bottom: 5%;
     }
+
+    .searchBar {
+        margin-left: auto;
+        margin-right: 20%;
+        width: 40%;
+        display: flex; 
+        flex-direction: column;
+    }
+    
 }
 
 .mission {
     width: 100%;
+    border: 1px solid black;
     h4 {
         font-size: x-large;
     }
@@ -22,34 +46,39 @@
     }
 
     .fists {
-        height: 200px;
-    }
-}
-
-.searchBanner{
-    background: #FFF1E8;
-    width: 100%;
-    height: 100px;
-
-    .peopleComputer {
-        width: 200px;
-        border: 1px solid red;
+        margin-left: 12.18%;
+        width: 23.1%;
+        margin-top: 5%;
+        margin-bottom: 5%;
     }
 }
 
 .resources{
     background: white;
     width: 100%;
-    height: 100px;
+    height: 600px;
+    border: 1px solid black;
+
+    h4 {
+        text-align: left;
+    }
 }
 
 .donate{
     background: white;
     width: 100%;
-    height: 100px;
+    height: 500px;
+    border: 1px solid black;
 }
+
 .contact{
     background: white;
+    border: 1px solid black;
     width: 100%;
-    height: 100px;
+    height: 480px;
+
+    .personComputer {
+        height: 200px;
+        width: auto;
+    }
 }
