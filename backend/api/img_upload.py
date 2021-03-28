@@ -15,4 +15,9 @@ cloudinary.config(
 def cloudinary_url(encoded_img):
     #Image validation
     image = cloudinary.uploader.upload(encoded_img)
-    return image["url"]
+    return image
+
+def cloudinary_delete(flyer_id):
+    #Image validation
+    image = cloudinary.uploader.destroy(flyer_id)
+    return image

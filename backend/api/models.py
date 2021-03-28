@@ -10,16 +10,18 @@ class Resource(models.Model):
     ('MENTAL_HEALTH', 'Mental Health'),
     ('INFO', 'Info Sessions/Webinars'),
     ('EVENTS', 'Events'),
+    ('WIFI', 'Free Wifi'),
     ('OTHER', 'Other'),
 ]
 
     name            = models.CharField(max_length=30, blank=False)
     organization    = models.CharField(max_length=30, blank=False)
     category        = models.CharField(choices=RESOURCE_CATEGORIES, default='OTHER', max_length=20, null=True, blank=False)
-    startDate       = models.DateField(auto_now=False, auto_now_add=False, null=True)
-    endDate         = models.DateField(auto_now=False, auto_now_add=False, null=True)
-    time            = models.TimeField(auto_now=False, auto_now_add=False, null=True)
+    startDate       = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True)
+    endDate         = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True)
+    time            = models.TimeField(auto_now=False, auto_now_add=False, null=True, blank=True)
     flyer           = models.URLField(null=True, blank=True)
+    flyer_id        = models.CharField(max_length=30, null=True, blank=True)
     link            = models.URLField(null=True, blank=True)
     zoom            = models.URLField(null=True, blank=True)
     description     = models.TextField(blank=False)
@@ -31,7 +33,7 @@ class Resource(models.Model):
         )
 
 class Location(models.Model):
-    resource        = models.OneToOneField(Resource, on_delete=models.CASCADE, null=True)
+    resource        = models.OneToOneField(Resource, on_delete=models.CASCADE, null=True, blank=True)
     street_address  = models.CharField(max_length=30, blank=True)
     city            = models.CharField(max_length=15, blank=True)
     state           = models.CharField(max_length=30, blank=True)
