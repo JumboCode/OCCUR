@@ -99,8 +99,9 @@ class ResourceCreate(CreateAPIView):
         # if optional flyer was not passed or this object will not
         # go on to be added to DB, don't add img to cloudinary
         if image != None and len(vErrors) == 0:
-            request.data['flyer'] = cloudinary_url(image)["url"]
-            request.data['flyer_id'] = cloudinary_url(image)["public_id"]
+            image = cloudinary_url(image)
+            request.data['flyer'] = image["url"]
+            request.data['flyer_id'] = image["public_id"]
 
         serializer = ResourceSerializer(data=request.data)
 
