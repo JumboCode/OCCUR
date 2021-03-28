@@ -55,6 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.RemoteUserMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'api.cors.CorsMiddleware',
 ]
 
 REST_FRAMEWORK = {

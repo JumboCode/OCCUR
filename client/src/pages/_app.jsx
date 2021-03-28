@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Footer from 'components/Footer/Footer.jsx';
 
 import { AuthProvider } from '../auth';
 
@@ -10,14 +11,14 @@ import Header from 'components/Header/header.jsx';
 export default function AppContainer({ Component, pageProps }) {
   return (
     <AuthProvider>
-      <Header />
-
-      <div className={styles.container}>
-        <Component {...pageProps} />
+      <div className={styles.page}>
+        <Header />
+        <div className={styles.container}>
+          <Component {...pageProps} />
+        </div>
+        <Footer />
       </div>
     </AuthProvider>
-
-
   );
 }
 

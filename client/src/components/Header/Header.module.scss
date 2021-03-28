@@ -13,7 +13,7 @@
   z-index: 999;
 }
 
-.navbar > form {
+.navbar > :global(.searchbar) {
   flex-grow: 1;
   max-width: 350px;
 }
@@ -22,16 +22,16 @@
   margin: 0 10px;
 }
 
-.logo {
+.logo, .logo img {
   height: 100%;
 }
 
-.navbar a {
+.navbar > a {
   font-size: 18px;
   color: inherit;
   text-decoration: none;
 
-  &:link:hover {
+  &:link:not(.logo):hover {
     box-shadow: 0 2px 0 0 $orange;
   }
   &:not(:link) {
