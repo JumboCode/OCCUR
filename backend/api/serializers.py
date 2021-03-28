@@ -15,17 +15,23 @@ class ResourceSerializer(serializers.ModelSerializer):
     class Meta:
         model   = Resource
         fields  = (
-            'id', 'name','organization','category','startDate','endDate','time', 'flyer', 'zoom', 'description', 'location'
+            'id', 'name','organization','category','startDate','endDate','time', 'flyer', 'flyer_id', 'link', 'zoom', 'description', 'location'
         )
         read_only_fields = ('id',)
+        write_only_field = ('location',)
 
     def create(self, validated_data):
+      
+        if 'location' in validated_data and validated_data['location']:
+            location_validated_data = validated_data.pop('location')
+            resource = Resource.objects.create(**validated_data)
+            location_serializer = self.fields['location']
+            location_validated_data['resource'] = resource
+            locations = location_serializer.create(location_validated_data)
+            return resource
+            
         location_validated_data = validated_data.pop('location')
-        resource = Resource.objects.create(**validated_data)
-        location_serializer = self.fields['location']
-        location_validated_data['resource'] = resource
-        locations = location_serializer.create(location_validated_data)
-        return resource
+        return Resource.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
 
@@ -78,4 +84,5 @@ class ResourceSerializer(serializers.ModelSerializer):
     #     -> get that location instance
     #     -> update that location with the fields in location_validated_data
     #     -> syntax: super().update(location_instance, location_validated_data)
+
 
