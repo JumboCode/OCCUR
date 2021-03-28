@@ -7,6 +7,7 @@ from rest_framework.generics import CreateAPIView, ListAPIView, DestroyAPIView
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
 from api.serializers import ResourceSerializer
 from api.serializers import LocationSerializer
 from api.models import Resource
@@ -173,6 +174,10 @@ class ResourceList(ListAPIView):
         if cats != None:
             # getting list of categories passed
             cats = cats.split(',')
+            valid_cats = [c[0] for c in Resource.RESOURCE_CATEGORIES]
+            for c in cats:
+                if not c in valid_cats:
+                    raise ValidationError(detail = 'Invalid category passed in filter: {}'.format(c))
 
             queryset = queryset.filter(
                 category__in = cats
