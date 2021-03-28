@@ -14,7 +14,10 @@
     padding: 2px 8px;
 }
 
-.searchbutton{
+.searchbutton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     background-color: $orange;
     width: 50px;
     height: 35px;
@@ -22,6 +25,8 @@
     border: none;
 
     svg {
-        height: 1.3em;
+        height: 1.1rem;
+        display: block;
+        transform: translate(-0.1rem);
     }
 }
