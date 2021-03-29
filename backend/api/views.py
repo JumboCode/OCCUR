@@ -163,24 +163,24 @@ class ResourceList(ListAPIView):
         max_long = self.request.query_params.get('max_long', None)
         min_lat = self.request.query_params.get('min_lat', None)
         max_lat = self.request.query_params.get('max_lat', None)
-        cats = self.request.query_params.get('category', None)
+        categories = self.request.query_params.get('category', None)
 
         queryset = Resource.objects.all()
 
         # Base case, no filters
-        if start_date_r == None and end_date_r == None and min_long == None and max_long == None and min_lat == None and max_lat == None and cats == None:
+        if start_date_r == None and end_date_r == None and min_long == None and max_long == None and min_lat == None and max_lat == None and categories == None:
             return super().get_queryset()
 
-        if cats != None:
+        if categories != None:
             # getting list of categories passed
-            cats = cats.split(',')
-            valid_cats = [c[0] for c in Resource.RESOURCE_CATEGORIES]
-            for c in cats:
-                if not c in valid_cats:
+            categories = categories.split(',')
+            valid_categories = [c[0] for c in Resource.RESOURCE_CATEGORIES]
+            for c in categories:
+                if not c in valid_categories:
                     raise ValidationError(detail = 'Invalid category passed in filter: {}'.format(c))
 
             queryset = queryset.filter(
-                category__in = cats
+                category__in = categories
             )
         
         # if both are supplied
