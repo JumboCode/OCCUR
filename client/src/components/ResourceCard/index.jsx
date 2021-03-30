@@ -1,9 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styles from './ResourceCard.module.scss';
-
 import MaybeLink from 'components/MaybeLink';
-
 import ClockIcon from '../../../public/clock.svg';
 import PinIcon from '../../../public/pin.svg';
 import CalendarIcon from '../../../public/calendar.svg';
