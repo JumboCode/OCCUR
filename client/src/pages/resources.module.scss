@@ -1,0 +1,11 @@
+.base {
+  display: flex;
+
+  .left {
+    margin-right: 3em;
+  }
+
+  .right {
+    flex-grow: 1;
+  }
+}
