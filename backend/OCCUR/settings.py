@@ -114,7 +114,7 @@ DATABASES = {
         'USER': os.getenv('DB_USER'),
         'PASSWORD': os.getenv('DB_PASSWORD'),
         'HOST': 'localhost', # '127.0.0.1' for localhost through TCP.
-        'PORT': '5433',
+        'PORT': '5432',
     }
 }
 
