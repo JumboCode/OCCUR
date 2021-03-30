@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import ResourceCard from 'components/ResourceCard';
 import SidebarFilter from 'components/SidebarFilter/SidebarFilter';
-import { get } from 'api';
+import api from 'api';
 
 import styles from './resources.module.scss';
 
@@ -38,7 +38,7 @@ ResourcesPage.propTypes = {
 };
 
 export async function getServerSideProps(context) {
-  const data = await get('/list/resource', context.query.search && {
+  const data = await api.get('/list/resource', context.query.search && {
     search: context.query.search,
   });
 
