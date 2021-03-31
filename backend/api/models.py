@@ -39,7 +39,7 @@ class Resource(models.Model):
     flyerId         = models.CharField(max_length=30, null=True, blank=True)
     link            = models.URLField(null=True, blank=True)
     meetingLink     = models.URLField(null=True, blank=True)
-    phone           = models.PhoneNumberField(null=True, blank=True)
+    phone           = PhoneNumberField(null=True, blank=True)
     email           = models.EmailField(null=True, blank=True)
     description     = models.TextField(blank=False)
     
