@@ -1,18 +1,24 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import ResourceCard from 'components/ResourceCard';
 import SidebarFilter from 'components/SidebarFilter/SidebarFilter';
 import api from 'api';
+import { useRouter } from 'next/router';
 
 import styles from './resources.module.scss';
 
 export default function ResourcesPage({ data }) {
-  const [values, setValues] = useState([]);
+  const router = useRouter();
+
+  const categories = router.query.category ? router.query.category.split(',') : [];
+  const setCategories = (cats) => {
+    router.replace({ query: { ...router.query, category: cats.join(',') } });
+  };
 
   return (
     <div className={styles.base}>
       <div className={styles.left}>
-        <SidebarFilter values={values} onChange={setValues} />
+        <SidebarFilter values={categories} onChange={setCategories} />
       </div>
 
       <div className={styles.right}>
