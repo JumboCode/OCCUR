@@ -21,7 +21,6 @@ class ResourceSerializer(serializers.ModelSerializer):
         write_only_field = ('location',)
 
     def create(self, validated_data):
-        print("in create")
         if 'location' in validated_data and validated_data['location']:
             location_validated_data = validated_data.pop('location')
             resource = Resource.objects.create(**validated_data)

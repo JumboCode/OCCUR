@@ -14,6 +14,7 @@ django-handlers==0.1.1
 django-heroku==0.3.1
 django-multiselectfield==0.1.12
 django-on-heroku==1.1.2
+django-phonenumber-field==5.0.0
 djangorestframework==3.12.1
 drf-jwt==1.13.4
 filelock==3.0.12

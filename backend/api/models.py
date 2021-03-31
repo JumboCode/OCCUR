@@ -1,6 +1,7 @@
 from django.db import models
 from django import forms
 from multiselectfield import MultiSelectField
+from phonenumber_field.modelfields import PhoneNumberField
 
 # Models
 class Resource(models.Model):
@@ -38,6 +39,8 @@ class Resource(models.Model):
     flyerId         = models.CharField(max_length=30, null=True, blank=True)
     link            = models.URLField(null=True, blank=True)
     meetingLink     = models.URLField(null=True, blank=True)
+    phone           = models.PhoneNumberField(null=True, blank=True)
+    email           = models.EmailField(null=True, blank=True)
     description     = models.TextField(blank=False)
     
     def __str__(self):
