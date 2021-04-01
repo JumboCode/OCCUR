@@ -28,24 +28,26 @@ def apiUrlsList(request):
     Urls = {
         'list all resources': 'api/v1/list/resource',
         'list all locations': 'api/v1/list/location',
-        'create a new resource': 'api/v1/new/resource/',
-        'delete a resource': 'api/v1/<int:id>/delete/resource',
+        'get a resource': 'api/v1/<int:id>/resource',
+        'create a new resource': 'api/v1/new/resource',
+        'update a resource': 'api/v1/<int:id>/resource',
+        'delete a resource': 'api/v1/<int:id>/resource',
     }
     return Response(Urls)
 
 class ResourceCreate(CreateAPIView):
-
-    defaultOptionalVals = { 'flyer': None, 'zoom': None, 'location': {}, 'flyer_id': None } 
+    # All unrequired fields are populated with None values if empty
+    defaultOptionalVals = { 'flyer': None, 'meetingLink': None, 'location': {}, 'flyerId': None, 'startDate': None, 'endDate': None, 'link': None, 'startTime': None, 'endTime': None, 'phone': None, 'email': None } 
 
     def inputValidator(self, data):
         # dict of list matches the format of serializer.errors
         errorCatalog = defaultdict(list)
 
-        if data['startDate'] > data['endDate']:
+        if data['startDate'] and data['endDate'] and data['startDate'] > data['endDate']:
             errorCatalog['startDate'].append('Start date must occur after end date.')
         
         nowStr = datetime.now().strftime('%Y-%m-%d')
-        if data['startDate'] < nowStr:
+        if data['startDate'] and data['startDate'] < nowStr:
             errorCatalog['startDate'].append('Start date must occur in the future.')
 
         if data['location'] != {} and data['location'] and len(data['location']['zip_code']) != 5 and len(data['location']['zip_code']) != 0:
@@ -65,7 +67,7 @@ class ResourceCreate(CreateAPIView):
 
     def fillRequestBlanks(self, data, optionalsToDefaults):
         for (fieldName,defaultVal) in optionalsToDefaults.items():
-            if not fieldName in data:
+            if not fieldName in data or data[fieldName] == "":
                 data[fieldName] = defaultVal
 
     def mergeFieldErrors(self, vErrors, sErrors):
@@ -100,8 +102,9 @@ class ResourceCreate(CreateAPIView):
         # if optional flyer was not passed or this object will not
         # go on to be added to DB, don't add img to cloudinary
         if image != None and len(vErrors) == 0:
-            request.data['flyer'] = cloudinary_url(image)["url"]
-            request.data['flyer_id'] = cloudinary_url(image)["public_id"]
+            image = cloudinary_url(image)
+            request.data['flyer'] = image["url"]
+            request.data['flyerId'] = image["public_id"]
 
         serializer = ResourceSerializer(data=request.data)
 
@@ -124,7 +127,7 @@ class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
         json = JSONRenderer().render(serializer.data)
         stream = io.BytesIO(json)
         data = JSONParser().parse(stream)
-        flyer_id = data['flyer_id']
+        flyer_id = data['flyerId']
         if flyer_id:
             cloudinary_delete(flyer_id)
         response = super().delete(request, *args, **kwargs)
@@ -238,14 +241,17 @@ class ResourceList(ListAPIView):
                 return Resource.objects.none()
 
             # getting resources with dates in the given range
+            # all resources whose duration contains the range end date
             q1 = queryset.filter(
                 startDate__lte = end_date_r,
                 endDate__gte = end_date_r,
             )
+            # all resources whose duration contains the range start date
             q2 = queryset.filter(
                 startDate__lte = start_date_r,
                 endDate__gte = start_date_r,
             )
+            # all resources whose durations are contained within the passed range
             q3 = queryset.filter(
                 startDate__gte = start_date_r,
                 endDate__lte = end_date_r
