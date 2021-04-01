@@ -34,8 +34,8 @@ def apiUrlsList(request):
     return Response(Urls)
 
 class ResourceCreate(CreateAPIView):
-
-    defaultOptionalVals = { 'flyer': None, 'meetingLink': None, 'location': {}, 'flyerId': None, 'startDate': None, 'endDate': None, 'startTime': None, 'endTime': None } 
+    # All unrequired fields are populated with None values if empty
+    defaultOptionalVals = { 'flyer': None, 'meetingLink': None, 'location': {}, 'flyerId': None, 'startDate': None, 'endDate': None, 'link': None, 'startTime': None, 'endTime': None, 'phone': None, 'email': None } 
 
     def inputValidator(self, data):
         # dict of list matches the format of serializer.errors
