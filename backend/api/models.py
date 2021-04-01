@@ -5,7 +5,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 # Models
 class Resource(models.Model):
-    
+
     RESOURCE_CATEGORIES = [
     ('FOOD', 'Food'),
     ('HOUSING', 'Housing'),
@@ -42,7 +42,7 @@ class Resource(models.Model):
     phone           = PhoneNumberField(null=True, blank=True)
     email           = models.EmailField(null=True, blank=True)
     description     = models.TextField(blank=False)
-    
+
     def __str__(self):
         return "Resource: {},\n Provided by: {}\n".format(
             self.name,
@@ -54,7 +54,7 @@ class Location(models.Model):
     street_address  = models.CharField(max_length=30, blank=True)
     city            = models.CharField(max_length=15, blank=True)
     state           = models.CharField(max_length=30, blank=True)
-    zip_code        = models.CharField(max_length=5, blank=True) 
+    zip_code        = models.CharField(max_length=5, blank=True)
     latitude        = models.FloatField(max_length=30, null=True, blank=True)
     longitude       = models.FloatField(max_length=30, null=True, blank=True)
 
