@@ -33,17 +33,17 @@ def apiUrlsList(request):
 
 class ResourceCreate(CreateAPIView):
 
-    defaultOptionalVals = { 'flyer': None, 'meetingLink': None, 'location': {}, 'flyerId': None } 
+    defaultOptionalVals = { 'flyer': None, 'meetingLink': None, 'location': {}, 'flyerId': None, 'startDate': None, 'endDate': None, 'startTime': None, 'endTime': None } 
 
     def inputValidator(self, data):
         # dict of list matches the format of serializer.errors
         errorCatalog = defaultdict(list)
 
-        if data['startDate'] > data['endDate']:
+        if data['startDate'] and data['endDate'] and data['startDate'] > data['endDate']:
             errorCatalog['startDate'].append('Start date must occur after end date.')
         
         nowStr = datetime.now().strftime('%Y-%m-%d')
-        if data['startDate'] < nowStr:
+        if data['startDate'] and data['startDate'] < nowStr:
             errorCatalog['startDate'].append('Start date must occur in the future.')
 
         if data['location'] != {} and data['location'] and len(data['location']['zip_code']) != 5 and len(data['location']['zip_code']) != 0:
@@ -63,7 +63,7 @@ class ResourceCreate(CreateAPIView):
 
     def fillRequestBlanks(self, data, optionalsToDefaults):
         for (fieldName,defaultVal) in optionalsToDefaults.items():
-            if not fieldName in data:
+            if not fieldName in data or data[fieldName] == "":
                 data[fieldName] = defaultVal
 
     def mergeFieldErrors(self, vErrors, sErrors):

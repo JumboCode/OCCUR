@@ -26,8 +26,8 @@ class Resource(models.Model):
         ('FRI', 'Friday'),
         ('SAT', 'Saturday')
     ]
-    name            = models.CharField(max_length=30, blank=False)
-    organization    = models.CharField(max_length=30, blank=False)
+    name            = models.CharField(max_length=70, blank=False)
+    organization    = models.CharField(max_length=70, blank=False)
     category        = models.CharField(max_length=30, choices=RESOURCE_CATEGORIES, null=True, blank=True)
     startDate       = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True)
     endDate         = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True)
@@ -36,7 +36,7 @@ class Resource(models.Model):
     isRecurring     = models.BooleanField(null=True, blank=True)
     recurrenceDays  = MultiSelectField(choices=DAYS_OF_WEEK, default=[], null=True, blank=True)
     flyer           = models.URLField(null=True, blank=True)
-    flyerId         = models.CharField(max_length=30, null=True, blank=True)
+    flyerId         = models.CharField(max_length=50, null=True, blank=True)
     link            = models.URLField(null=True, blank=True)
     meetingLink     = models.URLField(null=True, blank=True)
     phone           = PhoneNumberField(null=True, blank=True)
