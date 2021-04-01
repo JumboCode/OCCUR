@@ -36,7 +36,8 @@ class ResourceSerializer(serializers.ModelSerializer):
        
         # *** ADD IF STATEMENT
 
-        # Update location_validated_data to be equal to an empty dict {}, if all fields in validated_data['location'] are None or empty strings
+        # Update location_validated_data to be equal to an empty dict {}, 
+        # if all fields in validated_data['location'] are None or empty strings
         location_validated_data = validated_data.pop('location')
         
         # bool to track if location_validated_data is empty
