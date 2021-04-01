@@ -33,7 +33,7 @@ def apiUrlsList(request):
 
 class ResourceCreate(CreateAPIView):
 
-    defaultOptionalVals = { 'flyer': None, 'zoom': None, 'location': {}, 'flyer_id': None } 
+    defaultOptionalVals = { 'flyer': None, 'meetingLink': None, 'location': {}, 'flyerId': None } 
 
     def inputValidator(self, data):
         # dict of list matches the format of serializer.errors
@@ -101,7 +101,7 @@ class ResourceCreate(CreateAPIView):
         if image != None and len(vErrors) == 0:
             image = cloudinary_url(image)
             request.data['flyer'] = image["url"]
-            request.data['flyer_id'] = image["public_id"]
+            request.data['flyerId'] = image["public_id"]
 
         serializer = ResourceSerializer(data=request.data)
 
@@ -124,7 +124,7 @@ class ResourceDestroy(DestroyAPIView):
         json = JSONRenderer().render(serializer.data)
         stream = io.BytesIO(json)
         data = JSONParser().parse(stream)
-        flyer_id = data['flyer_id']
+        flyer_id = data['flyerId']
         if flyer_id:
             cloudinary_delete(flyer_id)
         response = super().delete(request, *args, **kwargs)
