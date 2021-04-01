@@ -29,7 +29,7 @@ def apiUrlsList(request):
         'list all resources': 'api/v1/list/resource',
         'list all locations': 'api/v1/list/location',
         'get a resource': 'api/v1/<int:id>/resource',
-        'create a new resource': 'api/v1/new/resource/',
+        'create a new resource': 'api/v1/new/resource',
         'update a resource': 'api/v1/<int:id>/resource',
         'delete a resource': 'api/v1/<int:id>/resource',
     }
