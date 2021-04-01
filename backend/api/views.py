@@ -3,10 +3,12 @@ import io
 from rest_framework.parsers import JSONParser
 from rest_framework.renderers import JSONRenderer
 # Create your views here.
-from rest_framework.generics import CreateAPIView, ListAPIView, DestroyAPIView
+
+from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
 from api.serializers import ResourceSerializer
 from api.serializers import LocationSerializer
 from api.models import Resource
@@ -94,7 +96,6 @@ class ResourceCreate(CreateAPIView):
             request.data['location']['longitude'] = geoCoordinates['lng']
 
         #---- convert image to url reference
-
         image = request.data['flyer']
         # if optional flyer was not passed or this object will not
         # go on to be added to DB, don't add img to cloudinary
@@ -113,7 +114,7 @@ class ResourceCreate(CreateAPIView):
         errors = self.mergeFieldErrors(vErrors, serializer.errors)
         return Response(errors, status=status.HTTP_400_BAD_REQUEST)
 
-class ResourceDestroy(DestroyAPIView):
+class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     queryset = Resource.objects.all()
     lookup_field = 'id'
     serializer_class = ResourceSerializer
@@ -133,11 +134,42 @@ class ResourceDestroy(DestroyAPIView):
             cache.delete('resource_data_{}'.format(resource_id))
         return response
 
+    def update(self, request, *args, **kwargs):
+        address = request.data['location']
+
+        #---- retrieve geoCoordinates 
+        geoCoordinates = getCoordinates(address)
+
+        if geoCoordinates:
+            request.data['location']['latitude'] = geoCoordinates['lat']
+            request.data['location']['longitude'] = geoCoordinates['lng']
+        else:
+            request.data['location'] = {}
+
+        response = super().update(request, *args, **kwargs)
+        
+        if response.status_code == 200:
+            from django.core.cache import cache
+            Resource = response.data
+            cache.set('Resource_data_{}'.format(Resource['id']), {
+                'name': Resource['name'],
+                'organization': Resource['organization'],
+                'category': Resource['category'],
+                'startDate': Resource['startDate'],
+                'endDate': Resource['endDate'],
+                'time': Resource['time'],
+                'flyer': Resource['flyer'],
+                'zoom': Resource['zoom'],
+                'description': Resource['description'],
+                'location': Resource['location'],
+            })
+        return response
 
 
-class LocationDestroy(DestroyAPIView):
+class LocationRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     queryset = Location.objects.all()
     lookup_field = 'id'
+    serializer_class = LocationSerializer
 
     def delete(self, request, *args, **kwargs):
         Location_id = request.data.get('id')
@@ -147,12 +179,26 @@ class LocationDestroy(DestroyAPIView):
             cache.delete('location_data_{}'.format(Location_id))
         return response
 
+    def update(self, request, *args, **kwargs):
+        response = super().update(request, *args, **kwargs)
+        if response.status_code == 200:
+            from django.core.cache import cache
+            Location = response.data
+            cache.set('Location_data_{}'.format(Location['id']), {
+                'street_address': Location['street_address'],
+                'city': Location['city'],
+                'state': Location['state'],
+                'zip_code': Location['zip_code'],
+                'latitude': Location['latitude'],
+                'longitude': Location['longitude'],
+            })
+        return response
 
 class ResourceList(ListAPIView):
     queryset = Resource.objects.all()
     serializer_class = ResourceSerializer
     filter_backends = (DjangoFilterBackend, SearchFilter)
-    filter_fields = ('id','category',)
+    filter_fields = ('id',)
     search_fields = ('name', 'organization',)
 
     def get_queryset(self):
@@ -163,12 +209,25 @@ class ResourceList(ListAPIView):
         max_long = self.request.query_params.get('max_long', None)
         min_lat = self.request.query_params.get('min_lat', None)
         max_lat = self.request.query_params.get('max_lat', None)
+        categories = self.request.query_params.get('category', None)
 
         queryset = Resource.objects.all()
 
         # Base case, no filters
-        if start_date_r == None and end_date_r == None and min_long == None and max_long == None and min_lat == None and max_lat == None:
+        if start_date_r == None and end_date_r == None and min_long == None and max_long == None and min_lat == None and max_lat == None and categories == None:
             return super().get_queryset()
+
+        if categories != None:
+            # getting list of categories passed
+            categories = categories.split(',')
+            valid_categories = [c[0] for c in Resource.RESOURCE_CATEGORIES]
+            for c in categories:
+                if not c in valid_categories:
+                    raise ValidationError(detail = 'Invalid category passed in filter: {}'.format(c))
+
+            queryset = queryset.filter(
+                category__in = categories
+            )
         
         # if both are supplied
         if start_date_r != None and end_date_r != None:
