@@ -32,8 +32,6 @@ def apiUrlsList(request):
     }
     return Response(Urls)
 
-#class ResourceRetrieveUpdate
-
 class ResourceCreate(CreateAPIView):
 
     defaultOptionalVals = { 'flyer': None, 'zoom': None, 'location': {}, 'flyer_id': None } 
