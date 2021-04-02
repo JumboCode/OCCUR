@@ -25,9 +25,4 @@ class Migration(migrations.Migration):
             name='startDate',
             field=models.DateField(blank=True, null=True),
         ),
-        migrations.AlterField(
-            model_name='resource',
-            name='time',
-            field=models.TimeField(blank=True, null=True),
-        ),
     ]
