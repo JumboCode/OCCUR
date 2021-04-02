@@ -88,6 +88,8 @@ class ResourceCreate(CreateAPIView):
         self.fillRequestBlanks(request.data, self.defaultOptionalVals)
         vErrors = self.inputValidator(request.data)  
 
+        print(request.data)
+
         #---- retrieve geoCoordinates 
         if 'location' in request.data and request.data['location']:
             address = request.data['location']
