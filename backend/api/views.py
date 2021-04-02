@@ -90,7 +90,6 @@ class ResourceCreate(CreateAPIView):
 
         #---- retrieve geoCoordinates 
         if 'location' in request.data and request.data['location']:
-            print(bool(request.data['location']))
             address = request.data['location']
             geoCoordinates = getCoordinates(address)
 
@@ -140,11 +139,11 @@ class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
         address = request.data['location']
 
         #---- retrieve geoCoordinates 
-        geoCoordinates = getCoordinates(address)
-
-        if geoCoordinates:
-            request.data['location']['latitude'] = geoCoordinates['lat']
-            request.data['location']['longitude'] = geoCoordinates['lng']
+        if 'location' in request.data and request.data['location']:
+            geoCoordinates = getCoordinates(address)
+            if geoCoordinates:
+                request.data['location']['latitude'] = geoCoordinates['lat']
+                request.data['location']['longitude'] = geoCoordinates['lng']
         else:
             request.data['location'] = {}
 
@@ -159,9 +158,13 @@ class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
                 'category': Resource['category'],
                 'startDate': Resource['startDate'],
                 'endDate': Resource['endDate'],
-                'time': Resource['time'],
+                'startTime': Resource['startTime'],
+                'endTime': Resource['endTime'],
                 'flyer': Resource['flyer'],
-                'zoom': Resource['zoom'],
+                'flyerId': Resource['flyerId'],
+                'meetingLink': Resource['meetingLink'],
+                'phone': Resource['phone'],
+                'email': Resource['email'],
                 'description': Resource['description'],
                 'location': Resource['location'],
             })
