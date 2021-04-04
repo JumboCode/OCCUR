@@ -21,18 +21,18 @@ export default function Home() {
         </h4>
         <p>
           OCCUR is committed to creating capacity building 
-          opportunities to support the well-being, economic development, and 
+          opportunities to support the well&#8209;being, economic development, and 
           civic inclusion of marginzalized communities.
         </p>
         <img className={styles.fists} src="/images/illustrations/fists_on_screen.png" />
       </div>
       <div className = {styles.resources}>
-        <h4>
+        <h5>
           OCCUR Resources Happening Soon
-        </h4>
-        <h4>
+        </h5>
+        <h5>
           Free Wifi Hotspots Near Oakland
-        </h4>
+        </h5>
       </div>
       <div className = {styles.donate}>
         <h4>
@@ -42,14 +42,20 @@ export default function Home() {
           Your generous support enables OCCUR to continue to provide
           effective capacity building programs and services.
         </p>
-        Donate Today
+        <div className = {styles.donateButton}>
+          <p> Donate Today </p>
+        </div>
       </div>
       <div className = {styles.contact}> 
         <h4>
           Stay Connected: Join the OCCUR Newsletter Today
         </h4>
-       <img className={styles.personComputer} src="/images/illustrations/person_at_computer.png" />
-        Contact Us
+        <div className = {styles.signup}>
+        <img className={styles.personComputer} src="/images/illustrations/person_at_computer.png" />
+        </div>
+        <div className = {styles.contactButton}>
+          <p> Contact Us </p>      
+        </div>
       </div>
     </div>
   );
