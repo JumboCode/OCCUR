@@ -16,13 +16,19 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from api import views
+from api import admin_views
+
 urlpatterns = [
     path('',views.apiUrlsList, name="apiUrlsList" ),
     path('api/v1/new/resource/', views.ResourceCreate.as_view()),
-    path('api/v1/<int:id>/delete/location', views.LocationDestroy.as_view()),
-    path('api/v1/<int:id>/delete/resource', views.ResourceDestroy.as_view()),
+    path('api/v1/<int:id>/location', views.LocationRetrieveUpdateDestroy.as_view()),
+    path('api/v1/<int:id>/resource', views.ResourceRetrieveUpdateDestroy.as_view()),
     path('api/v1/list/resource', views.ResourceList.as_view()),
     path('api/v1/list/location', views.LocationList.as_view()),
+    path('api/v1/list/admin', admin_views.get_admins),
+    path('api/v1/<id>/delete/admin', admin_views.delete_admin),
+    path('api/v1/new/admin', admin_views.new_admin),
+    path('api/v1/<id>/update/admin', admin_views.update_admin),
     path('admin/', admin.site.urls
     ),
 ]

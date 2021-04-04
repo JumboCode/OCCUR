@@ -1,0 +1,19 @@
+<svg viewBox="0 0 181 139" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="6" y="37" width="160" height="82" stroke="#1A2737" stroke-width="12"/>
+<mask id="path-2-inside-1" fill="white">
+<rect width="172" height="35" rx="5"/>
+</mask>
+<rect width="172" height="35" rx="5" stroke="#1A2737" stroke-width="24" mask="url(#path-2-inside-1)"/>
+<rect x="31" y="46" width="5" height="65" fill="#1A2737"/>
+<rect x="8" y="63" width="5" height="156" transform="rotate(-90 8 63)" fill="#1A2737"/>
+<rect x="8" y="81" width="5" height="156" transform="rotate(-90 8 81)" fill="#1A2737"/>
+<rect x="8" y="98" width="6" height="156" transform="rotate(-90 8 98)" fill="#1A2737"/>
+<rect x="52" y="46" width="5" height="65" fill="#1A2737"/>
+<rect x="74" y="46" width="4" height="65" fill="#1A2737"/>
+<rect x="95" y="46" width="4" height="65" fill="#1A2737"/>
+<rect x="116" y="46" width="5" height="65" fill="#1A2737"/>
+<rect x="137" y="46" width="5" height="65" fill="#1A2737"/>
+<ellipse cx="151" cy="107.5" rx="30" ry="31.5" fill="white"/>
+<rect x="145" y="85" width="11" height="45" fill="#E1701D"/>
+<rect x="129" y="114" width="12" height="43" transform="rotate(-90 129 114)" fill="#E1701D"/>
+</svg>
