@@ -35,18 +35,20 @@ class ResourceSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
        
         # *** ADD IF STATEMENT
+        location_validated_data_empty = True
 
+        if 'location' in validated_data:
+            location_validated_data = validated_data.pop('location')
         # Update location_validated_data to be equal to an empty dict {}, 
         # if all fields in validated_data['location'] are None or empty strings
-        location_validated_data = validated_data.pop('location')
         
         # bool to track if location_validated_data is empty
-        location_validated_data_empty = True
+        
         # if all fields are "" or "None" set location validated data to an empty dictionary
-        for key, item in location_validated_data.items():
-            if not (item == "" or item == None):
-                #print("item is {}".format(item))
-                location_validated_data_empty = False
+            for key, item in location_validated_data.items():
+                if not (item == "" or item == None):
+                    #print("item is {}".format(item))
+                    location_validated_data_empty = False
         
         # if all fields are empty or None, set location_validated_data to empty dictionary
         if location_validated_data_empty:
