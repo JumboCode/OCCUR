@@ -88,7 +88,7 @@ class ResourceCreate(CreateAPIView):
         self.fillRequestBlanks(request.data, self.defaultOptionalVals)
         vErrors = self.inputValidator(request.data)  
 
-        print(request.data)
+        # print(request.data)
 
         #---- retrieve geoCoordinates 
         if 'location' in request.data and request.data['location']:
@@ -138,10 +138,9 @@ class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
         return response
 
     def update(self, request, *args, **kwargs):
-        address = request.data['location']
-
         #---- retrieve geoCoordinates 
         if 'location' in request.data and request.data['location']:
+            address = request.data['location']
             geoCoordinates = getCoordinates(address)
             if geoCoordinates:
                 request.data['location']['latitude'] = geoCoordinates['lat']
@@ -172,13 +171,7 @@ class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
             })
         return response
 
-    def patch(self, request, *args, **kwargs):
-        resource = get_object_or_404(Resource, pk=kwargs['id'])
-        serializer = ResourceSerializer(resource, data=request.data, partial=True)
-        if serializer.is_valid():
-            resource = serializer.save()
-            return Response(ResourceSerializer(resource).data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class LocationRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     queryset = Location.objects.all()
@@ -197,6 +190,7 @@ class LocationRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
         response = super().update(request, *args, **kwargs)
         if response.status_code == 200:
             from django.core.cache import cache
+            print(response.data)
             Location = response.data
             cache.set('Location_data_{}'.format(Location['id']), {
                 'street_address': Location['street_address'],
@@ -207,6 +201,14 @@ class LocationRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
                 'longitude': Location['longitude'],
             })
         return response
+
+    def patch(self, request, *args, **kwargs):
+        resource = get_object_or_404(Resource, pk=kwargs['id'])
+        serializer = ResourceSerializer(resource, data=request.data, partial=True)
+        if serializer.is_valid():
+            resource = serializer.save()
+            return Response(ResourceSerializer(resource).data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ResourceList(ListAPIView):
     queryset = Resource.objects.all()

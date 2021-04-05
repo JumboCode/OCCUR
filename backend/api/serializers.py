@@ -65,12 +65,13 @@ class ResourceSerializer(serializers.ModelSerializer):
             location_instance = None
         
         # CREATE NEW LOCATION CASE
-        if location_instance is None:
+        if location_instance == None and not location_validated_data_empty:
+            print("in create new loction case")
             location_serializer = self.fields['location']
             location_validated_data['resource'] = resource
             locations = location_serializer.create(location_validated_data)
         # UPDATE LOCATION CASE
-        else:
+        elif location_instance != None and not location_validated_data_empty:
             location_serializer = self.fields['location']
             location_validated_data['resource'] = resource
             locations = location_serializer.update(location_instance, location_validated_data)
