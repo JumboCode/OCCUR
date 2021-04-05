@@ -172,6 +172,13 @@ class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
             })
         return response
 
+    def patch(self, request, *args, **kwargs):
+        resource = get_object_or_404(Resource, pk=kwargs['id'])
+        serializer = ResourceSerializer(resource, data=request.data, partial=True)
+        if serializer.is_valid():
+            resource = serializer.save()
+            return Response(ResourceSerializer(resource).data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class LocationRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     queryset = Location.objects.all()
