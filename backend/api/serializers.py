@@ -9,9 +9,9 @@ class LocationSerializer(serializers.ModelSerializer):
         )
         read_only_fields = ('id',)
 
-
 class ResourceSerializer(serializers.ModelSerializer):
     location = LocationSerializer(many=False)
+    recurrenceDays = serializers.MultipleChoiceField(choices=[ ('SUN', 'Sunday'),('MON', 'Monday'),('TUE', 'Tuesday'),('WED', 'Wednesday'),('THU', 'Thursday'),('FRI', 'Friday'),('SAT', 'Saturday')], required=False)
     class Meta:
         model   = Resource
         fields  = (
@@ -33,16 +33,14 @@ class ResourceSerializer(serializers.ModelSerializer):
         return Resource.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-       
-        # *** ADD IF STATEMENT
+        # Update location_validated_data to be equal to an empty dict {}, 
+        # if all fields in validated_data['location'] are None or empty strings
+
+        # bool to track if location_validated_data is empty
         location_validated_data_empty = True
 
         if 'location' in validated_data:
             location_validated_data = validated_data.pop('location')
-        # Update location_validated_data to be equal to an empty dict {}, 
-        # if all fields in validated_data['location'] are None or empty strings
-        
-        # bool to track if location_validated_data is empty
         
         # if all fields are "" or "None" set location validated data to an empty dictionary
             for key, item in location_validated_data.items():
@@ -77,16 +75,3 @@ class ResourceSerializer(serializers.ModelSerializer):
             locations = location_serializer.update(location_instance, location_validated_data)
 
         return resource
-
-
-    # 1. Update location_validated_data
-    #     - if fields are all empty or None -> reassign location_validated_data = {} (add as helper function - iterate)
-    # 2. Update all fields for resource
-    # 3. if location_validated_data isn't empty and there does not exist a location with a key to the given resource instance
-    #     -> create a new location
-    #     -> assign resource as parent resource of the new location
-    # 4. if location_validated_data isn't empty and there exists a location with a key to the given resource instance
-    #     -> get that location instance
-    #     -> update that location with the fields in location_validated_data
-    #     -> syntax: super().update(location_instance, location_validated_data)
-
