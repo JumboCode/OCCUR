@@ -1,6 +1,8 @@
 import csv 
 import json
 import re
+# import http.client
+
 
 def csv_to_json(csvFilePath, jsonFilePath):
     jsonArray = []
@@ -28,17 +30,30 @@ def csv_to_json(csvFilePath, jsonFilePath):
             if row['location']:
                 # handle nested location data
                 location_str = row.pop('location')
-                # location_data_list = location_str.split(";")
                 location_data_list = re.split(', ',location_str)
                 location = {}
                 for i, item in enumerate(location_data_list):
                     location[location_keys[i]] = item
                 row['location'] = location
-
-
-
-            
             jsonArray.append(row)
+
+def getAuthToken():
+    # TO DO: authenticate user as admin
+
+def addResourcesToDB(jsonArray):
+    # TO DO: add new resources to db with authenticated client.
+
+    # conn = http.client.HTTPSConnection('www.httpbin.org')
+
+    # headers = {'Content-type': 'application/json', 'Authentication': 'Bearer ' + getAuthToken()}
+
+    # iterate over jsonarray and try to add each object to DB 
+    # json_data = json.dumps(foo)
+
+    # conn.request('POST', '/post', json_data, headers)
+
+    # response = conn.getresponse()
+    # print(response.read().decode())
   
     #convert python jsonArray to JSON String and write to file
     with open(jsonFilePath, 'w', encoding='utf-8') as jsonf: 
