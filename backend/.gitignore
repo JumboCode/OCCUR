@@ -20,3 +20,5 @@ backendEnv/*
 backendEnv
 .DS_Store
 *.sqlite3
+alameda_county_resources.csv
+alameda_county_resources.json
