@@ -23,3 +23,8 @@ body {
 .page-padding {
   @include page-padding;
 }
+
+button,
+input {
+  font-family: inherit;
+}
