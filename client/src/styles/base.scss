@@ -1,3 +1,5 @@
+@import 'mixins';
+
 html,
 body {
   padding: 0;
@@ -15,4 +17,8 @@ body {
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+.page-padding {
+  @include page-padding;
 }
