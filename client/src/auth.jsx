@@ -16,12 +16,15 @@ export const webAuth = new auth0.WebAuth({
 /* eslint-disable import/prefer-default-export */
 
 export function doLogin(email) {
-  webAuth.passwordlessStart({
-    connection: 'email',
-    send: 'link',
-    email,
-  }, (err) => {
-    if (err) console.error('Error sending passwordless link:', err);
+  return new Promise((resolve, reject) => {
+    webAuth.passwordlessStart({
+      connection: 'email',
+      send: 'link',
+      email,
+    }, (err) => {
+      if (err) reject(err);
+      else resolve();
+    });
   });
 }
 

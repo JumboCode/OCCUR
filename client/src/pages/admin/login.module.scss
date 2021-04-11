@@ -1,0 +1,9 @@
+@import '../../styles/colors';
+
+.error {
+  color: $red;
+
+  &.hidden {
+    display: none;
+  }
+}
