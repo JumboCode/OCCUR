@@ -18,3 +18,9 @@ body {
 *::after {
   box-sizing: border-box;
 }
+
+
+button,
+input {
+  font-family: inherit;
+}
