@@ -5,12 +5,55 @@
   padding: 30px 24px;
   border-radius: 10px;
   box-shadow: 0 5px 35px -10px rgba(0, 0, 0, 0.25);
-}
 
-.error {
-  color: $red;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 
-  &.hidden {
-    display: none;
+  min-width: 36ch;
+
+  h1 {
+    font-size: 1.5em;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 2rem;
+    color: rgba(26, 39, 55, .75);
+  }
+
+  .error {
+    color: $red;
+
+    &.hidden {
+      display: none;
+    }
+  }
+
+  input {
+    background: none;
+    border: none;
+    outline: none;
+    border-radius: 3px;
+    box-shadow: inset 0 0 0 1.5px $dark-gray;
+    padding: .75em .5em;
+    font-family: inherit;
+    font-size: 1em;
+
+    &:focus {
+      box-shadow: inset 0 0 0 1.5px $light-blue;
+    }
+  }
+
+  button {
+    background: $orange;
+    border: none;
+    border-radius: 3px;
+    color: $white;
+    font-family: inherit;
+    font-size: 1em;
+    font-weight: bold;
+    padding: .75em 0.5em;
+    margin-top: 2rem;
+    cursor: pointer;
   }
 }
+

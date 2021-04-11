@@ -27,6 +27,7 @@ export default function AdminLogin() {
 
   return (
     <div className={cx('base')}>
+      <h1>Admin Login</h1>
       <div className={cx('error', { hidden: !errorMessage })}>
         {errorMessage}
       </div>
