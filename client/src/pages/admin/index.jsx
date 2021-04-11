@@ -7,7 +7,7 @@ import classNames from 'classnames/bind';
 
 const cx = classNames.bind(styles);
 
-export default function Home() {
+export default function AdminHome() {
   return (
     <div className={cx('base')}>
       <AdminLogin />

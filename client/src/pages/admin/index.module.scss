@@ -1,1 +1,15 @@
 @import '../../styles/colors';
+
+.base {
+  display: relative;
+  width: 100%;
+  height: calc(90vh - 60px);
+  background: linear-gradient(25deg, #FC801A 0%, #FDB800 45%, #FDB800 55%, #FC801A 100%);
+
+  & > div {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
