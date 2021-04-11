@@ -15,7 +15,6 @@ def csv_to_json(csvFilePath, jsonFilePath):
         #convert each csv row into python dict
         for row in csvReader: 
             #add this python dict to json array
-
             recurrenceDays_str = row.pop('recurrenceDays')
             recurrenceDays = re.split(' ',recurrenceDays_str)
             row['recurrenceDays'] = recurrenceDays
@@ -37,10 +36,10 @@ def csv_to_json(csvFilePath, jsonFilePath):
                 row['location'] = location
             jsonArray.append(row)
 
-def getAuthToken():
+# def getAuthToken():
     # TO DO: authenticate user as admin
 
-def addResourcesToDB(jsonArray):
+# def addResourcesToDB(jsonArray):
     # TO DO: add new resources to db with authenticated client.
 
     # conn = http.client.HTTPSConnection('www.httpbin.org')
@@ -61,6 +60,6 @@ def addResourcesToDB(jsonArray):
         jsonf.write(jsonString)
           
 
-csvFilePath = r'alameda_county_resources.csv'
-jsonFilePath = r'alameda_county_resources.json'
+csvFilePath = r'alameda_county_food_resources.csv'
+jsonFilePath = r'alameda_county_food_resources.json'
 csv_to_json(csvFilePath, jsonFilePath)
