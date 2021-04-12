@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 
-import { doLogin } from 'auth';
+import { useAuth } from 'auth';
 
 import EmailIllustration from '../../../public/images/email-illustration.svg';
 import EmailIcon from '../../../public/icons/email.svg';
@@ -14,6 +14,8 @@ export default function AdminLogin() {
   const [email, setEmail] = useState('');
   const [errorMessage, setErrorMessage] = useState(null);
   const [sentEmail, setSentEmail] = useState(false);
+
+  const { ready: authReady, login: doLogin } = useAuth();
 
   const login = useCallback(() => {
     doLogin(email)
@@ -45,7 +47,7 @@ export default function AdminLogin() {
                 <EmailIcon />
                 <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email address" />
               </div>
-              <button type="button" className={cx('login-button')} onClick={login}>
+              <button type="button" className={cx('login-button')} onClick={login} disabled={!authReady}>
                 Log in
               </button>
             </>
