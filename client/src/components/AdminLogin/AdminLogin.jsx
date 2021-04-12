@@ -2,6 +2,9 @@ import React, { useState, useCallback } from 'react';
 
 import { doLogin } from 'auth';
 
+import EmailIllustration from '../../../public/images/email-illustration.svg';
+import EmailIcon from '../../../public/icons/email.svg';
+
 import styles from './AdminLogin.module.scss';
 import classNames from 'classnames/bind';
 
@@ -38,7 +41,10 @@ export default function AdminLogin() {
               <div className={cx('error', { hidden: !errorMessage })}>
                 {errorMessage}
               </div>
-              <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email address" />
+              <div className={cx('input-group')}>
+                <EmailIcon />
+                <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email address" />
+              </div>
               <button type="button" className={cx('login-button')} onClick={login}>
                 Log in
               </button>
@@ -48,6 +54,7 @@ export default function AdminLogin() {
           : (
             <>
               <h1 style={{ marginBottom: '0.5em' }}>Check your email!</h1>
+              <EmailIllustration className={cx('illustration')} />
               <div className={cx('message')} style={{ marginTop: '1em' }}>
                 Email confirmation sent to
                 <br />

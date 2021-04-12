@@ -49,6 +49,27 @@
     }
   }
 
+  .input-group {
+    position: relative;
+
+    svg {
+      position: absolute;
+      top: 50%;
+      left: .75em;
+      width: 1.5em;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+
+    svg + input {
+      padding-left: .75em + 1.5em + .85em;
+    }
+
+    input {
+      width: 100%;
+    }
+  }
+
   .login-button {
     background: $orange;
     border: none;
