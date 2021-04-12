@@ -7,7 +7,7 @@
   justify-content: space-around;
   align-items: center;
   width: 100%;
-  height: 40px;
+  height: 60px;
   background-color: white;
   padding: 10px 0;
   z-index: 999;
@@ -30,6 +30,7 @@
   font-size: 18px;
   color: inherit;
   text-decoration: none;
+  font-weight: 600;
 
   &:link:not(.logo):hover {
     box-shadow: 0 2px 0 0 $orange;
