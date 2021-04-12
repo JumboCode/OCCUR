@@ -1,4 +1,4 @@
-const BASE_PATH = process.env.NEXT_PUBLIC_API_BASE ?? 'http://occur-backend.herokuapp.com/api/v1/';
+const BASE_PATH = process.env.NEXT_PUBLIC_API_BASE ?? 'https://api.resources.occurnow.org/api/v1/';
 
 export async function makeRequest(method, path, params = {}, body) {
   const url = new URL(
