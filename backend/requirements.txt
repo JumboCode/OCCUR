@@ -10,7 +10,6 @@ dj-database-url==0.5.0
 Django==3.0.3
 django-cors-headers==3.1.1
 django-filter==2.4.0
-django-heroku==0.3.1
 django-multiselectfield==0.1.12
 django-on-heroku==1.1.2
 django-phonenumber-field==5.0.0
@@ -22,7 +21,6 @@ idna==2.10
 importlib-metadata==2.0.0
 Markdown==3.2.2
 phonenumbers==8.12.20
-psycopg2==2.8.6
 psycopg2-binary==2.8.6
 pycparser==2.20
 PyJWT==1.7.1
