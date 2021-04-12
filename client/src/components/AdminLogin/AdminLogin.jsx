@@ -31,6 +31,7 @@ export default function AdminLogin() {
     <div className={cx('base')}>
       {
         !sentEmail
+          // First page: enter email address and send email
           ? (
             <>
               <h1>Admin Login</h1>
@@ -43,15 +44,16 @@ export default function AdminLogin() {
               </button>
             </>
           )
+          // Instructions for once you're done with that
           : (
             <>
-              <h1>Check your email!</h1>
-              <div className={cx('message')}>
+              <h1 style={{ marginBottom: '0.5em' }}>Check your email!</h1>
+              <div className={cx('message')} style={{ marginTop: '1em' }}>
                 Email confirmation sent to
                 <br />
                 <i>{email}</i>
               </div>
-              <div className={cx('message', 'small')}>
+              <div className={cx('message', 'small')} style={{ marginTop: '2em' }}>
                 Didn’t receive an email?
                 <button type="button" className={cx('reset-button')} onClick={() => setSentEmail(false)}>
                   Click to resend

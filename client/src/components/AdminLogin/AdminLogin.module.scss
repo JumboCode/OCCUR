@@ -49,7 +49,7 @@
     }
   }
 
-  button {
+  .login-button {
     background: $orange;
     border: none;
     border-radius: 3px;
@@ -60,6 +60,31 @@
     padding: .75em 0.5em;
     margin-top: 2rem;
     cursor: pointer;
+  }
+
+  .illustration {
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .message {
+    text-align: center;
+    font-size: .85rem;
+
+    &.small {
+      font-size: .6rem;
+    }
+  }
+
+  .reset-button {
+    background: none;
+    border: none;
+    outline: none;
+    font: inherit;
+    cursor: pointer;
+    color: $orange;
+    text-decoration: underline;
   }
 }
 
