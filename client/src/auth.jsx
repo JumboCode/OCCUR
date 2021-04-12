@@ -15,6 +15,13 @@ export function AuthProvider({ children }) {
   const isAuthenticated = !!accessToken;
   const [idToken, setIdToken] = useState(null);
 
+  const logout = () => {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('id_token');
+    setAccessToken(null);
+    setIdToken(null);
+  };
+
   // Grab access token from localStorage and check if expired
   useEffect(() => {
     const tok = accessToken || JSON.parse(localStorage.getItem('access_token'));
@@ -28,10 +35,7 @@ export function AuthProvider({ children }) {
       // Token expired; log out
       if (expired) {
         console.log('Logging out...');
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('id_token');
-        setAccessToken(null);
-        setIdToken(null);
+        logout();
       }
       // If the token is not expired and we don't already have one in state, we should store it.
       if (!accessToken && !expired) {
@@ -96,10 +100,13 @@ export function AuthProvider({ children }) {
     <AuthContext.Provider
       value={{
         ready: !!webAuth,
+
         isAuthenticated,
         accessToken,
         idToken,
+
         login,
+        logout,
       }}
     >
       {children}
