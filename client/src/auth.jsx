@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 import jwtDecode from 'jwt-decode';
@@ -104,6 +104,7 @@ export function AuthProvider({ children }) {
         isAuthenticated,
         accessToken,
         idToken,
+        identity: useMemo(() => idToken && jwtDecode(idToken), [idToken]),
 
         login,
         logout,
