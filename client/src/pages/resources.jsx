@@ -21,12 +21,12 @@ export default function ResourcesPage({ data }) {
             key={r.id}
             resourceTitle={r.name}
             organization={r.organization}
-            startDate={new Date(r.startDate)}
-            endDate={new Date(r.startDate)}
+            startDate={r.startDate}
+            endDate={r.endDate}
             location={r.location}
             imageSrc={r.flyer}
-            startTime={new Date(r.time)}
-            endTime={new Date(r.time)}
+            startTime={r.startTime}
+            endTime={r.endTime}
           />
         )) }
       </div>
