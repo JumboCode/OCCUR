@@ -17,17 +17,15 @@
   background-size: cover;
   background-position: center;
   color: #fff;
-  padding: 30px;
-  max-width: 100%;
-  width: 200px;
-  max-width: 20%;
   border-radius: 6px;
+  flex: 0 1 240px;
 }
 
 .rightside {
   padding: 30px;
   position: relative;
   width: 100%;
+  flex: 1 2 auto;
 
   h3 {
     margin: 0;

@@ -20,7 +20,7 @@ r = requests.post('https://occur.us.auth0.com/oauth/token', data={
     "audience": "occur-api",
     "username": username,
     "password": password,
-});
+})
 
 # ANSI escape sequences for colorful output
 set_bold_red = "\033[1m\033[91m"
