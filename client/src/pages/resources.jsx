@@ -7,16 +7,25 @@ import api from 'api';
 import styles from './resources.module.scss';
 
 export default function ResourcesPage({ data }) {
-  const [values, setValues] = useState([]);
-
+  const [categoryValues, setCategoryValues] = useState([]);
+  const [sortSelectValue, setSortSelectValue] = useState("ascending");
+  const sortOrder = sortSelectValue != "ascending";
+  function handleSelectChange(event) {
+    setSortSelectValue(event.target.value);
+  }
   return (
     <div className={styles.base}>
       <div className={styles.left}>
-        <SidebarFilter values={values} onChange={setValues} />
+        <SidebarFilter values={categoryValues} onChange={setCategoryValues} />
       </div>
 
       <div className={styles.right}>
-        { data.map((r) => (
+        <select value={sortSelectValue} onChange={handleSelectChange}>
+          <option value="ascending">A to Z</option>
+          <option value="descending">Z to A</option>
+        </select>
+
+        { sortBy(data, sortOrder).map((r) => (
           <ResourceCard
             key={r.id}
             resourceTitle={r.name}
@@ -46,3 +55,9 @@ export async function getServerSideProps(context) {
     props: { data },
   };
 }
+
+function sortBy(resources, descending) {
+  const mult = descending ? -1 : 1;
+  return [...resources].sort((a, b) => mult * a.name.localeCompare(b.name));
+};
+
