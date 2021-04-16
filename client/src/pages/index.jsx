@@ -31,15 +31,6 @@ export default function Home() {
         <img className={styles.fists} src="/images/illustrations/fists_on_screen.png" />
       </div>
 
-      <div className = {styles.resources}>
-        <h5>
-          OCCUR Resources Happening Soon
-        </h5>
-        <h5>
-          Free Wifi Hotspots Near Oakland
-        </h5>
-      </div>
-
       <div className = {styles.donate}>
         <h4>
           Please Support Our Efforts
