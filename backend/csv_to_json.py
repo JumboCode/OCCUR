@@ -58,6 +58,6 @@ def csv_to_json(csvFilePath, jsonFilePath):
         jsonf.write(jsonString)
           
 
-csvFilePath = r'alameda_county_food_resources.csv'
-jsonFilePath = r'alameda_county_food_resources.json'
+csvFilePath = r'alameda_county_housing_resources.csv'
+jsonFilePath = r'alameda_county_housing_resources.json'
 csv_to_json(csvFilePath, jsonFilePath)
