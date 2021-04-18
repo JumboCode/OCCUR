@@ -15,5 +15,5 @@ export default function Header() {
       <a>Wifi Hotspot</a>
       <a>Contact</a>
     </nav>
-  );
+  )
 }
