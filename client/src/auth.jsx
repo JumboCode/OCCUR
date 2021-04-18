@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
+import Cookies from 'js-cookie';
 import jwtDecode from 'jwt-decode';
 
 /* eslint-disable import/prefer-default-export */
@@ -16,15 +17,15 @@ export function AuthProvider({ children }) {
   const [idToken, setIdToken] = useState(null);
 
   const logout = () => {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('id_token');
+    Cookies.remove('access_token');
+    Cookies.remove('id_token');
     setAccessToken(null);
     setIdToken(null);
   };
 
   // Grab access token from localStorage and check if expired
   useEffect(() => {
-    const tok = accessToken || JSON.parse(localStorage.getItem('access_token'));
+    const tok = accessToken || JSON.parse(Cookies.get('access_token') ?? null);
     if (tok) {
       // Parse token
       let expired = false;
@@ -40,7 +41,7 @@ export function AuthProvider({ children }) {
       // If the token is not expired and we don't already have one in state, we should store it.
       if (!accessToken && !expired) {
         setAccessToken(tok);
-        setIdToken(JSON.parse(localStorage.getItem('id_token')));
+        setIdToken(JSON.parse(Cookies.get('id_token') ?? null));
       }
     }
   });
@@ -75,8 +76,9 @@ export function AuthProvider({ children }) {
           // Record auth result
           setAccessToken(authResult.accessToken);
           setIdToken(authResult.idToken);
-          localStorage.setItem('access_token', JSON.stringify(authResult.accessToken));
-          localStorage.setItem('id_token', JSON.stringify(authResult.idToken));
+          // cookies expire in a week (the token expires long before this)
+          Cookies.set('access_token', JSON.stringify(authResult.accessToken), { expires: 7, secure: true });
+          Cookies.set('id_token', JSON.stringify(authResult.idToken), { expires: 7, secure: true });
         }
       });
       // Remove visible hash from URL
