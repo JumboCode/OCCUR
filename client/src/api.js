@@ -2,7 +2,8 @@ import { useAuth } from 'auth';
 
 const BASE_PATH = process.env.NEXT_PUBLIC_API_BASE ?? 'https://api.resources.occurnow.org/api/v1/';
 
-
+/* Low-level interface: make a request to the given path/parameters using the given method and
+ * the given body/authorization. Light wrapper around the `fetch` API. */
 export async function makeRequest(method, path, params = {}, body, token) {
   const url = new URL(
     // Strip leading slash off of path
@@ -19,55 +20,43 @@ export async function makeRequest(method, path, params = {}, body, token) {
   return response.json();
 }
 
+/* Get authenticated API functions for a given access token */
+export function getApi(token) {
+  // Methods with no body
+  const [getf, deletef] = ['get', 'delete']
+    .map((method) => (path, params) => makeRequest(method, path, params, undefined, token));
+  // Methods with body
+  const [postf, putf, patchf] = ['post', 'put', 'patch']
+    .map((method) => (path, params, body) => makeRequest(method, path, params, body, token));
 
-export function getReq(path, params, token = null) {
-  return makeRequest('get', path, params, undefined, token);
-}
-
-export function postReq(path, params, body, token = null) {
-  return makeRequest('post', path, params, body, token);
-}
-
-export function putReq(path, params, body, token = null) {
-  return makeRequest('put', path, params, body, token);
-}
-
-export function patchReq(path, params, body, token = null) {
-  return makeRequest('patch', path, params, body, token);
-}
-
-export function deleteReq(path, params, token = null) {
-  return makeRequest('delete', path, params, undefined, token);
-}
-
-
-/* Hook to get a full suite of API functions that automatically pass auth token */
-export function useApi() {
-  const { ready, isAuthenticated, accessToken } = useAuth();
-  const tokenParam = (ready && isAuthenticated) ? accessToken : undefined;
-  const [getf, postf, putf, patchf, deletef] = [getReq, postReq, putReq, patchReq, deleteReq]
-    .map((func) => (...args) => func(...args, tokenParam));
   return {
-    // API methods
     get: getf,
     post: postf,
     put: putf,
     patch: patchf,
     delete: deletef,
-    // Info
+  };
+}
+
+/* React hook to get authenticated API functions using the token from context */
+export function useApi() {
+  const { ready, isAuthenticated, accessToken } = useAuth();
+  const token = (ready && isAuthenticated) ? accessToken : undefined;
+
+  const methods = getApi(token);
+  return {
+    ...methods,
     authenticated: ready && isAuthenticated,
   };
 }
 
 
 export default {
-  useApi,
-
-  get: getReq,
-  post: postReq,
-  put: putReq,
-  patch: patchReq,
-  delete: deleteReq,
+  // Only get request runs unauthenticated
+  get: (path, params) => makeRequest('get', path, params),
+  // useApi and getApi return an authenticated suite of functions
+  useApi, // get authenticated methods for use inside a React component
+  getApi, // get authenticated methods for use in the server-side case
 
   request: makeRequest,
 };
