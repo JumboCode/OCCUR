@@ -14,6 +14,15 @@ const RESOURCE_TYPES = [
   { id: 'OTHER', label: 'Other' },
 ];
 
+const DAYS_OF_WEEK = [
+  { id: 'MON', label: 'Monday' },
+  { id: 'TUES', label: 'Tuesday' },
+  { id: 'WED', label: 'Wednesday' },
+  { id: 'THURS', label: 'Thursday' },
+  { id: 'FRI', label: 'Friday' },
+  { id: 'SAT', label: 'Saturday' },
+  { id: 'SUN', label: 'Sunday' },
+]
 
 export default function SidebarFilter({ values, onChange }) {
   return (
@@ -25,14 +34,23 @@ export default function SidebarFilter({ values, onChange }) {
             <label key={id}>
               <input
                 type="checkbox"
-                checked={values.includes(id)}
+                checked={(() => {
+                  console.log(values);
+                  return values.categories.includes(id);
+                })()}
                 onChange={() => {
-                  if (!values.includes(id)) {
+                  if (!values.categories.includes(id)) {
                     // Add this checkbox to the array
-                    onChange([...values, id]);
+                    onChange({
+                      ...values,
+                      categories: [...values.categories, id],
+                    });
                   } else {
                     // Remove this checkbox from the array
-                    onChange(values.filter((val) => val !== id));
+                    onChange({
+                      ...values,
+                      categories: values.categories.filter((val) => val !== id),
+                    });
                   }
                 }}
               />
@@ -46,15 +64,33 @@ export default function SidebarFilter({ values, onChange }) {
   );
 }
 SidebarFilter.propTypes = {
-  values: PropTypes.arrayOf(PropTypes.oneOf([
-    'FOOD',
-    'HOUSING',
-    'COMM_GIVE',
-    'MENTAL_HEALTH',
-    'INFO',
-    'EVENTS',
-    'WIFI',
-    'OTHER',
-  ])).isRequired,
+  values: PropTypes.shape({
+    categories: PropTypes.arrayOf(PropTypes.oneOf(
+      RESOURCE_TYPES.map((e) => e.id)
+    )).isRequired,
+    daysOfWeek: PropTypes.arrayOf(PropTypes.oneOf(
+      DAYS_OF_WEEK.map((e) => e.id)
+    )).isRequired,
+    startTime: PropTypes.shape({
+      hour: PropTypes.string.isRequired,
+      min: PropTypes.string.isRequired,
+      timePeriod: PropTypes.string.isRequired,
+    }),
+    endTime: PropTypes.shape({
+      hour: PropTypes.string.isRequired,
+      min: PropTypes.string.isRequired,
+      timePeriod: PropTypes.string.isRequired,
+    }),
+    startDate: PropTypes.shape({
+      month: PropTypes.string.isRequired,
+      date: PropTypes.string.isRequired,
+      year: PropTypes.string.isRequired,
+    }),
+    endDate: PropTypes.shape({
+      month: PropTypes.string.isRequired,
+      date: PropTypes.string.isRequired,
+      year: PropTypes.string.isRequired,
+    }),
+  }),
   onChange: PropTypes.func.isRequired,
 };

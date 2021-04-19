@@ -7,7 +7,30 @@ import api from 'api';
 import styles from './resources.module.scss';
 
 export default function ResourcesPage({ data }) {
-  const [values, setValues] = useState([]);
+  const [values, setValues] = useState({
+    categories: [],
+    daysOfWeek: [],
+    startTime: {
+      hour: '',
+      min: '',
+      timePeriod: '',
+    },
+    endTime: {
+      hour: '',
+      min: '',
+      timePeriod: '',
+    },
+    startDate: {
+      month: '',
+      date: '',
+      year: '',
+    },
+    endDate: {
+      month: '',
+      date: '',
+      year: '',
+    },
+  });
 
   return (
     <div className={styles.base}>
