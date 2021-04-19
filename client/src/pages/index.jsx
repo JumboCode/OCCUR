@@ -24,8 +24,8 @@ export default function Home() {
           Our Mission
         </h4>
         <p>
-          OCCUR is committed to creating capacity building 
-          opportunities to support the well&#8209;being, economic development, and 
+          OCCUR is committed to creating capacity building
+          opportunities to support the well&#8209;being, economic development, and
           civic inclusion of marginzalized communities.
         </p>
         <img className={styles.fists} src="/images/illustrations/fists_on_screen.png" />
@@ -46,7 +46,7 @@ export default function Home() {
         </a>
       </div>
 
-      <div className = {styles.contact}> 
+      <div className = {styles.contact}>
         <h4>
           Stay Connected: Join the OCCUR Newsletter Today
         </h4>
@@ -56,9 +56,9 @@ export default function Home() {
             <SignUp/>
           </div>
         </div>
-        <a href="https://occurnow.org/contact-us-1">  
+        <a href="https://occurnow.org/contact-us-1">
         <div className = {styles.contactButton}>
-          <p> Contact Us </p>      
+          <p> Contact Us </p>
         </div>
         </a>
       </div>
