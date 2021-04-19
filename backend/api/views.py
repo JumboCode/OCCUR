@@ -63,6 +63,10 @@ class ResourceCreate(CreateAPIView):
         if data['flyer'] != None and not correctDataURLStart == data['flyer'][:len(correctDataURLStart)]:
             errorCatalog['flyer'].append('The flyer is not a valid image.')
 
+        phoneNumberPattern = r"^[0-9]*$"
+        if data['phone'] != None and not re.match(phoneNumberPattern, data['phone']):
+            errorCatalog['phone'].append('Phone numbers must only contain digits')
+
         return dict(errorCatalog)
 
     def fillRequestBlanks(self, data, optionalsToDefaults):
