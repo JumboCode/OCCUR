@@ -6,16 +6,18 @@ from gen_token import get_token
 import sys
 import http.client
 
+# 
+# Reads an array of resources and makes a post req to 
+# server to add new resources to db
 def readData(jsonArray):
-    # Loop through json object to create 
-    resource_data = json.dumps(jsonArray[0])
-    print(jsonArray[0])
-    access_token = get_token()
-    token = 'Bearer ' + access_token
-    headers = {'content-type': 'application/json', 'Authorization': token}
-    response = requests.post('http://127.0.0.1:8000/api/v1/new/resource/', data=resource_data, headers=headers)
-    if response.status_code == 201:
-        print(response.json)
+    for resource in jsonArray:
+        resource_data = json.dumps(resource)
+        access_token = get_token()
+        token = 'Bearer ' + access_token
+        headers = {'content-type': 'application/json', 'Authorization': token}
+        response = requests.post('http://127.0.0.1:8000/api/v1/new/resource/', data=resource_data, headers=headers)
+        if response.status_code == 201:
+            print(response.json)
 
 if len(sys.argv) == 2:
     filename = sys.argv[1]

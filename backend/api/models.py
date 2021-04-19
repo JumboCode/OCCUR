@@ -9,9 +9,9 @@ class Resource(models.Model):
     RESOURCE_CATEGORIES = [
     ('FOOD', 'Food'),
     ('HOUSING', 'Housing'),
-    ('COMM_GIVE', 'Community Giveaways'),
+    ('COMM_SERVE', 'Community Services'),
     ('MENTAL_HEALTH', 'Mental Health'),
-    ('INFO', 'Info Sessions/Webinars'),
+    ('EDUCATION', 'Info Sessions/Webinars/Education'),
     ('EVENTS', 'Events'),
     ('WIFI', 'Free Wifi'),
     ('OTHER', 'Other'),
