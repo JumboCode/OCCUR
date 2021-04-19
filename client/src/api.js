@@ -14,8 +14,11 @@ export async function makeRequest(method, path, params = {}, body, token) {
 
   const response = await fetch(url, {
     method,
-    body,
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    body: JSON.stringify(body),
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
   });
   return response.json();
 }
