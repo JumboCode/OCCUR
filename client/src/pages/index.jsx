@@ -2,7 +2,7 @@ import React from 'react';
 
 import styles from './homepage.module.scss';
 import SearchBar from '../components/SearchBar/SearchBar';
-import SignUp from '../components/SignUp/SignUp';
+import SignUp from '../components/NewsletterSignup/NewsletterSignup';
 import WordBubble from '../../public/images/word_bubble.svg';
 
 export default function Home() {

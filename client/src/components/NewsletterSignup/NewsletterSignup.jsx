@@ -1,9 +1,7 @@
 import React from 'react';
-import styles from './SignUp.module.scss';
-import SearchIcon from '../../../public/glass.svg';
+import styles from './NewsletterSignup.module.scss';
 
-
-const SignUp = () => (
+const NewsletterSignup = () => (
   <form className={styles.searchbar} action="/" method="get">
     <input
       type="text"
@@ -18,4 +16,4 @@ const SignUp = () => (
   </form>
 );
 
-export default SignUp;
+export default NewsletterSignup;
