@@ -34,10 +34,7 @@ export default function SidebarFilter({ values, onChange }) {
             <label key={id}>
               <input
                 type="checkbox"
-                checked={(() => {
-                  console.log(values);
-                  return values.categories.includes(id);
-                })()}
+                checked={values.categories.includes(id)}
                 onChange={() => {
                   if (!values.categories.includes(id)) {
                     // Add this checkbox to the array
@@ -50,6 +47,36 @@ export default function SidebarFilter({ values, onChange }) {
                     onChange({
                       ...values,
                       categories: values.categories.filter((val) => val !== id),
+                    });
+                  }
+                }}
+              />
+              <div className={styles.checkbox} />
+              {label}
+            </label>
+          ))
+        }
+      </div>
+      <div className={styles.group}>
+        <h4>Day of the week</h4>
+        {
+          DAYS_OF_WEEK.map(({ id, label }) => (
+            <label key={id}>
+              <input
+                type="checkbox"
+                checked={values.daysOfWeek.includes(id)}
+                onChange={() => {
+                  if (!values.daysOfWeek.includes(id)) {
+                    // Add this checkbox to the array
+                    onChange({
+                      ...values,
+                      daysOfWeek: [...values.daysOfWeek, id],
+                    });
+                  } else {
+                    // Remove this checkbox from the array
+                    onChange({
+                      ...values,
+                      daysOfWeek: values.daysOfWeek.filter((val) => val !== id),
                     });
                   }
                 }}
