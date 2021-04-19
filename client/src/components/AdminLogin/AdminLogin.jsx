@@ -41,7 +41,7 @@ export default function AdminLogin() {
 
   // Login page 1: enter email address and send email
   const page1 = (
-    <>
+    <form onSubmit={(e) => { e.preventDefault(); doLogin(); }}>
       <h1>Admin Login</h1>
       <div className={cx('error', { hidden: !errorMessage })}>
         {errorMessage}
@@ -50,10 +50,10 @@ export default function AdminLogin() {
         <EmailIcon />
         <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email address" />
       </div>
-      <button type="button" className={cx('login-button')} onClick={doLogin} disabled={!authReady}>
+      <button type="submit" className={cx('login-button')} disabled={!authReady}>
         Log in
       </button>
-    </>
+    </form>
   );
 
   // Login page 2: Instructions for once you're done with that
