@@ -9,7 +9,7 @@ export default function Home() {
   return (
     <div className={styles.base}>
 
-      <div className={styles.searchBanner}>
+      <section className={styles.searchBanner}>
         <img className={styles.peopleComputer} src="/images/illustrations/people_at_laptop.png" alt="People sitting around a laptop" />
         <div className={styles.searchBar}>
           <div className={styles.wordBubble}>
@@ -17,9 +17,9 @@ export default function Home() {
           </div>
           <SearchBar />
         </div>
-      </div>
+      </section>
 
-      <div className={styles.mission}>
+      <section className={styles.mission}>
         <h4>
           Our Mission
         </h4>
@@ -29,9 +29,9 @@ export default function Home() {
           civic inclusion of marginzalized communities.
         </p>
         <img className={styles.fists} src="/images/illustrations/fists_on_screen.png" alt="A laptop screen displaying three raised fists." />
-      </div>
+      </section>
 
-      <div className={styles.donate}>
+      <section className={styles.donate}>
         <h4>
           Please Support Our Efforts
         </h4>
@@ -44,9 +44,9 @@ export default function Home() {
             <p>Donate Today</p>
           </div>
         </a>
-      </div>
+      </section>
 
-      <div className={styles.contact}>
+      <section className={styles.contact}>
         <h4>
           Stay Connected: Join the OCCUR Newsletter Today
         </h4>
@@ -61,7 +61,7 @@ export default function Home() {
             <p> Contact Us </p>
           </div>
         </a>
-      </div>
+      </section>
 
     </div>
   );

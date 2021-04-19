@@ -1,5 +1,13 @@
 @import 'styles/colors';
 
+@mixin big-tagline() {
+    margin: 1em 7vw;
+    width: 86vw;
+    width: min(86vw, 70ch);
+    margin: 1em 7vw;
+    margin: 1em calc((100vw - min(86vw, 70ch)) / 2);
+}
+
 .base {
     display: flex;
     flex-direction: column;
@@ -10,9 +18,14 @@
     }
 }
 
+.base section {
+    width: 100%;
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+}
+
 .searchBanner{
     background: #FFF1E8;
-    width: 100%;
 
     display: flex;
     justify-content: space-evenly;
@@ -25,11 +38,6 @@
         width: calc(20vmin + 20rem);
         margin-bottom: 2rem;
     }
-
-    //  margin-left: 12.18%;
-    //  width: 25.2%;
-    // margin-top: 5%;
-    // margin-bottom: 5%;
 
     .peopleComputer {
         margin-left: 12vmin;
@@ -50,15 +58,12 @@
 }
 
 .mission {
-    width: 100%;
-    padding-top: 5rem;
-    padding-bottom: 5rem;
     text-align: center;
 
     p {
         font-style: italic;
         font-size: calc(1.1vw + .6rem);
-        margin: 5%;
+        @include big-tagline;
         word-break: keep-all;
     }
 
@@ -71,15 +76,11 @@
 .donate{
     background: white;
     margin: 1px; //added this
-    padding-top: 5rem;
-    padding-bottom: 5rem;
-    width: 100%;
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding-top: 5%;
-    margin-bottom: 5%;
 
     a {
         text-decoration: none;
@@ -104,7 +105,8 @@
         }
     }
 
-    p {
+    & > p {
+        @include big-tagline;
         font-size: calc(1.1vw + .6rem);
         margin-left:11%;
         margin-right: 11%;
@@ -114,9 +116,6 @@
 
 .contact{
     background: white;
-    padding-top: 5rem;
-    padding-bottom: 5rem;
-    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
