@@ -7,19 +7,19 @@ import WordBubble from '../../public/images/word_bubble.svg';
 
 export default function Home() {
   return (
-    <div className = {styles.base}>
+    <div className={styles.base}>
 
-      <div className = {styles.searchBanner}>
-        <img className={styles.peopleComputer} src="/images/illustrations/people_at_laptop.png" />
-        <div className = {styles.searchBar}>
+      <div className={styles.searchBanner}>
+        <img className={styles.peopleComputer} src="/images/illustrations/people_at_laptop.png" alt="People sitting around a laptop" />
+        <div className={styles.searchBar}>
           <div className={styles.wordBubble}>
-            <WordBubble/>
+            <WordBubble />
           </div>
-          <SearchBar/>
+          <SearchBar />
         </div>
       </div>
 
-      <div className = {styles.mission}>
+      <div className={styles.mission}>
         <h4>
           Our Mission
         </h4>
@@ -28,10 +28,10 @@ export default function Home() {
           opportunities to support the well&#8209;being, economic development, and
           civic inclusion of marginzalized communities.
         </p>
-        <img className={styles.fists} src="/images/illustrations/fists_on_screen.png" />
+        <img className={styles.fists} src="/images/illustrations/fists_on_screen.png" alt="A laptop screen displaying three raised fists." />
       </div>
 
-      <div className = {styles.donate}>
+      <div className={styles.donate}>
         <h4>
           Please Support Our Efforts
         </h4>
@@ -40,26 +40,26 @@ export default function Home() {
           effective capacity building programs and services.
         </p>
         <a href="https://donorbox.org/occur">
-          <div className ={styles.donateButton} >
-              <p> Donate Today </p>
+          <div className={styles.donateButton}>
+            <p>Donate Today</p>
           </div>
         </a>
       </div>
 
-      <div className = {styles.contact}>
+      <div className={styles.contact}>
         <h4>
           Stay Connected: Join the OCCUR Newsletter Today
         </h4>
-        <div className = {styles.signup}>
-          <img className={styles.personComputer} src="/images/illustrations/person_at_computer.png" />
-          <div className = {styles.signupBtn}>
-            <SignUp/>
+        <div className={styles.signup}>
+          <img className={styles.personComputer} src="/images/illustrations/person_at_computer.png" alt="A woman sitting at a computer" />
+          <div className={styles.signupBtn}>
+            <SignUp />
           </div>
         </div>
         <a href="https://occurnow.org/contact-us-1">
-        <div className = {styles.contactButton}>
-          <p> Contact Us </p>
-        </div>
+          <div className={styles.contactButton}>
+            <p> Contact Us </p>
+          </div>
         </a>
       </div>
 
