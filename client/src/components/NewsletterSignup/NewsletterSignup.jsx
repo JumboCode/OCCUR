@@ -2,12 +2,10 @@ import React from 'react';
 import styles from './NewsletterSignup.module.scss';
 
 const NewsletterSignup = () => (
-  <form className={styles.searchbar} action="/" method="get">
+  <form className={styles.searchbar} onSubmit={(e) => { e.preventDefault(); /* TODO: submit */ }}>
     <input
-      type="text"
-      id="header-search"
-      placeholder="Enter email..."
-      name="s"
+      type="email"
+      placeholder="Enter email"
     />
     <button className={styles.searchbutton} type="submit">
       <p>Sign Up</p>
