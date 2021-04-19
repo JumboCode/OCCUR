@@ -1,0 +1,166 @@
+@import 'styles/colors';
+
+@mixin big-tagline() {
+    margin: 1em 7vw;
+    width: 86vw;
+    width: min(86vw, 70ch);
+    margin: 1em 7vw;
+    margin: 1em calc((100vw - min(86vw, 70ch)) / 2);
+}
+
+.base {
+    display: flex;
+    flex-direction: column;
+
+    h4 {
+        text-align: center;
+        font-size: calc(1.1vw + .6rem);
+    }
+}
+
+.base section {
+    width: 100%;
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+}
+
+.searchBanner{
+    background: #FFF1E8;
+
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    align-items: center;
+    flex-direction: row;
+
+    .wordBubble svg {
+        height: auto;
+        width: calc(20vmin + 20rem);
+        margin-bottom: 2rem;
+    }
+
+    .peopleComputer {
+        margin-left: 12vmin;
+        margin-right: calc(3vmin + 1rem);
+        width: calc(12vmin + 12rem);
+        margin-top: calc(3vmin + 1rem);
+        margin-bottom: calc(3vmin + 1rem);
+    }
+
+    .searchBar {
+        margin-left: calc(3vmin + 1rem);
+        margin-right: 16vmin;
+        width: calc(20vmin + 20rem);
+        display: flex;
+        flex-direction: column;
+    }
+
+}
+
+.mission {
+    text-align: center;
+
+    p {
+        font-style: italic;
+        font-size: calc(1.1vw + .6rem);
+        @include big-tagline;
+        word-break: keep-all;
+    }
+
+    .fists {
+        width: calc(12vmin + 12rem);
+    }
+}
+
+
+.donate{
+    background: white;
+    margin: 1px; //added this
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 5%;
+
+    a {
+        text-decoration: none;
+        width: 23%;
+        height: calc(2.5vmin + 2.5rem);
+        margin-top: 4%;
+        .donateButton {
+            background-color: #DC9766;
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-content: center;
+            flex-direction: column;
+            p {
+                font-weight: bold;
+                font-size: inherit;
+                color: black;
+            }
+        }
+    }
+
+    & > p {
+        @include big-tagline;
+        font-size: calc(1.1vw + .6rem);
+        margin-left:11%;
+        margin-right: 11%;
+    }
+
+}
+
+.contact{
+    background: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .signup {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        .personComputer {
+            width: 22.3%;
+            margin-left: 6.5%;
+            margin-right: 7%;
+        }
+        .signupBtn {
+            margin-left: calc(3vmin + 1rem);
+            margin-right: 16vmin;
+            width: calc(20vmin + 20rem);
+            display: flex;
+            flex-direction: column;
+        }
+    }
+
+    a {
+        width: 16%;
+        height: 12.2%;
+        text-decoration: none;
+        .contactButton {
+            background-color: #DC9766;
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-content: center;
+            flex-direction: column;
+
+            p {
+                font-weight: bold;
+                font-size: inherit;
+                color: black;
+            }
+        }
+
+    }
+
+}
