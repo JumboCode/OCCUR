@@ -2,7 +2,9 @@
 import React, { useState, useEffect, useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
-import Cookies from 'js-cookie';
+import Cookies from 'js-cookie'; // cookies for browser
+import cookie from 'cookie'; // cookies for node
+
 import jwtDecode from 'jwt-decode';
 
 /* eslint-disable import/prefer-default-export */
@@ -10,7 +12,9 @@ import jwtDecode from 'jwt-decode';
 export const AuthContext = React.createContext({});
 export const useAuth = () => useContext(AuthContext);
 
-// The Auth0 Provider can manage and retrieve auth state and provide it to children via Context
+/* The Auth0Provider is a component that should wrap the entire app. It stores and tends to tokens
+ * and credentials, and it provides auth information to the entire component tree through the
+ * Context API. */
 export function AuthProvider({ children }) {
   const [accessToken, setAccessToken] = useState(null);
   const isAuthenticated = !!accessToken;
@@ -117,3 +121,16 @@ export function AuthProvider({ children }) {
   );
 }
 AuthProvider.propTypes = { children: PropTypes.node.isRequired };
+
+
+/* Use isAdmin in a getServerSideProps function to limit it to authenticated admin users. */
+export function isAdmin(ctx) {
+  const cookies = cookie.parse(ctx.req.headers.cookie);
+  const token = cookies.access_token;
+  let expired;
+  if (token) {
+    const { exp } = jwtDecode(token);
+    expired = exp * 1000 < Date.now();
+  }
+  return !(!token || expired);
+}
