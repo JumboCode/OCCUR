@@ -1,9 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import { isAdmin } from 'auth';
 import NotFound from 'pages/404';
-import styles from './admin.modules.scss';
+import styles from './manager.modules.scss';
+
+import classNames from 'classnames/bind';
+
+const cx = classNames.bind(styles);
   
 // temporary list of admin users
 const ADMINUSERS = [
@@ -19,11 +22,11 @@ const ADMINUSERS = [
 
 export default function AdminManager({ blocked }) {
     return blocked ? <NotFound /> : (
-        <div className="AdminDetails">
+        <div className={cx('base')}>
         {ADMINUSERS.map((user) => (
-          <div className="AdminUser">
-            <input className="AdminName" type="text" value={user.name} />
-            <input className="AdminEmail" type="text" value={user.email} />
+          <div className={cx('AdminUser')}>
+            <input className={cx('AdminName')} type="text" value={user.name} />
+            <input className={cx('AdminEmail')} type="text" value={user.email} />
           </div>
         ))}
       </div>
