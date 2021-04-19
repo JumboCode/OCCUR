@@ -3,15 +3,7 @@
 .base {
     display: flex;
     flex-direction: column;
-    // credit: https://stackoverflow.com/questions/49000385/css-border-disappears-when-child-element-has-a-background-color-and-browser-is-z
-    &::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-   }
+
     h4 {
         text-align: center;
         font-size: calc(1.1vw + .6rem);
@@ -51,10 +43,10 @@
         margin-left: calc(3vmin + 1rem);
         margin-right: 16vmin;
         width: calc(20vmin + 20rem);
-        display: flex; 
+        display: flex;
         flex-direction: column;
     }
-    
+
 }
 
 .mission {
@@ -88,7 +80,7 @@
     align-items: center;
     padding-top: 5%;
     margin-bottom: 5%;
-    
+
     a {
         text-decoration: none;
         width: 23%;
@@ -128,7 +120,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    
+
     .signup {
         width: 100%;
         display: flex;
@@ -143,7 +135,7 @@
             margin-left: calc(3vmin + 1rem);
             margin-right: 16vmin;
             width: calc(20vmin + 20rem);
-            display: flex; 
+            display: flex;
             flex-direction: column;
         }
     }
@@ -162,7 +154,7 @@
             justify-content: center;
             align-content: center;
             flex-direction: column;
-            
+
             p {
                 font-weight: bold;
                 font-size: inherit;
