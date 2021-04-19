@@ -48,7 +48,7 @@ export default function AdminLogin() {
       </div>
       <div className={cx('input-group')}>
         <EmailIcon />
-        <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email address" />
+        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email address" />
       </div>
       <button type="button" className={cx('login-button')} onClick={doLogin} disabled={!authReady}>
         Log in
