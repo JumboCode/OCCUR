@@ -50,6 +50,9 @@ class ResourceCreate(CreateAPIView):
         if data['startDate'] and data['startDate'] < nowStr:
             errorCatalog['startDate'].append('Start date must occur in the future.')
 
+        if data['startTime'] and data['endTime'] and data['startTime'] > data['endTime']:
+            errorCatalog['startDate'].append('Start time must occur before end time.')
+
         if data['location'] != {} and data['location'] and len(data['location']['zip_code']) != 5 and len(data['location']['zip_code']) != 0:
             # matching format of error in foreign key field
             errorCatalog['location'] = {}
