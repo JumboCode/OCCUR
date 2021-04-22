@@ -9,9 +9,9 @@ class Resource(models.Model):
     RESOURCE_CATEGORIES = [
     ('FOOD', 'Food'),
     ('HOUSING', 'Housing'),
-    ('COMM_GIVE', 'Community Giveaways'),
+    ('COMM_SERVE', 'Community Services'),
     ('MENTAL_HEALTH', 'Mental Health'),
-    ('INFO', 'Info Sessions/Webinars'),
+    ('EDUCATION', 'Education/Information'),
     ('EVENTS', 'Events'),
     ('WIFI', 'Free Wifi'),
     ('OTHER', 'Other'),
@@ -39,7 +39,7 @@ class Resource(models.Model):
     flyerId         = models.CharField(max_length=50, null=True, blank=True)
     link            = models.URLField(null=True, blank=True)
     meetingLink     = models.URLField(null=True, blank=True)
-    phone           = PhoneNumberField(null=True, blank=True)
+    phone           = models.CharField(null=True, blank=True,max_length=12)
     email           = models.EmailField(null=True, blank=True)
     description     = models.TextField(blank=False)
 
