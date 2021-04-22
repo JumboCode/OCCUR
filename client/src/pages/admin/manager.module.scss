@@ -1,0 +1,42 @@
+@import '../../styles/colors';
+
+// To Do: fix global CSS error
+
+.base {
+  height: 100%;
+  margin: 2rem;
+
+  .addAdmin {
+    float: right;
+    background-color: #DC9766;
+    padding: 15px;
+    border: #DC9766;
+    border-radius: 15px;
+
+    .circleIcon {
+      vertical-align: middle;
+      height: 30px;
+      width: 30px;
+    }
+
+    .AddAdminButton
+    {
+      background-color: #DC9766;
+      border: #DC9766;
+      font-weight: bold;
+    }
+  }
+
+  .AdminName .AdminEmail {
+    width: 30%;
+    border: 0;
+  }
+
+  .AdminUser {
+    margin: 4px;
+    border: 1px solid rgb(58, 56, 56, 0.5);
+    box-sizing: border-box;
+    border-radius: 3px;
+  }
+
+}
