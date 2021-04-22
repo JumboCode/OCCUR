@@ -1,12 +1,12 @@
 import React from 'react';
-import styles from './Header.module.scss';
+import styles from './NavBar.module.scss';
 import SearchBar from '../SearchBar/SearchBar.jsx';
 import Link from 'next/link';
 
 
-export default function Header() {
+export default function NavBar() {
   return (
-    <nav className={styles.navbar}>
+    <nav className={styles.base}>
       <Link href="/"><a className={styles.logo}><img alt="OCCUR logo" src="/logo.png" /></a></Link>
 
       <SearchBar />
