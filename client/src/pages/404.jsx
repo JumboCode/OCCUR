@@ -1,8 +1,8 @@
 import React from 'react';
 
-export default function ErrorPage() {
+export default function NotFound() {
   return (
-    <div>
+    <div className="page-padding">
       Page not found
     </div>
   );
