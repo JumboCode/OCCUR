@@ -16,6 +16,18 @@ const ADMINUSERS = [
     name: 'Keisha Mukasa',
     email: 'keisha.mukasa@gmail.com',
   },
+  {
+    name: 'Eddie Hatfield',
+    email: 'eddie.hatfield@whatever.com',
+  },
+  {
+    name: 'Tina King',
+    email: 'tina.king@whatever.com',
+  },
+  {
+    name: 'Luke Taylor',
+    email: 'luke.taylor@whatever.com',
+  },
 ];
 
 export default function AdminManager({ blocked }) {
@@ -32,6 +44,7 @@ export default function AdminManager({ blocked }) {
         {ADMINUSERS.map((user) => (
           <div className={cx('adminUser')}>
             <input className={cx('adminName')} type="text" value={user.name} />
+            <div className={cx('verticalBreak')} />
             <input className={cx('adminEmail')} type="text" value={user.email} />
           </div>
         ))}
