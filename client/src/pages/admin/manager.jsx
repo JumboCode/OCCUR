@@ -6,6 +6,7 @@ import styles from './manager.module.scss';
 
 import classNames from 'classnames/bind';
 import Circleplus from '../../../public/icons/circle_plus.svg';
+import Pen from '../../../public/icons/pen.svg';
 
 
 const cx = classNames.bind(styles);
@@ -46,6 +47,7 @@ export default function AdminManager({ blocked }) {
             <input className={cx('adminName')} type="text" value={user.name} />
             <div className={cx('verticalBreak')} />
             <input className={cx('adminEmail')} type="text" value={user.email} />
+            <Pen/>
           </div>
         ))}
       </div>

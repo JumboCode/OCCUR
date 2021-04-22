@@ -4,8 +4,7 @@
 
 .base {
   height: 100%;
-  margin: 2rem;
-  // width: 100%;
+  margin: 2em 4em 2em 4em;
 
   .buttonContainer {
     display: inline-block;
@@ -18,7 +17,7 @@
     padding: 15px;
     border: #DC9766;
     border-radius: 15px;
-    margin-right: 2em;
+    // margin-right: 2em;
 
     .circleIcon {
       vertical-align: middle;
@@ -40,8 +39,6 @@
     {
       outline: none;
     }
-
-      
   }
 
   input {
@@ -56,11 +53,10 @@
   }
 
   .adminUser {
-    margin: 4px;
+    margin: 8px;
     border: 1px solid rgb(58, 56, 56, 0.5);
     box-sizing: border-box;
     border-radius: 3px;
-    margin-right: 2em;
     padding-top: 5px;
     padding-bottom: 5px;
   }
@@ -71,6 +67,11 @@
     height: 0px;
     border: 1px solid rgb(58, 56, 56, 0.4);
     transform: rotate(90deg);
+  }
+
+  .penIcon {
+    height: 30px;
+    width: 30px;
   }
 
 }
