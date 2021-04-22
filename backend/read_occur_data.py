@@ -6,7 +6,6 @@ from gen_token import get_token
 import sys
 import http.client
 
-# 
 # Reads an array of resources and makes a post req to 
 # server to add new resources to db
 def readData(jsonArray):
@@ -16,9 +15,9 @@ def readData(jsonArray):
         token = 'Bearer ' + access_token
         headers = {'content-type': 'application/json', 'Authorization': token}
         response = requests.post('https://api.resources.occurnow.org/api/v1/new/resource/', data=resource_data, headers=headers)
-        # if response.status_code == 201:
         print(response.json)
 
+# reads json file from argv
 if len(sys.argv) == 2:
     filename = sys.argv[1]
     f = open(filename)
