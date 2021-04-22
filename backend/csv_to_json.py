@@ -1,7 +1,7 @@
 import csv 
 import json
 import re
-# from gen_token import get_token
+import sys
 import http.client
 
 
@@ -42,7 +42,9 @@ def csv_to_json(csvFilePath, jsonFilePath):
         jsonString = json.dumps(jsonArray, indent=4)
         jsonf.write(jsonString)
           
-
-csvFilePath = r'alameda_county_housing_resources.csv'
-jsonFilePath = r'alameda_county_housing_resources.json'
-csv_to_json(csvFilePath, jsonFilePath)
+if len(sys.argv) == 3:
+    csvFilePath = sys.argv[1]
+    jsonFilePath = sys.argv[2]
+    csv_to_json(csvFilePath, jsonFilePath)
+else:
+    print("Incorrect/missing inputs for argv\n\nRun as follows: python3 csv_to_json csv_file_name.csv json_file_name.json")
