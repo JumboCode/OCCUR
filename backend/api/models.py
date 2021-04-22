@@ -11,7 +11,7 @@ class Resource(models.Model):
     ('HOUSING', 'Housing'),
     ('COMM_SERVE', 'Community Services'),
     ('MENTAL_HEALTH', 'Mental Health'),
-    ('EDUCATION', 'Info Sessions/Webinars/Education'),
+    ('EDUCATION', 'Education/Information'),
     ('EVENTS', 'Events'),
     ('WIFI', 'Free Wifi'),
     ('OTHER', 'Other'),
