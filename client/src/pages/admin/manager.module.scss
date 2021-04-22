@@ -5,6 +5,12 @@
 .base {
   height: 100%;
   margin: 2rem;
+  // width: 100%;
+
+  .buttonContainer {
+    display: inline-block;
+    width: 100%;
+  }
 
   .addAdmin {
     float: right;
@@ -12,6 +18,7 @@
     padding: 15px;
     border: #DC9766;
     border-radius: 15px;
+    margin-right: 2em;
 
     .circleIcon {
       vertical-align: middle;
@@ -19,20 +26,33 @@
       width: 30px;
     }
 
-    .AddAdminButton
+    .adminList {
+      clear: both;
+    }
+
+    .addAdminButton
     {
       background-color: #DC9766;
       border: #DC9766;
       font-weight: bold;
     }
+    .addAdminButton:focus
+    {
+      outline: none;
+    }
+      
   }
 
-  .AdminName .AdminEmail {
+  input {
     width: 30%;
-    border: 0;
+    border: none;
   }
 
-  .AdminUser {
+  input:focus {
+    outline: none;
+  }
+
+  .adminUser {
     margin: 4px;
     border: 1px solid rgb(58, 56, 56, 0.5);
     box-sizing: border-box;

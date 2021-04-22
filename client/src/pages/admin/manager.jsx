@@ -16,25 +16,26 @@ const ADMINUSERS = [
     name: 'Keisha Mukasa',
     email: 'keisha.mukasa@gmail.com',
   },
-  {
-    name: 'Luke Taylor',
-    email: 'luketaylor@notrealemail.com',
-  },
 ];
 
 export default function AdminManager({ blocked }) {
   return blocked ? <NotFound /> : (
     <div className={cx('base')}>
-      <div className={cx('addAdmin')}>
-        <Circleplus className={cx('circleIcon')} />
-        <button className={cx('AddAdminButton')} type="button">Add Admin</button>
-      </div>
-      {/* {ADMINUSERS.map((user) => (
-        <div className={cx('AdminUser')}>
-          <input className={cx('AdminName')} type="text" value={user.name} />
-          <input className={cx('AdminEmail')} type="text" value={user.email} />
+      <div className={cx('buttonContainer')}>
+        <div className={cx('addAdmin')}>
+          <Circleplus className={cx('circleIcon')} />
+          <button className={cx('addAdminButton')} type="button">Add Admin</button>
         </div>
-      ))} */}
+      </div>
+      <div className={cx('adminList')}>
+        <h4 className={cx('adminListTitle')}>Admin List</h4>
+        {ADMINUSERS.map((user) => (
+          <div className={cx('adminUser')}>
+            <input className={cx('adminName')} type="text" value={user.name} />
+            <input className={cx('adminEmail')} type="text" value={user.email} />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
