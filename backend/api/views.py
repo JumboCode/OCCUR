@@ -225,7 +225,7 @@ class ResourceList(ListAPIView):
     search_fields = ('name', 'organization',)
 
     def parse_date(date_string):
-        return datetime.strptime(end_date_r, '%Y-%m-%d')
+        return datetime.strptime(date_string, '%Y-%m-%d')
 
     def get_queryset(self):
         # retrieving query params from request
