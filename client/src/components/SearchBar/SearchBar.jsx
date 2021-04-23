@@ -1,11 +1,16 @@
-import React, { useState } from 'react';
-import Link from 'next/link';
+import React, { useState, useCallback } from 'react';
+import { useRouter } from 'next/router';
 import styles from './SearchBar.module.scss';
 import SearchIcon from '../../../public/glass.svg';
 
 
 function SearchBar() {
   const [text, setText] = useState('');
+  const router = useRouter();
+
+  const go = useCallback(() => {
+    router.push({ pathname: '/resources', query: text ? { search: text } : undefined });
+  }, [text]);
 
   return (
     <div className={`searchbar ${styles.searchbar}`}>
@@ -13,16 +18,13 @@ function SearchBar() {
         type="text"
         value={text}
         onChange={(e) => setText(e.target.value)}
-        id="header-search"
         placeholder="Search for resources..."
         name="s"
       />
 
-      <Link href={{ pathname: '/resources', query: { search: text } }}>
-        <a className={styles.searchbutton}>
-          <SearchIcon />
-        </a>
-      </Link>
+      <button type="button" className={styles.searchbutton} onClick={go}>
+        <SearchIcon />
+      </button>
     </div>
   );
 }

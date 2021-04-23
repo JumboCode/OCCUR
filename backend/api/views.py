@@ -1,9 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 import io
 from rest_framework.parsers import JSONParser
 from rest_framework.renderers import JSONRenderer
 # Create your views here.
-from rest_framework.generics import CreateAPIView, ListAPIView, DestroyAPIView
+
+from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
@@ -27,25 +28,30 @@ def apiUrlsList(request):
     Urls = {
         'list all resources': 'api/v1/list/resource',
         'list all locations': 'api/v1/list/location',
-        'create a new resource': 'api/v1/new/resource/',
-        'delete a resource': 'api/v1/<int:id>/delete/resource',
+        'get a resource': 'api/v1/<int:id>/resource',
+        'create a new resource': 'api/v1/new/resource',
+        'update a resource': 'api/v1/<int:id>/resource',
+        'delete a resource': 'api/v1/<int:id>/resource',
     }
     return Response(Urls)
 
 class ResourceCreate(CreateAPIView):
-
-    defaultOptionalVals = { 'flyer': None, 'zoom': None, 'location': {}, 'flyer_id': None } 
+    # All unrequired fields are populated with None values if empty
+    defaultOptionalVals = { 'flyer': None, 'meetingLink': None, 'location': {}, 'flyerId': None, 'startDate': None, 'endDate': None, 'link': None, 'startTime': None, 'endTime': None, 'phone': None, 'email': None, 'isRecurring': None, 'recurrenceDays': [] } 
 
     def inputValidator(self, data):
         # dict of list matches the format of serializer.errors
         errorCatalog = defaultdict(list)
 
-        if data['startDate'] > data['endDate']:
+        if data['startDate'] and data['endDate'] and data['startDate'] > data['endDate']:
             errorCatalog['startDate'].append('Start date must occur after end date.')
         
         nowStr = datetime.now().strftime('%Y-%m-%d')
-        if data['startDate'] < nowStr:
+        if data['startDate'] and data['startDate'] < nowStr:
             errorCatalog['startDate'].append('Start date must occur in the future.')
+
+        if data['startTime'] and data['endTime'] and data['startTime'] > data['endTime']:
+            errorCatalog['startDate'].append('Start time must occur before end time.')
 
         if data['location'] != {} and data['location'] and len(data['location']['zip_code']) != 5 and len(data['location']['zip_code']) != 0:
             # matching format of error in foreign key field
@@ -60,11 +66,15 @@ class ResourceCreate(CreateAPIView):
         if data['flyer'] != None and not correctDataURLStart == data['flyer'][:len(correctDataURLStart)]:
             errorCatalog['flyer'].append('The flyer is not a valid image.')
 
+        phoneNumberPattern = r"^[0-9]*$"
+        if data['phone'] != None and not re.match(phoneNumberPattern, data['phone']):
+            errorCatalog['phone'].append('Phone numbers must only contain digits')
+
         return dict(errorCatalog)
 
     def fillRequestBlanks(self, data, optionalsToDefaults):
         for (fieldName,defaultVal) in optionalsToDefaults.items():
-            if not fieldName in data:
+            if not fieldName in data or data[fieldName] == "":
                 data[fieldName] = defaultVal
 
     def mergeFieldErrors(self, vErrors, sErrors):
@@ -85,9 +95,10 @@ class ResourceCreate(CreateAPIView):
         self.fillRequestBlanks(request.data, self.defaultOptionalVals)
         vErrors = self.inputValidator(request.data)  
 
+        # print(request.data)
+
         #---- retrieve geoCoordinates 
         if 'location' in request.data and request.data['location']:
-            print(bool(request.data['location']))
             address = request.data['location']
             geoCoordinates = getCoordinates(address)
 
@@ -95,13 +106,13 @@ class ResourceCreate(CreateAPIView):
             request.data['location']['longitude'] = geoCoordinates['lng']
 
         #---- convert image to url reference
-
         image = request.data['flyer']
         # if optional flyer was not passed or this object will not
         # go on to be added to DB, don't add img to cloudinary
         if image != None and len(vErrors) == 0:
-            request.data['flyer'] = cloudinary_url(image)["url"]
-            request.data['flyer_id'] = cloudinary_url(image)["public_id"]
+            image = cloudinary_url(image)
+            request.data['flyer'] = image["url"]
+            request.data['flyerId'] = image["public_id"]
 
         serializer = ResourceSerializer(data=request.data)
 
@@ -113,7 +124,7 @@ class ResourceCreate(CreateAPIView):
         errors = self.mergeFieldErrors(vErrors, serializer.errors)
         return Response(errors, status=status.HTTP_400_BAD_REQUEST)
 
-class ResourceDestroy(DestroyAPIView):
+class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     queryset = Resource.objects.all()
     lookup_field = 'id'
     serializer_class = ResourceSerializer
@@ -124,7 +135,7 @@ class ResourceDestroy(DestroyAPIView):
         json = JSONRenderer().render(serializer.data)
         stream = io.BytesIO(json)
         data = JSONParser().parse(stream)
-        flyer_id = data['flyer_id']
+        flyer_id = data['flyerId']
         if flyer_id:
             cloudinary_delete(flyer_id)
         response = super().delete(request, *args, **kwargs)
@@ -133,11 +144,54 @@ class ResourceDestroy(DestroyAPIView):
             cache.delete('resource_data_{}'.format(resource_id))
         return response
 
+    def update(self, request, *args, **kwargs):
+        #---- retrieve geoCoordinates 
+        if 'location' in request.data and request.data['location']:
+            address = request.data['location']
+            geoCoordinates = getCoordinates(address)
+            if geoCoordinates:
+                request.data['location']['latitude'] = geoCoordinates['lat']
+                request.data['location']['longitude'] = geoCoordinates['lng']
+        else:
+            request.data['location'] = {}
 
+        response = super().update(request, *args, **kwargs)
+        
+        if response.status_code == 200:
+            from django.core.cache import cache
+            Resource = response.data
+            cache.set('Resource_data_{}'.format(Resource['id']), {
+                'name': Resource['name'],
+                'organization': Resource['organization'],
+                'category': Resource['category'],
+                'startDate': Resource['startDate'],
+                'endDate': Resource['endDate'],
+                'startTime': Resource['startTime'],
+                'endTime': Resource['endTime'],
+                'flyer': Resource['flyer'],
+                'flyerId': Resource['flyerId'],
+                'meetingLink': Resource['meetingLink'],
+                'phone': Resource['phone'],
+                'email': Resource['email'],
+                'description': Resource['description'],
+                'location': Resource['location'],
+            })
+        return response
 
-class LocationDestroy(DestroyAPIView):
+    def patch(self, request, *args, **kwargs):
+        resource = get_object_or_404(Resource, pk=kwargs['id'])
+        serializer = ResourceSerializer(resource, data=request.data, partial=True)
+        if serializer.is_valid():
+            resource = serializer.save()
+            return Response(ResourceSerializer(resource).data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # TO DO: Make patch request 
+
+class LocationRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     queryset = Location.objects.all()
     lookup_field = 'id'
+    serializer_class = LocationSerializer
 
     def delete(self, request, *args, **kwargs):
         Location_id = request.data.get('id')
@@ -147,6 +201,21 @@ class LocationDestroy(DestroyAPIView):
             cache.delete('location_data_{}'.format(Location_id))
         return response
 
+    def update(self, request, *args, **kwargs):
+        response = super().update(request, *args, **kwargs)
+        if response.status_code == 200:
+            from django.core.cache import cache
+            print(response.data)
+            Location = response.data
+            cache.set('Location_data_{}'.format(Location['id']), {
+                'street_address': Location['street_address'],
+                'city': Location['city'],
+                'state': Location['state'],
+                'zip_code': Location['zip_code'],
+                'latitude': Location['latitude'],
+                'longitude': Location['longitude'],
+            })
+        return response
 
 class ResourceList(ListAPIView):
     queryset = Resource.objects.all()
@@ -193,14 +262,17 @@ class ResourceList(ListAPIView):
                 return Resource.objects.none()
 
             # getting resources with dates in the given range
+            # all resources whose duration contains the range end date
             q1 = queryset.filter(
                 startDate__lte = end_date_r,
                 endDate__gte = end_date_r,
             )
+            # all resources whose duration contains the range start date
             q2 = queryset.filter(
                 startDate__lte = start_date_r,
                 endDate__gte = start_date_r,
             )
+            # all resources whose durations are contained within the passed range
             q3 = queryset.filter(
                 startDate__gte = start_date_r,
                 endDate__lte = end_date_r
