@@ -20,3 +20,13 @@ backendEnv/*
 backendEnv
 .DS_Store
 *.sqlite3
+alameda_county_food_resources.csv
+alameda_county_food_resources.json
+alameda_county_housing_resources.csv
+alameda_county_housing_resources.json
+alameda_county_comm_serve_resources.csv
+alameda_county_comm_serve_resources.json
+alameda_county_education_resources.csv
+alameda_county_education_resources.json
+alameda_county_mental_healh_resources.csv
+alameda_county_mental_healh_resources.json
