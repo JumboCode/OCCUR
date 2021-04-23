@@ -14,7 +14,7 @@
   .addAdmin {
     float: right;
     background-color: #DC9766;
-    padding: 15px;
+    padding: 10px 24px 10px 24px;
     border: #DC9766;
     border-radius: 15px;
     // margin-right: 2em;
@@ -74,14 +74,8 @@
     transform: rotate(90deg);
   }
 
-  .penIcon {
-    height: 25px;
-    width: 25px;
-    vertical-align: top;
-    fill: #DC9766;
-  }
-
-  .trashIcon {
+  svg {
+    padding: 2px;
     height: 25px;
     width: 25px;
     vertical-align: top;
