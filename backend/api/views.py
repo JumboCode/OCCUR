@@ -332,10 +332,18 @@ class ResourceList(ListAPIView):
         # if only one time range param is supplied
         elif start_time_r != None:
             start_time_r = self.parse_time(start_time_r)
-            queryset = queryset.filter(endTime__gte = start_time_r)     
+            # all events that end after the start time are included
+            q1 = queryset.filter(endTime__gte = start_time_r)     
+            # all events that never end are also included
+            q2 = queryset.filter(endTime__isnull = True)
+            queryset = q1.union(q2)
         elif end_time_r != None:
             end_time_r = self.parse_time(end_time_r)
-            queryset = queryset.filter(startTime__lte = end_time_r)
+            # all events that start before the end time are included
+            q1 = queryset.filter(startTime__lte = end_time_r)
+            # all events that do not have a start time are also included
+            q2 = queryset.filter(startTime__isnull = True)
+            queryset = q1.union(q2)
 
         # filtering by lat. & long. ranges passed
         if min_long != None:
