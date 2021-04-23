@@ -5,16 +5,21 @@
 
   display: flex;
 
-  flex-flow: row wrap;
+  @media (max-width: 650px) {
+    flex-direction: column;
+
+    .rightColumn {
+      margin: 2rem 0;
+    }
+  }
 }
 
 .logo {
   background-color: #C4C4C4;
   background-size: cover;
   background-position: center;
-  max-width: 100%;
-  width: 250px;
-  height: 250px;
+  width: 12rem;
+  min-height: 12rem;
   border-radius: 6px;
   margin-right: 2em;
 }
@@ -37,7 +42,7 @@
 }
 
 .logistics {
-  margin-top: 2.5rem;
+  margin-top: 1.5rem;
   font-size: 1em;
 
   p {
@@ -46,8 +51,6 @@
 }
 
 .eventcontainer {
-  padding-top: 30px;
-
   h2 {
     font-size: inherit;
     margin-top: 0;
@@ -59,11 +62,21 @@
 }
 
 .main {
-  margin-right: 1em;
+  margin-right: 2ch;
 }
 
 .mainColumns {
   display: flex;
+  align-items: stretch;
+  margin-bottom: 1.5em;
+
+  @media (max-width: 800px) {
+    flex-direction: column;
+
+    .logo {
+      margin-bottom: 1rem;
+    }
+  }
 }
 
 .rightColumn {
@@ -75,23 +88,12 @@
   }
 }
 
-@media all and (min-width: 600px) {
-  .aside { flex: 1 auto; }
-}
-
-@media all and (min-width: 800px) {
-  .main { flex: 3 0px; order: 2; }
-  .backColumn { order: 1; }
-  .rightColumn { order: 3; }
-  .footer { order: 4; }
-}
-
 .buttongroup {
   display: flex;
 }
 
 .rightbutton {
-  min-width: 140px;
+  min-width: 100px;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -166,7 +168,6 @@
   h3 {
     font-size: inherit;
     text-decoration: underline;
-    white-space: nowrap;
     margin: 0;
     margin-bottom: .5em;
   }

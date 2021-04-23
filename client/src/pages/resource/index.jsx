@@ -8,6 +8,11 @@ import ShareIcon from '../../../public/share.svg';
 export default function ResourcePage() {
   return (
     <div className={styles.base}>
+      {/* <div className={styles.backColumn}>
+        <ArrowIcon style={{ transform: 'rotate(180deg)' }} />
+        Back
+      </div> */}
+
       <div className={styles.main}>
         <div className={styles.mainColumns}>
           <div className={styles.logo} />
@@ -53,11 +58,6 @@ export default function ResourcePage() {
         </div>
       </div>
 
-      <div className={styles.backColumn}>
-        <ArrowIcon style={{ transform: 'rotate(180deg)' }} />
-        Back
-      </div>
-
       <div className={styles.rightColumn}>
         <div className={styles.buttongroup}>
           <div className={styles.rightbutton}>
@@ -77,7 +77,7 @@ export default function ResourcePage() {
 
           <div className={styles.rightbutton}>
             <ShareIcon />
-            Share Button
+            Share
           </div>
         </div>
 
