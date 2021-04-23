@@ -286,19 +286,19 @@ class ResourceList(ListAPIView):
                 endDate__lte = end_date_r
             )
 
-            # all resources that don't end and whose startTime's are captured in the range
+            # all resources that don't end and whose startDate's are captured in the range
             q4 = queryset.filter(
                     endDate__isnull = True,
                     startDate__lte = end_date_r
             )
 
-            # all resources that don't have a startTime and whose endTime's are captured in the range
+            # all resources that don't have a startDate and whose endDate's are captured in the range
             q5 = queryset.filter(
                     startDate__isnull = True,
                     endDate__gte = start_date_r 
             )
 
-            # all resources without startTime or endTime -- these are always considered active
+            # all resources without startDate or endDate -- these are always considered active
             q6 = queryset.filter(
                     startDate__isnull = True,
                     endDate__isnull = True
