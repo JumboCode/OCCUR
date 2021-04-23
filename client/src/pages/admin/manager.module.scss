@@ -1,8 +1,56 @@
 @import '../../styles/colors';
 
-// To Do: fix global CSS error
+.modalWindow {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.2);
+  
+  .closeButton {
+    height: 25px;
+    width: 25px;
+    float: right;
+  }
 
-.base {
+  form {
+    background: white;
+    margin: 4em 12em;
+    padding: 3em 3em;
+  }
+
+  input {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 4px;
+  }
+
+  h4 {
+    text-align: center;
+  }
+
+  button {
+    float: right;
+    padding: 8px 30px;
+    margin: 5px;
+  }
+  .cancelButton {
+    background-color: rgb(58, 56, 56, 0.5);
+    border-radius: 2px;
+    border:none ;
+    font-weight: bold;
+    color: white;
+  }
+
+  .saveButton {
+    background-color: #DC9766;
+    border-radius: 2px;
+    border:none;
+    font-weight: bold;
+    color: white;
+  }
+}
+
+.mainAdminContainer {
   height: 100%;
   margin: 2em 8em 2em 8em;
 
@@ -17,7 +65,6 @@
     padding: 10px 24px 10px 24px;
     border: #DC9766;
     border-radius: 15px;
-    // margin-right: 2em;
 
     .circleIcon {
       vertical-align: middle;
@@ -68,8 +115,6 @@
 
   .verticalBreak {
     display: inline;
-    width: 20px;
-    height: 0px;
     border: 1px solid rgb(58, 56, 56, 0.4);
     transform: rotate(90deg);
   }
