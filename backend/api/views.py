@@ -325,9 +325,26 @@ class ResourceList(ListAPIView):
                 endTime__lte = end_time_r
             )
 
+            # all resources that don't end and whose startTime's are captured in the range
+            q4 = queryset.filter(
+                    endTime__isnull = True,
+                    startTime__lte = end_time_r
+            )
+
+            # all resources that don't have a startTime and whose endTime's are captured in the range
+            q5 = queryset.filter(
+                    startTime__isnull = True,
+                    endTime__gte = start_time_r 
+            )
+
+            # all resources without startTime or endTime -- these are always considered active
+            q6 = queryset.filter(
+                    startTime__isnull = True,
+                    endTime__isnull = True
+            )
+
             # combining all results
-            queryset = q1.union(q2)
-            queryset = queryset.union(q3)
+            queryset = q1.union(q2, q3, q4, q5, q6)
 
         # if only one time range param is supplied
         elif start_time_r != None:
