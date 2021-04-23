@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import ReactDOM from 'react-dom';
 import { useForm } from 'react-hook-form';
 import { isAdmin } from 'auth';
 import NotFound from 'pages/404';
@@ -36,23 +37,28 @@ const ADMINUSERS = [
 ];
 
 export default function AdminManager({ blocked }) {
-  const { register } = useForm();
-  // const onSubmit = (data) => console.log(data);
+  const { register, handleSubmit } = useForm();
+  const onSubmit = (data) => console.log(data);
+  let showModal = true;
+  const closeModal = () => { console.log('In Close'); showModal = false; };
+  const Modal = () => (
+    <div className={cx('modalWindow')}>
+      <form>
+        <Close onClick={closeModal} className={cx('closeButton')} type="button"/>
+        <h4>Add Admin</h4>
+        Admin Name
+        <input name="Admin Name" {...register('Admin Name')} placeholder="Admin Name" />
+        Admin Email
+        <input name="Admin Email" {...register('Admin Email')} placeholder="Admin Email" />
+        <button onClick={handleSubmit(onSubmit)} className={cx('saveButton')} type="button">Save</button>
+        <button onClick={closeModal} className={cx('cancelButton')} type="button">Cancel</button>
+      </form>
+    </div>
+  );
 
   return blocked ? <NotFound /> : (
     <div className={cx('base')}>
-      <div className={cx('modalWindow')}>
-        <form onSubmit={(data) => { console.log(data); }}>
-          <Close className={cx('closeButton')} type="button"/>
-          <h4>Add Admin</h4>
-          Admin Name
-          <input name="Admin Name" {...register('Admin Name')} placeholder="Admin Name" />
-          Admin Email
-          <input name="Admin Email" {...register('Admin Email')} placeholder="Admin Email" />
-          <button className={cx('saveButton')} type="button">Save</button>
-          <button className={cx('cancelButton')} type="button">Cancel</button>
-        </form>
-      </div>
+      {showModal ? <Modal /> : null }
       <div className={cx('mainAdminContainer')}>
         <div className={cx('buttonContainer')}>
           <div className={cx('addAdmin')}>
