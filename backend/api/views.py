@@ -286,17 +286,42 @@ class ResourceList(ListAPIView):
                 endDate__lte = end_date_r
             )
 
+            # all resources that don't end and whose startTime's are captured in the range
+            q4 = queryset.filter(
+                    endDate__isnull = True,
+                    startDate__lte = end_date_r
+            )
+
+            # all resources that don't have a startTime and whose endTime's are captured in the range
+            q5 = queryset.filter(
+                    startDate__isnull = True,
+                    endDate__gte = start_date_r 
+            )
+
+            # all resources without startTime or endTime -- these are always considered active
+            q6 = queryset.filter(
+                    startDate__isnull = True,
+                    endDate__isnull = True
+            )
+
             # combining all results
-            queryset = q1.union(q2)
-            queryset = queryset.union(q3)
+            queryset = q1.union(q2, q3, q4, q5, q6)
 
         # if only one date range param is supplied
         elif start_date_r != None:
             start_date_r = self.parse_date(start_date_r)
-            queryset = queryset.filter(endDate__gte = start_date_r)     
+            # all events that end after the start date are included
+            q1 = queryset.filter(endDate__gte = start_date_r)     
+            # all events that never end are also included
+            q2 = queryset.filter(endDate__isnull = True)
+            queryset = q1.union(q2)
         elif end_date_r != None:
             end_date_r = self.parse_date(end_date_r)
-            queryset = queryset.filter(startDate__lte = end_date_r)
+            # all events that start before the end date are included
+            q1 = queryset.filter(startDate__lte = end_date_r)
+            # all events that do not have a start date are also included
+            q2 = queryset.filter(startDate__isnull = True)
+            queryset = q1.union(q2)
 
         # doing almost identical process to filtering based on date
         # except now we are using time
