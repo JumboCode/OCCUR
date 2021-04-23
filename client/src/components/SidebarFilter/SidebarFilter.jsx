@@ -2,17 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styles from './SidebarFilter.module.scss';
-
-const RESOURCE_TYPES = [
-  { id: 'FOOD', label: 'Food' },
-  { id: 'HOUSING', label: 'Housing' },
-  { id: 'COMM_GIVE', label: 'Community Giveaways' },
-  { id: 'MENTAL_HEALTH', label: 'Mental Health' },
-  { id: 'INFO', label: 'Info Sessions/Webinars' },
-  { id: 'EVENTS', label: 'Events' },
-  { id: 'WIFI', label: 'Free Wifi' },
-  { id: 'OTHER', label: 'Other' },
-];
+import RESOURCE_TYPES from 'data/resource-types';
 
 
 export default function SidebarFilter({ values, onChange }) {
