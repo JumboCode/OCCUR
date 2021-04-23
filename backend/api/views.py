@@ -227,6 +227,9 @@ class ResourceList(ListAPIView):
     def parse_date(date_string):
         return datetime.strptime(date_string, '%Y-%m-%d')
 
+    def parse_time(time_string):
+        return datetime.strptime(time_string, '%H:%M')
+
     def get_queryset(self):
         # retrieving query params from request
         start_date_r = self.request.query_params.get('start_date_r', None)
