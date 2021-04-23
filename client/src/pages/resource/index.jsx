@@ -14,11 +14,11 @@ export default function ResourcePage() {
           <div>
             <div className={styles.basic}>
               <h1>Oakland Food Drive</h1>
-              <h2 style={{ fontWeight: 400, }}>
+              <div className={styles.subhead} style={{ fontWeight: 400 }}>
                 <span style={{ fontWeight: 600 }}>Run by:</span>
                 &nbsp;
                 OCCUR
-              </h2>
+              </div>
             </div>
             <div className={styles.logistics}>
               <p>

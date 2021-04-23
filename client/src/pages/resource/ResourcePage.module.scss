@@ -21,34 +21,45 @@
 
 .paragraph {
   font-size: 1rem;
-}
-
-.wrapper > * {
-  padding: 10px;
-  flex: 1 100%;
+  max-width: 50ch;
 }
 
 .basic {
-  padding-left: 20px;
-  h1, h2 {
-  margin: 0;
+  h1 {
+    margin: 0;
+    font-size: 1.35em;
+  }
+
+  .subhead {
+    font-size: 1em;
+    color: #6A6565;
   }
 }
 
 .logistics {
-  padding-top: 50px;
-  padding-left: 20px;
-  font-size: 25px;
+  margin-top: 2.5rem;
+  font-size: 1em;
+
   p {
-    margin: 0;
+    margin: 0 0 0.25em 0;
   }
 }
 
 .eventcontainer {
   padding-top: 30px;
-  p, h2 {
+
+  h2 {
+    font-size: inherit;
+    margin-top: 0;
+    margin-bottom: .25em;
+  }
+  p {
     margin: 0;
   }
+}
+
+.main {
+  margin-right: 1em;
 }
 
 .mainColumns {
@@ -56,6 +67,8 @@
 }
 
 .rightColumn {
+  margin-left: auto;
+  margin-right: 0;
 
   & > :not(:last-child) {
     margin-bottom: 1.5rem;
