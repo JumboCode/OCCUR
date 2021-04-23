@@ -1,25 +1,19 @@
 .base {
-  display: flex;  
-  
+  display: flex;
+
   flex-flow: row wrap;
-  
+
   font-weight: bold;
   text-align: center;
-}
-div.arrow {
-  transform: rotate(180deg);
-
 }
 
 .logo {
   background-color: #C4C4C4;
   background-size: cover;
   background-position: center;
-  color: #fff;
-  padding: 40px;
   max-width: 100%;
-  width: 170px;
-  height: 170px;
+  width: 250px;
+  height: 250px;
   border-radius: 6px;
   margin-right: 2em;
 }
@@ -67,14 +61,9 @@ div.arrow {
 
 .mainColumns {
   display: flex;
-
-  
 }
 
-.aside1 {
-}
-
-.aside2 {
+.rightColumn {
   width: 25%;
 }
 
@@ -83,11 +72,10 @@ div.arrow {
 }
 
 @media all and (min-width: 800px) {
-  .main    { flex: 3 0px; }
-  .aside1 { order: 1; } 
-  .main    { order: 2; }
-  .aside2 { order: 3; }
-  .footer  { order: 4; }
+  .main { flex: 3 0px; order: 2; }
+  .backColumn { order: 1; }
+  .rightColumn { order: 3; }
+  .footer { order: 4; }
 }
 
 
@@ -135,7 +123,7 @@ div.arrow {
 }
 
 
-.rightbuttons{
+.rightbuttons {
   flex-basis: 40%;
   display: inline-flex;
   flex-direction: column;
@@ -155,17 +143,17 @@ div.arrow {
     margin-right: 1em;
   }
 
-  &:first-child{
+  &:first-child {
     width: 100%;
   }
-  
+
   &:not(:first-child) {
     align-items: center;
     flex: 1;
    width: 35%;
   }
 
-  &:last-child{
+  &:last-child {
     width: 100%;
   }
 
@@ -178,14 +166,11 @@ div.arrow {
     margin-bottom: .5em;
   }
 
-  img{
+  img {
     height: 1.75em;
     width: auto;
     margin-bottom: .5em;
   }
-
-
-
 }
 
 div .address2{
@@ -194,8 +179,6 @@ div .address2{
 
 p .address2{
   text-align: left;
-  
-
 }
 
 .moreinfo {
@@ -216,27 +199,24 @@ p .address2{
   padding-bottom: 1em;
   padding-right: 1em;
   padding-left: 1em;
-  
-  
   cursor: pointer;
 
   &:not(:last-child) {
     margin-right: 1em;
   }
 
-  &:first-child{
+  &:first-child {
     width: 100%;
   }
-  
+
   &:not(:first-child) {
     align-items: center;
     flex: 1;
-   width: 35%;
+    width: 35%;
   }
 
   &:last-child{
     width: 100%;
-    
   }
 
   border: 1px solid rgba(0, 0, 0, 0.45);
@@ -248,18 +228,15 @@ p .address2{
     margin-bottom: .5em;
   }
 
-
-
-  .address{
+  .address {
     text-decoration: underline;
     text-align: left;
     margin-right: 50px;
     white-space: nowrap;
     margin-bottom: 0px;
-    
   }
 
-  .address2{
+  .address2 {
     position: relative;
     font-weight: lighter;
     font-size: larger;
@@ -267,15 +244,9 @@ p .address2{
     margin-right: 130px;
     margin-top: 0px;
     margin-bottom: 0px;
-
   }
 
-  .phoneNumber{
+  .phoneNumber {
     margin-right: 170px;
-
   }
-
-
-
-
 }
