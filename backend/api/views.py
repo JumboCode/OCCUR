@@ -233,6 +233,8 @@ class ResourceList(ListAPIView):
         min_lat = self.request.query_params.get('min_lat', None)
         max_lat = self.request.query_params.get('max_lat', None)
         categories = self.request.query_params.get('category', None)
+        start_time_r = self.request.query_params.get('start_time_r', None)
+        end_time_r = self.request.query_params.get('end_time_r', None)
 
         queryset = Resource.objects.all()
 
