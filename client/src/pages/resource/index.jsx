@@ -14,19 +14,26 @@ export default function ResourcePage() {
           <div>
             <div className={styles.basic}>
               <h1>Oakland Food Drive</h1>
-              <h2 className={styles.ranbyoccur}>Run by: Occur</h2>
+              <h2 style={{ fontWeight: 400, }}>
+                <span style={{ fontWeight: 600 }}>Run by:</span>
+                &nbsp;
+                OCCUR
+              </h2>
             </div>
             <div className={styles.logistics}>
               <p>
                 <b>Date:</b>
+                &nbsp;
                 Friday, March 17 2021
               </p>
               <p>
                 <b>Time:</b>
+                &nbsp;
                 8:00 AM to 5:00 PM PST
               </p>
               <p>
                 <b>Location:</b>
+                &nbsp;
                 Alameda Food Bank
               </p>
             </div>
@@ -52,30 +59,31 @@ export default function ResourcePage() {
       </div>
 
       <div className={styles.rightColumn}>
-        <div className={styles.rightbuttons}>
-          <Link className={styles.moreinfo} href="/">
-            <a>
-              <img alt="more info button" src="/moreinfo.png" />
-            </a>
-          </Link>
-          More Information
+        <div className={styles.buttongroup}>
+          <div className={styles.rightbutton}>
+            <Link className={styles.moreinfo} href="/">
+              <a>
+                <img alt="more info button" src="/moreinfo.png" />
+              </a>
+            </Link>
+            More Information
+          </div>
         </div>
-        <div style={{ display: 'flex' }}>
-          <div className={styles.rightbuttons}>
+        <div className={styles.buttongroup}>
+          <div className={styles.rightbutton}>
             <Calendar2Icon />
             Add to Calendar
           </div>
 
-          <div className={styles.rightbuttons}>
+          <div className={styles.rightbutton}>
             <ShareIcon />
             Share Button
           </div>
         </div>
 
         <div className={styles.contact}>
-          <p className={styles.address}>Address and Contact Information</p>
-          <p className={styles.address2}>
-            <br />
+          <h3>Address and Contact Information</h3>
+          <p className={styles.address}>
             Alameda Food Bank
             <br />
             214 N. Maple Dr
@@ -84,10 +92,10 @@ export default function ResourcePage() {
             <br />
             US
           </p>
-          <p className={styles.phoneNumber}>
-            (924) 554-3459
+          <p className={styles.contactDetails}>
+            <a href="tel:19245543459">(924) 554-3459</a>
             <br />
-            name@email.com
+            <a href="mailto:name@email.com">name@email.com</a>
           </p>
         </div>
       </div>

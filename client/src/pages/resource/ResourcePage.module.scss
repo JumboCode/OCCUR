@@ -6,9 +6,6 @@
   display: flex;
 
   flex-flow: row wrap;
-
-  font-weight: bold;
-  text-align: center;
 }
 
 .logo {
@@ -23,9 +20,9 @@
 }
 
 .paragraph {
-  font-weight: 450;
-  font-size: 25px;
+  font-size: 1rem;
 }
+
 .wrapper > * {
   padding: 10px;
   flex: 1 100%;
@@ -41,16 +38,10 @@
 .logistics {
   padding-top: 50px;
   padding-left: 20px;
-  font-weight: 450;
   font-size: 25px;
   p {
     margin: 0;
   }
-}
-
-.ranbyoccur {
-  color: gray;
-  font-weight: 600;
 }
 
 .eventcontainer {
@@ -59,16 +50,16 @@
     margin: 0;
   }
 }
-.main {
-  text-align: left;
-}
 
 .mainColumns {
   display: flex;
 }
 
 .rightColumn {
-  width: 25%;
+
+  & > :not(:last-child) {
+    margin-bottom: 1.5rem;
+  }
 }
 
 @media all and (min-width: 600px) {
@@ -82,83 +73,26 @@
   .footer { order: 4; }
 }
 
-
-
-.cta {
-  margin: 0 auto;
-  padding: 0.5em 1em;
-  display: inline-flex;
-  align-items: center;
-
-  color: inherit;
-  text-decoration: none;
-
-  &:not(:link) { cursor: default; }
-
-  svg {
-    width: 1.15em;
-    height: 1.15em;
-    margin-left: .5em;
-  }
+.buttongroup {
+  display: flex;
 }
 
-.cta2 {
-  margin: 0 auto;
-  border: 1px solid rgba(0, 0, 0, 0.45);
-  border-radius: 5px;
-  padding: 0.5em 1em;
-
-  display: inline-flex;
-  align-items: center;
-  position: absolute;
-  top: 30px;
-  right: 30px;
-
-  color: inherit;
-  text-decoration: none;
-
-  &:not(:link) { cursor: default; }
-
-  svg {
-    width: 1.15em;
-    height: 1.15em;
-    margin-left: .5em;
-  }
-}
-
-
-.rightbuttons {
-  flex-basis: 40%;
-  display: inline-flex;
+.rightbutton {
+  min-width: 140px;
+  flex: 1;
+  display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
   background: none;
   border: 0;
   font-size: .85em;
   text-decoration: underline;
-  margin-bottom: 3em;
-  padding-top: 1em;
-  padding-bottom: 1em;
-  padding-right: 1em;
-  padding-left: 1em;
+  padding: 1em;
   cursor: pointer;
 
   &:not(:last-child) {
     margin-right: 1em;
-  }
-
-  &:first-child {
-    width: 100%;
-  }
-
-  &:not(:first-child) {
-    align-items: center;
-    flex: 1;
-   width: 35%;
-  }
-
-  &:last-child {
-    width: 100%;
   }
 
   border: 1px solid rgba(0, 0, 0, 0.45);
@@ -177,33 +111,17 @@
   }
 }
 
-div .address2{
-  text-decoration: none;
-}
-
-p .address2{
-  text-align: left;
-}
-
 .moreinfo {
   float: left;
 }
 
 .contact{
   flex-basis: 40%;
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
   background: none;
   border: 0;
-  font-size: .85em;
-  text-decoration: none;
-  margin-bottom: 3em;
-  padding-top: 1em;
-  padding-bottom: 1em;
-  padding-right: 1em;
-  padding-left: 1em;
-  cursor: pointer;
+  font-size: 1rem;
+  padding: 1em;
+  color: #3A3838;
 
   &:not(:last-child) {
     margin-right: 1em;
@@ -232,25 +150,26 @@ p .address2{
     margin-bottom: .5em;
   }
 
-  .address {
+  h3 {
+    font-size: inherit;
     text-decoration: underline;
-    text-align: left;
-    margin-right: 50px;
     white-space: nowrap;
-    margin-bottom: 0px;
+    margin: 0;
+    margin-bottom: .5em;
   }
 
-  .address2 {
-    position: relative;
-    font-weight: lighter;
-    font-size: larger;
-    text-align: left;
-    margin-right: 130px;
-    margin-top: 0px;
-    margin-bottom: 0px;
+  .address {
+    margin: 0;
   }
 
-  .phoneNumber {
-    margin-right: 170px;
+  .contactDetails {
+    margin: 0;
+    margin-top: .5em;
+
+    a {
+      color: inherit;
+      text-decoration: none;
+      font-weight: 600;
+    }
   }
 }
