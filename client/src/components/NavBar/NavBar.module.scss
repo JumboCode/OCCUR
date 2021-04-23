@@ -1,6 +1,6 @@
 @import 'styles/colors';
 
-.navbar {
+.base {
   position: sticky;
   top: 0px;
   display: flex;
@@ -13,12 +13,12 @@
   z-index: 999;
 }
 
-.navbar > :global(.searchbar) {
+.base > :global(.searchbar) {
   flex-grow: 1;
   max-width: 350px;
 }
 
-.navbar > * {
+.base > * {
   margin: 0 10px;
 }
 
@@ -26,7 +26,7 @@
   height: 100%;
 }
 
-.navbar > a {
+.base > a {
   font-size: 18px;
   color: inherit;
   text-decoration: none;
