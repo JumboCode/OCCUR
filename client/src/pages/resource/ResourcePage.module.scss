@@ -1,4 +1,8 @@
+@import '../../styles/mixins';
+
 .base {
+  @include page-padding;
+
   display: flex;
 
   flex-flow: row wrap;
