@@ -224,10 +224,10 @@ class ResourceList(ListAPIView):
     filter_fields = ('id',)
     search_fields = ('name', 'organization',)
 
-    def parse_date(date_string):
+    def parse_date(self, date_string):
         return datetime.strptime(date_string, '%Y-%m-%d')
 
-    def parse_time(time_string):
+    def parse_time(self, time_string):
         return datetime.strptime(time_string, '%H:%M')
 
     def get_queryset(self):
@@ -245,7 +245,7 @@ class ResourceList(ListAPIView):
         queryset = Resource.objects.all()
 
         # Base case, no filters
-        if start_date_r == None and end_date_r == None and min_long == None and max_long == None and min_lat == None and max_lat == None and categories == None:
+        if start_date_r == None and end_date_r == None and min_long == None and max_long == None and min_lat == None and max_lat == None and categories == None and start_time_r == None and end_time_r == None:
             return super().get_queryset()
 
         if categories != None:
@@ -297,6 +297,45 @@ class ResourceList(ListAPIView):
         elif end_date_r != None:
             end_date_r = self.parse_date(end_date_r)
             queryset = queryset.filter(startDate__lte = end_date_r)
+
+        # doing almost identical process to filtering based on date
+        # except now we are using time
+        if start_time_r != None and end_time_r != None:
+            # parsing as times
+            start_time_r = self.parse_time(start_time_r)
+            end_time_r = self.parse_time(end_time_r)
+
+            if start_time_r > end_time_r:
+                return Resource.objects.none()
+
+            # getting resources with times in the given range
+            # all resources whose duration contains the range end time
+            q1 = queryset.filter(
+                startTime__lte = end_time_r,
+                endTime__gte = end_time_r,
+            )
+            # all resources whose duration contains the range start time
+            q2 = queryset.filter(
+                startTime__lte = start_time_r,
+                endTime__gte = start_time_r,
+            )
+            # all resources whose durations are contained within the passed range
+            q3 = queryset.filter(
+                startTime__gte = start_time_r,
+                endTime__lte = end_time_r
+            )
+
+            # combining all results
+            queryset = q1.union(q2)
+            queryset = queryset.union(q3)
+
+        # if only one time range param is supplied
+        elif start_time_r != None:
+            start_time_r = self.parse_time(start_time_r)
+            queryset = queryset.filter(endTime__gte = start_time_r)     
+        elif end_time_r != None:
+            end_time_r = self.parse_time(end_time_r)
+            queryset = queryset.filter(startTime__lte = end_time_r)
 
         # filtering by lat. & long. ranges passed
         if min_long != None:
