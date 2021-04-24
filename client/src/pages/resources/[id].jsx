@@ -1,15 +1,25 @@
 import React from 'react';
-import Link from 'next/link';
+import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
+
+import Link from 'next/link';
+import NotFound from 'pages/404';
+import Error from 'next/error';
 
 import ArrowIcon from '../../../public/view.svg';
 import Calendar2Icon from '../../../public/calendar2.svg';
 import ShareIcon from '../../../public/share.svg';
 
+import api, { HTTPError } from 'api';
+
 import styles from './ResourceDetail.module.scss';
 
-export default function ResourcePage() {
+
+export default function ResourcePage({ errorCode, data }) {
   const router = useRouter();
+
+  if (errorCode === 404) return <NotFound />;
+  if (errorCode !== null) return <Error statusCode={errorCode} />;
 
   return (
     <div className={styles.base}>
@@ -108,4 +118,29 @@ export default function ResourcePage() {
       </div>
     </div>
   );
+}
+ResourcePage.propTypes = {
+  errorCode: PropTypes.number,
+  data: PropTypes.shape({
+    // TODO:
+  }),
+};
+ResourcePage.defaultProps = { errorCode: null, data: null };
+
+export async function getServerSideProps(ctx) {
+  const { id } = ctx.query;
+  // Non-numeric IDs should generate 404 without even making a request
+  if (!/^\d+$/.test(id)) return { props: { errorCode: 404 } };
+
+  let data;
+  try {
+    data = await api.get(`/${id}/resource`);
+  } catch (e) {
+    let status = 500; // handle errors as 500 by default
+    if (e instanceof HTTPError && e.status === 404) status = 404; // but 404 if resource not found
+    ctx.res.statusCode = status;
+    return { props: { errorCode: status } };
+  }
+
+  return { props: { data } };
 }
