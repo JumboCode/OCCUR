@@ -36,15 +36,6 @@ export default function SidebarFilter({ values, onChange }) {
   );
 }
 SidebarFilter.propTypes = {
-  values: PropTypes.arrayOf(PropTypes.oneOf([
-    'FOOD',
-    'HOUSING',
-    'COMM_GIVE',
-    'MENTAL_HEALTH',
-    'INFO',
-    'EVENTS',
-    'WIFI',
-    'OTHER',
-  ])).isRequired,
+  values: PropTypes.arrayOf(PropTypes.oneOf(RESOURCE_CATEGORIES.map((cat) => cat.id))).isRequired,
   onChange: PropTypes.func.isRequired,
 };
