@@ -1,10 +1,12 @@
 import React from 'react';
-import styles from './ResourcePage.module.scss';
-import ArrowIcon from '../../../public/view.svg';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+
+import ArrowIcon from '../../../public/view.svg';
 import Calendar2Icon from '../../../public/calendar2.svg';
 import ShareIcon from '../../../public/share.svg';
-import { useRouter } from 'next/router';
+
+import styles from './ResourceDetail.module.scss';
 
 export default function ResourcePage() {
   const router = useRouter();

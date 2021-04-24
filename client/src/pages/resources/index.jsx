@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+
 import ResourceCard from 'components/ResourceCard';
 import SidebarFilter from 'components/SidebarFilter/SidebarFilter';
+
 import api from 'api';
 
-import styles from './resources.module.scss';
+import styles from './ResourceSearch.module.scss';
 
 export default function ResourcesPage({ data }) {
   const [values, setValues] = useState([]);
