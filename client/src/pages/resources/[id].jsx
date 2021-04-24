@@ -13,6 +13,7 @@ import ShareIcon from '../../../public/share.svg';
 import api, { HTTPError } from 'api';
 
 import styles from './ResourceDetail.module.scss';
+import { slugify } from 'utils';
 
 
 export default function ResourcePage({ errorCode, data }) {
@@ -128,10 +129,11 @@ ResourcePage.propTypes = {
 ResourcePage.defaultProps = { errorCode: null, data: null };
 
 export async function getServerSideProps(ctx) {
-  const { id } = ctx.query;
+  const [id, ...slug] = ctx.query.id.toLowerCase().split('-');
   // Non-numeric IDs should generate 404 without even making a request
   if (!/^\d+$/.test(id)) return { props: { errorCode: 404 } };
 
+  // Look for resource by ID and handle errors
   let data;
   try {
     data = await api.get(`/${id}/resource`);
@@ -140,6 +142,15 @@ export async function getServerSideProps(ctx) {
     if (e instanceof HTTPError && e.status === 404) status = 404; // but 404 if resource not found
     ctx.res.statusCode = status;
     return { props: { errorCode: status } };
+  }
+
+  // Make sure slug (if it was provided) matches resource title
+  const titleSlug = slugify(data.name).split('-');
+  for (let i = 0; i < slug.length; i += 1) {
+    if (slug[i] !== titleSlug[i]) {
+      ctx.res.statusCode = 404;
+      return { props: { errorCode: 404 } };
+    }
   }
 
   return { props: { data } };
