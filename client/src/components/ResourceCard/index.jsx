@@ -13,15 +13,15 @@ import ShareIcon from '../../../public/share.svg';
 
 
 export default function ResourceCard({
-  resourceTitle, organization, startDate, endDate, location, imageSrc, startTime, endTime, href, as,
+  name, organization, startDate, endDate, location, flyer, startTime, endTime,
 }) {
   return (
     <div className={styles.base}>
-      <div className={styles.leftside} style={imageSrc && { backgroundImage: `url(${imageSrc})` }} />
+      <div className={styles.leftside} style={flyer && { backgroundImage: `url(${flyer})` }} />
 
       <div className={styles.rightside}>
         <div className={styles.content}>
-          <h3>{resourceTitle}</h3>
+          <h3>{name}</h3>
           {organization && <p className={styles.subtitle}>{organization}</p>}
           { (startDate || endDate) && (
             <p className={styles['icon-line']}>
@@ -51,13 +51,6 @@ export default function ResourceCard({
           }
         </div>
 
-        {href && (
-          <MaybeLink href={href} as={as} className={styles.cta}>
-            View more
-            <ViewIcon />
-          </MaybeLink>
-        )}
-
         <div className={styles.buttons}>
           <button type="button">
             <Calendar2Icon />
@@ -73,15 +66,7 @@ export default function ResourceCard({
   );
 }
 
-const timeValidate = (props, propName, componentName) => {
-  if (!props[propName]) return undefined;
-  if (!/\d{2}:\d{2}:\d{2}/.test(props[propName])) {
-    return new Error(`Invalid prop \`${propName}\` supplied to \`${componentName}\`. Expected string of form HH:MM:SS.`);
-  }
-  return undefined;
-};
-
-const dateValidate = (props, propName, componentName) => {
+const datePropType = (props, propName, componentName) => {
   if (!props[propName]) return undefined;
   if (!/\d{4}-\d{2}-\d{2}/.test(props[propName])) {
     return new Error(`Invalid prop \`${propName}\` supplied to \`${componentName}\`. Expected string of form YYYY-MM-DD.`);
@@ -89,10 +74,24 @@ const dateValidate = (props, propName, componentName) => {
   return undefined;
 };
 
+const timePropType = (props, propName, componentName) => {
+  if (!props[propName]) return undefined;
+  if (!/\d{2}:\d{2}:\d{2}/.test(props[propName])) {
+    return new Error(`Invalid prop \`${propName}\` supplied to \`${componentName}\`. Expected string of form HH:MM:SS.`);
+  }
+  return undefined;
+};
+
 ResourceCard.propTypes = {
-  resourceTitle: PropTypes.string.isRequired,
-  imageSrc: PropTypes.string,
+  name: PropTypes.string.isRequired,
   organization: PropTypes.string,
+
+  startDate: datePropType,
+  endDate: datePropType,
+  startTime: timePropType,
+  endTime: timePropType,
+
+  flyer: PropTypes.string,
   location: PropTypes.shape({
     street_address: PropTypes.string,
     city: PropTypes.string,
@@ -101,22 +100,14 @@ ResourceCard.propTypes = {
     latitude: PropTypes.number,
     longitude: PropTypes.number,
   }),
-  startDate: dateValidate,
-  endDate: dateValidate,
-  startTime: timeValidate,
-  endTime: timeValidate,
-  href: PropTypes.string,
-  as: PropTypes.string,
 };
 
 ResourceCard.defaultProps = {
-  imageSrc: null,
   organization: null,
   startDate: null,
   endDate: null,
   startTime: null,
   endTime: null,
+  flyer: null,
   location: null,
-  href: null,
-  as: null,
 };

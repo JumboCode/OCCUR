@@ -19,17 +19,7 @@ export default function ResourcesPage({ data }) {
 
       <div className={styles.right}>
         { data.map((r) => (
-          <ResourceCard
-            key={r.id}
-            resourceTitle={r.name}
-            organization={r.organization}
-            startDate={r.startDate}
-            endDate={r.endDate}
-            location={r.location}
-            imageSrc={r.flyer}
-            startTime={r.startTime}
-            endTime={r.endTime}
-          />
+          <ResourceCard {...r} />
         )) }
       </div>
     </div>
