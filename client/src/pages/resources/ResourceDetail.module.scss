@@ -124,6 +124,7 @@
   text-decoration: underline;
   padding: 1em;
   cursor: pointer;
+  color: inherit;
 
   &:not(:last-child) {
     margin-right: 1em;
