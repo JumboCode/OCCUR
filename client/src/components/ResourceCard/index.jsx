@@ -1,10 +1,8 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { RESOURCE_PROP_TYPES, RESOURCE_DEFAULT_PROPS } from 'data/resources';
 import styles from './ResourceCard.module.scss';
 
 import Link from 'next/link';
-
-import { slugify } from 'utils';
 
 import ClockIcon from '../../../public/clock.svg';
 import PinIcon from '../../../public/pin.svg';
@@ -12,6 +10,8 @@ import CalendarIcon from '../../../public/calendar.svg';
 import ViewIcon from '../../../public/view.svg';
 import Calendar2Icon from '../../../public/calendar2.svg';
 import ShareIcon from '../../../public/share.svg';
+
+import { slugify } from 'utils';
 
 
 export default function ResourceCard({
@@ -75,50 +75,5 @@ export default function ResourceCard({
   );
 }
 
-const datePropType = (props, propName, componentName) => {
-  if (!props[propName]) return undefined;
-  if (!/\d{4}-\d{2}-\d{2}/.test(props[propName])) {
-    return new Error(`Invalid prop \`${propName}\` supplied to \`${componentName}\`. Expected string of form YYYY-MM-DD.`);
-  }
-  return undefined;
-};
-
-const timePropType = (props, propName, componentName) => {
-  if (!props[propName]) return undefined;
-  if (!/\d{2}:\d{2}:\d{2}/.test(props[propName])) {
-    return new Error(`Invalid prop \`${propName}\` supplied to \`${componentName}\`. Expected string of form HH:MM:SS.`);
-  }
-  return undefined;
-};
-
-ResourceCard.propTypes = {
-  id: PropTypes.number.isRequired,
-
-  name: PropTypes.string.isRequired,
-  organization: PropTypes.string,
-
-  startDate: datePropType,
-  endDate: datePropType,
-  startTime: timePropType,
-  endTime: timePropType,
-
-  flyer: PropTypes.string,
-  location: PropTypes.shape({
-    street_address: PropTypes.string,
-    city: PropTypes.string,
-    state: PropTypes.string,
-    zip_code: PropTypes.string,
-    latitude: PropTypes.number,
-    longitude: PropTypes.number,
-  }),
-};
-
-ResourceCard.defaultProps = {
-  organization: null,
-  startDate: null,
-  endDate: null,
-  startTime: null,
-  endTime: null,
-  flyer: null,
-  location: null,
-};
+ResourceCard.propTypes = RESOURCE_PROP_TYPES;
+ResourceCard.defaultProps = RESOURCE_DEFAULT_PROPS;
