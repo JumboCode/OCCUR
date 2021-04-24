@@ -2,7 +2,9 @@
 
 .base {
   @include page-padding;
+}
 
+.columns {
   display: flex;
 
   @media (max-width: 650px) {
@@ -11,6 +13,23 @@
     .rightColumn {
       margin: 2rem 0;
     }
+  }
+}
+
+.backButton {
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+
+  background: none;
+  border: 0;
+  cursor: pointer;
+
+  svg {
+    height: .8em;
+    margin-right: 1ch;
+    width: auto;
   }
 }
 
