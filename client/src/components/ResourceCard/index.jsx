@@ -2,7 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styles from './ResourceCard.module.scss';
 
-import MaybeLink from 'components/MaybeLink';
+import Link from 'next/link';
+
+import { slugify } from 'utils';
 
 import ClockIcon from '../../../public/clock.svg';
 import PinIcon from '../../../public/pin.svg';
@@ -13,7 +15,7 @@ import ShareIcon from '../../../public/share.svg';
 
 
 export default function ResourceCard({
-  name, organization, startDate, endDate, location, flyer, startTime, endTime,
+  id, name, organization, startDate, endDate, location, flyer, startTime, endTime,
 }) {
   return (
     <div className={styles.base}>
@@ -51,6 +53,13 @@ export default function ResourceCard({
           }
         </div>
 
+        <Link href="/resources/[id]" as={`/resources/${id}-${slugify(name, 5)}`}>
+          <a className={styles.cta}>
+            View more
+            <ViewIcon />
+          </a>
+        </Link>
+
         <div className={styles.buttons}>
           <button type="button">
             <Calendar2Icon />
@@ -83,6 +92,8 @@ const timePropType = (props, propName, componentName) => {
 };
 
 ResourceCard.propTypes = {
+  id: PropTypes.number.isRequired,
+
   name: PropTypes.string.isRequired,
   organization: PropTypes.string,
 
