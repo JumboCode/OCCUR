@@ -3,6 +3,7 @@ import { RESOURCE_PROP_TYPES, RESOURCE_DEFAULT_PROPS } from 'data/resources';
 import styles from './ResourceCard.module.scss';
 
 import Link from 'next/link';
+import { DateRange, TimeRange } from 'components/DateRange';
 
 import ClockIcon from '../../../public/clock.svg';
 import PinIcon from '../../../public/pin.svg';
@@ -28,18 +29,14 @@ export default function ResourceCard({
           { (startDate || endDate) && (
             <p className={styles['icon-line']}>
               <CalendarIcon />
-              {startDate && new Date(startDate).toLocaleDateString(undefined, { timeZone: 'UTC' })}
-              {endDate && (startDate ? ' to ' : ' Until ')}
-              {endDate && new Date(endDate).toLocaleDateString(undefined, { timeZone: 'UTC' })}
+              <DateRange from={startDate} to={endDate} />
             </p>
           )}
           {
             (startTime || endTime) && (
               <p className={styles['icon-line']}>
                 <ClockIcon />
-                {startTime && new Date(`1970-01-01T${startTime}Z`).toLocaleTimeString('en-US', { timeStyle: 'short', timeZone: 'UTC' })}
-                {endTime && (startTime ? ' to ' : ' Until ')}
-                {endTime && new Date(`1970-01-01T${endTime}Z`).toLocaleTimeString('en-US', { timeStyle: 'short', timeZone: 'UTC' })}
+                <TimeRange from={startTime} to={endTime} />
               </p>
             )
           }
