@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 // import ReactDOM from 'react-dom';
 import { useForm } from 'react-hook-form';
@@ -15,7 +15,6 @@ import Close from '../../../public/icons/close.svg';
 
 
 const cx = classNames.bind(styles);
-
 // temporary list of admin users
 const ADMINUSERS = [
   {
@@ -36,29 +35,31 @@ const ADMINUSERS = [
   },
 ];
 
-export default function AdminManager({ blocked, showModal }) {
+export default function AdminManager({ blocked }) {
+  const [modal, setModal] = useState(false);
+  function handleClick() {
+    setModal(!modal);
+  }
   const { register, handleSubmit } = useForm();
   const onSubmit = (data) => console.log(data);
-  const openModal = () => { console.log('In Open'); showModal = true; };
-  const closeModal = () => { console.log('In Close'); showModal = false; };
   const Modal = () => (
     <div className={cx('modalWindow')}>
       <form>
-        <Close onClick={closeModal} className={cx('closeButton')} type="button"/>
+        <Close onClick={handleClick} className={cx('closeButton')} type="button"/>
         <h4>Add Admin</h4>
         Admin Name
         <input name="Admin Name" {...register('Admin Name')} placeholder="Admin Name" />
         Admin Email
         <input name="Admin Email" {...register('Admin Email')} placeholder="Admin Email" />
         <button onClick={handleSubmit(onSubmit)} className={cx('saveButton')} type="button">Save</button>
-        <button onClick={closeModal} className={cx('cancelButton')} type="button">Cancel</button>
+        <button onClick={handleClick} className={cx('cancelButton')} type="button">Cancel</button>
       </form>
     </div>
   );
 
   return blocked ? <NotFound /> : (
     <div className={cx('base')}>
-      {showModal ? <Modal /> : null }
+      {modal ? <Modal /> : null }
       <div className={cx('mainAdminContainer')}>
         <div className={cx('buttonContainer')}>
           <div className={cx('addAdmin')}>
@@ -66,7 +67,7 @@ export default function AdminManager({ blocked, showModal }) {
             <button
               className={cx('addAdminButton')}
               type="button"
-              onClick={openModal}
+              onClick={handleClick}
             >
               Add Admin
             </button>
@@ -91,10 +92,6 @@ export default function AdminManager({ blocked, showModal }) {
 
 AdminManager.propTypes = {
   blocked: PropTypes.bool.isRequired,
-  showModal: PropTypes.bool,
-};
-AdminManager.defaultProps = {
-  showModal: false,
 };
 
 export function getServerSideProps(ctx) {
