@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ReactDOM from 'react-dom';
+// import ReactDOM from 'react-dom';
 import { useForm } from 'react-hook-form';
 import { isAdmin } from 'auth';
 import NotFound from 'pages/404';
@@ -36,10 +36,10 @@ const ADMINUSERS = [
   },
 ];
 
-export default function AdminManager({ blocked }) {
+export default function AdminManager({ blocked, showModal }) {
   const { register, handleSubmit } = useForm();
   const onSubmit = (data) => console.log(data);
-  let showModal = true;
+  const openModal = () => { console.log('In Open'); showModal = true; };
   const closeModal = () => { console.log('In Close'); showModal = false; };
   const Modal = () => (
     <div className={cx('modalWindow')}>
@@ -63,7 +63,13 @@ export default function AdminManager({ blocked }) {
         <div className={cx('buttonContainer')}>
           <div className={cx('addAdmin')}>
             <Circleplus className={cx('circleIcon')} />
-            <button className={cx('addAdminButton')} type="button">Add Admin</button>
+            <button
+              className={cx('addAdminButton')}
+              type="button"
+              onClick={openModal}
+            >
+              Add Admin
+            </button>
           </div>
         </div>
         <div className={cx('adminList')}>
@@ -85,6 +91,10 @@ export default function AdminManager({ blocked }) {
 
 AdminManager.propTypes = {
   blocked: PropTypes.bool.isRequired,
+  showModal: PropTypes.bool,
+};
+AdminManager.defaultProps = {
+  showModal: false,
 };
 
 export function getServerSideProps(ctx) {
