@@ -19,7 +19,7 @@ export default function ResourcesPage({ data }) {
 
       <div className={styles.right}>
         { data.map((r) => (
-          <ResourceCard {...r} />
+          <ResourceCard key={r.id} {...r} />
         )) }
       </div>
     </div>
