@@ -46,12 +46,13 @@ def apiUrlsList(request):
 # Functionality: create new resource, retrieve all resources with given query params
 #
 class ResourceListCreate(ListCreateAPIView):
-    # All unrequired fields are populated with None values if empty
     queryset = Resource.objects.all()
     serializer_class = ResourceSerializer
     filter_backends = (DjangoFilterBackend, SearchFilter)
     filter_fields = ('id',)
     search_fields = ('name', 'organization',)
+
+    # All unrequired fields are populated with None values if empty
     defaultOptionalVals = { 'flyer': None, 'meetingLink': None, 'location': {}, 'flyerId': None, 'startDate': None, 'endDate': None, 'link': None, 'startTime': None, 'endTime': None, 'phone': None, 'email': None, 'isRecurring': None, 'recurrenceDays': [] } 
 
     def inputValidator(self, data):
@@ -138,7 +139,13 @@ class ResourceListCreate(ListCreateAPIView):
         errors = self.mergeFieldErrors(vErrors, serializer.errors)
         return Response(errors, status=status.HTTP_400_BAD_REQUEST)
     
-    # retrieves list of resources 
+
+    def parse_date(self, date_string):
+        return datetime.strptime(date_string, '%Y-%m-%d')
+
+    def parse_time(self, time_string):
+        return datetime.strptime(time_string, '%H:%M')
+
     def get_queryset(self):
         # retrieving query params from request
         start_date_r = self.request.query_params.get('start_date_r', None)
@@ -148,11 +155,11 @@ class ResourceListCreate(ListCreateAPIView):
         min_lat = self.request.query_params.get('min_lat', None)
         max_lat = self.request.query_params.get('max_lat', None)
         categories = self.request.query_params.get('category', None)
-
-        queryset = Resource.objects.all()
+        start_time_r = self.request.query_params.get('start_time_r', None)
+        end_time_r = self.request.query_params.get('end_time_r', None)
 
         # Base case, no filters
-        if start_date_r == None and end_date_r == None and min_long == None and max_long == None and min_lat == None and max_lat == None and categories == None:
+        if start_date_r == None and end_date_r == None and min_long == None and max_long == None and min_lat == None and max_lat == None and categories == None and start_time_r == None and end_time_r == None:
             return super().get_queryset()
 
         if categories != None:
@@ -166,12 +173,12 @@ class ResourceListCreate(ListCreateAPIView):
             queryset = queryset.filter(
                 category__in = categories
             )
-        
+
         # if both are supplied
         if start_date_r != None and end_date_r != None:
             # parsing as dates
-            start_date_r = datetime.strptime(start_date_r, '%Y-%m-%d')
-            end_date_r = datetime.strptime(end_date_r, '%Y-%m-%d')
+            start_date_r = self.parse_date(start_date_r)
+            end_date_r = self.parse_date(end_date_r)
 
             if start_date_r > end_date_r:
                 return Resource.objects.none()
@@ -193,17 +200,106 @@ class ResourceListCreate(ListCreateAPIView):
                 endDate__lte = end_date_r
             )
 
+            # all resources that don't end and whose startDate's are captured in the range
+            q4 = queryset.filter(
+                    endDate__isnull = True,
+                    startDate__lte = end_date_r
+            )
+
+            # all resources that don't have a startDate and whose endDate's are captured in the range
+            q5 = queryset.filter(
+                    startDate__isnull = True,
+                    endDate__gte = start_date_r 
+            )
+
+            # all resources without startDate or endDate -- these are always considered active
+            q6 = queryset.filter(
+                    startDate__isnull = True,
+                    endDate__isnull = True
+            )
+
             # combining all results
-            queryset = q1.union(q2)
-            queryset = queryset.union(q3)
+            queryset = q1.union(q2, q3, q4, q5, q6)
 
         # if only one date range param is supplied
         elif start_date_r != None:
-            start_date_r = datetime.strptime(start_date_r, '%Y-%m-%d')
-            queryset = queryset.filter(endDate__gte = start_date_r)     
+            start_date_r = self.parse_date(start_date_r)
+            # all events that end after the start date are included
+            q1 = queryset.filter(endDate__gte = start_date_r)     
+            # all events that never end are also included
+            q2 = queryset.filter(endDate__isnull = True)
+            queryset = q1.union(q2)
         elif end_date_r != None:
-            end_date_r = datetime.strptime(end_date_r, '%Y-%m-%d')
-            queryset = queryset.filter(startDate__lte = end_date_r)
+            end_date_r = self.parse_date(end_date_r)
+            # all events that start before the end date are included
+            q1 = queryset.filter(startDate__lte = end_date_r)
+            # all events that do not have a start date are also included
+            q2 = queryset.filter(startDate__isnull = True)
+            queryset = q1.union(q2)
+
+        # doing almost identical process to filtering based on date
+        # except now we are using time
+        if start_time_r != None and end_time_r != None:
+            # parsing as times
+            start_time_r = self.parse_time(start_time_r)
+            end_time_r = self.parse_time(end_time_r)
+
+            if start_time_r > end_time_r:
+                return Resource.objects.none()
+
+            # getting resources with times in the given range
+            # all resources whose duration contains the range end time
+            q1 = queryset.filter(
+                startTime__lte = end_time_r,
+                endTime__gte = end_time_r,
+            )
+            # all resources whose duration contains the range start time
+            q2 = queryset.filter(
+                startTime__lte = start_time_r,
+                endTime__gte = start_time_r,
+            )
+            # all resources whose durations are contained within the passed range
+            q3 = queryset.filter(
+                startTime__gte = start_time_r,
+                endTime__lte = end_time_r
+            )
+
+            # all resources that don't end and whose startTime's are captured in the range
+            q4 = queryset.filter(
+                    endTime__isnull = True,
+                    startTime__lte = end_time_r
+            )
+
+            # all resources that don't have a startTime and whose endTime's are captured in the range
+            q5 = queryset.filter(
+                    startTime__isnull = True,
+                    endTime__gte = start_time_r 
+            )
+
+            # all resources without startTime or endTime -- these are always considered active
+            q6 = queryset.filter(
+                    startTime__isnull = True,
+                    endTime__isnull = True
+            )
+
+            # combining all results
+            queryset = q1.union(q2, q3, q4, q5, q6)
+
+        # if only one time range param is supplied
+        elif start_time_r != None:
+            start_time_r = self.parse_time(start_time_r)
+            # all events that end after the start time are included
+            q1 = queryset.filter(endTime__gte = start_time_r)     
+            # all events that never end are also included
+            q2 = queryset.filter(endTime__isnull = True)
+            queryset = q1.union(q2)
+        elif end_time_r != None:
+            end_time_r = self.parse_time(end_time_r)
+            # all events that start before the end time are included
+            q1 = queryset.filter(startTime__lte = end_time_r)
+            # all events that do not have a start time are also included
+            q2 = queryset.filter(startTime__isnull = True)
+            queryset = q1.union(q2)
 
         # filtering by lat. & long. ranges passed
         if min_long != None:
@@ -328,6 +424,7 @@ class LocationRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
 # Purpose: View for retrieving list of all locations
 # Functionality: filters by latitude and longitude
 #
+
 class LocationList(ListAPIView):
     queryset = Location.objects.all()
     serializer_class = LocationSerializer
