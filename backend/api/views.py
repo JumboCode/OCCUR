@@ -26,12 +26,14 @@ from rest_framework.decorators import api_view
 @api_view(['GET'])
 def apiUrlsList(request):
     Urls = {
-        'list all resources': 'api/v1/list/resource',
-        'list all locations': 'api/v1/list/location',
-        'get a resource': 'api/v1/<int:id>/resource',
-        'create a new resource': 'api/v1/new/resource',
-        'update a resource': 'api/v1/<int:id>/resource',
-        'delete a resource': 'api/v1/<int:id>/resource',
+        'GET': 'resources/',
+        'GET': 'resource/<int:id>/',
+        'POST': 'resources/',
+        'PUT': 'resources/<int:id>/',
+        'DELETE': 'resources/<int:id>/',
+        'GET': 'locations',
+        'PUT': 'locations/<int:id>/',
+        'DELETE': 'locations/<int:id>/',
     }
     return Response(Urls)
 
