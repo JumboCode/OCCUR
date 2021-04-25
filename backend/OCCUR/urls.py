@@ -20,15 +20,15 @@ from api import admin_views
 
 urlpatterns = [
     path('',views.apiUrlsList, name="apiUrlsList" ),
-    path('resources/', views.ResourceListCreate.as_view()),
-    path('locations/<int:id>/', views.LocationRetrieveUpdateDestroy.as_view()),
-    path('resources/<int:id>/', views.ResourceRetrieveUpdateDestroy.as_view()),
-    path('resources/', views.ResourceListCreate.as_view()),
+    path('resources', views.ResourceListCreate.as_view()),
+    path('locations/<int:id>', views.LocationRetrieveUpdateDestroy.as_view()),
+    path('resources/<int:id>', views.ResourceRetrieveUpdateDestroy.as_view()),
+    path('resources', views.ResourceListCreate.as_view()),
     path('locations', views.LocationList.as_view()),
-    path('admins/', admin_views.get_admins),
-    path('admins/<id>/', admin_views.delete_admin),
-    path('admins/', admin_views.new_admin),
-    path('admins/<id>/', admin_views.update_admin),
+    path('admins', admin_views.get_admins),
+    path('admins/<id>', admin_views.delete_admin),
+    path('admins', admin_views.new_admin),
+    path('admins/<id>', admin_views.update_admin),
     path('admin/', admin.site.urls
     ),
 ]
