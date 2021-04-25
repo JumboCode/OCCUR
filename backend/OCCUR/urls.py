@@ -29,6 +29,5 @@ urlpatterns = [
     path('admins/<id>', admin_views.delete_admin),
     path('admins', admin_views.new_admin),
     path('admins/<id>', admin_views.update_admin),
-    path('admin/', admin.site.urls
-    ),
+    path('admin/', admin.site.urls),
 ]

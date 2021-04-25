@@ -146,6 +146,8 @@ class ResourceListCreate(ListCreateAPIView):
 
     def get_queryset(self):
         # retrieving query params from request
+        queryset = Resource.objects.all()
+
         start_date_r = self.request.query_params.get('start_date_r', None)
         end_date_r = self.request.query_params.get('end_date_r', None)
         min_long = self.request.query_params.get('min_long', None)
@@ -381,7 +383,7 @@ class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
             return Response(ResourceSerializer(resource).data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# ---------------------------------- LOCATION API VIEWS ---------------------------------#
+# -------------------------------------- LOCATION API VIEWS ---------------------------------------#
 
 # 
 # LocationRetrieveUpdateDestroy
