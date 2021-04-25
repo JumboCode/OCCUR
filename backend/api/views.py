@@ -37,7 +37,7 @@ def apiUrlsList(request):
 
 class ResourceCreate(CreateAPIView):
     # All unrequired fields are populated with None values if empty
-    defaultOptionalVals = { 'flyer': None, 'meetingLink': None, 'location': {}, 'flyerId': None, 'startDate': None, 'endDate': None, 'link': None, 'startTime': None, 'endTime': None, 'phone': None, 'email': None } 
+    defaultOptionalVals = { 'flyer': None, 'meetingLink': None, 'location': {}, 'flyerId': None, 'startDate': None, 'endDate': None, 'link': None, 'startTime': None, 'endTime': None, 'phone': None, 'email': None, 'isRecurring': None, 'recurrenceDays': [] } 
 
     def inputValidator(self, data):
         # dict of list matches the format of serializer.errors
@@ -49,6 +49,9 @@ class ResourceCreate(CreateAPIView):
         nowStr = datetime.now().strftime('%Y-%m-%d')
         if data['startDate'] and data['startDate'] < nowStr:
             errorCatalog['startDate'].append('Start date must occur in the future.')
+
+        if data['startTime'] and data['endTime'] and data['startTime'] > data['endTime']:
+            errorCatalog['startDate'].append('Start time must occur before end time.')
 
         if data['location'] != {} and data['location'] and len(data['location']['zip_code']) != 5 and len(data['location']['zip_code']) != 0:
             # matching format of error in foreign key field
@@ -62,6 +65,10 @@ class ResourceCreate(CreateAPIView):
         correctDataURLStart = 'data:image'
         if data['flyer'] != None and not correctDataURLStart == data['flyer'][:len(correctDataURLStart)]:
             errorCatalog['flyer'].append('The flyer is not a valid image.')
+
+        phoneNumberPattern = r"^[0-9]*$"
+        if data['phone'] != None and not re.match(phoneNumberPattern, data['phone']):
+            errorCatalog['phone'].append('Phone numbers must only contain digits')
 
         return dict(errorCatalog)
 
