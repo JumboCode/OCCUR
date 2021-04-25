@@ -38,6 +38,13 @@ def apiUrlsList(request):
     }
     return Response(Urls)
 
+# ---------------------------------- RESOURCE API VIEWS ------------------------------------#    
+
+#
+# ResourceListCreate
+# Purpose: View for GET, POST resources
+# Functionality: create new resource, retrieve all resources with given query params
+#
 class ResourceListCreate(ListCreateAPIView):
     # All unrequired fields are populated with None values if empty
     queryset = Resource.objects.all()
@@ -99,6 +106,7 @@ class ResourceListCreate(ListCreateAPIView):
                 
         return result
 
+    # creates new resource
     def create(self, request, *args, **kwargs): 
         self.fillRequestBlanks(request.data, self.defaultOptionalVals)
         vErrors = self.inputValidator(request.data)  
@@ -130,7 +138,7 @@ class ResourceListCreate(ListCreateAPIView):
         errors = self.mergeFieldErrors(vErrors, serializer.errors)
         return Response(errors, status=status.HTTP_400_BAD_REQUEST)
     
-
+    # retrieves list of resources 
     def get_queryset(self):
         # retrieving query params from request
         start_date_r = self.request.query_params.get('start_date_r', None)
@@ -212,6 +220,11 @@ class ResourceListCreate(ListCreateAPIView):
 
         return queryset
 
+# 
+# ResourceRetrieveUpdateDestroy
+# Purpose: View for GET, DELETE, PUT, PATCH of resources
+# Functionality: given resource id, retreive resource, modify or delete it
+#
 class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     queryset = Resource.objects.all()
     lookup_field = 'id'
@@ -274,8 +287,13 @@ class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
             return Response(ResourceSerializer(resource).data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # TO DO: Make patch request 
+# ---------------------------------- LOCATION API VIEWS ---------------------------------#
 
+# 
+# LocationRetrieveUpdateDestroy
+# Purpose: View for DELETE, PUT, PATCH
+# Functionality: given location id, location is retreived then modified or deleted
+#
 class LocationRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     queryset = Location.objects.all()
     lookup_field = 'id'
@@ -305,96 +323,11 @@ class LocationRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
             })
         return response
 
-# class ResourceList(ListAPIView):
-#     queryset = Resource.objects.all()
-#     serializer_class = ResourceSerializer
-#     filter_backends = (DjangoFilterBackend, SearchFilter)
-#     filter_fields = ('id',)
-#     search_fields = ('name', 'organization',)
-
-#     def get_queryset(self):
-#         # retrieving query params from request
-#         start_date_r = self.request.query_params.get('start_date_r', None)
-#         end_date_r = self.request.query_params.get('end_date_r', None)
-#         min_long = self.request.query_params.get('min_long', None)
-#         max_long = self.request.query_params.get('max_long', None)
-#         min_lat = self.request.query_params.get('min_lat', None)
-#         max_lat = self.request.query_params.get('max_lat', None)
-#         categories = self.request.query_params.get('category', None)
-
-#         queryset = Resource.objects.all()
-
-#         # Base case, no filters
-#         if start_date_r == None and end_date_r == None and min_long == None and max_long == None and min_lat == None and max_lat == None and categories == None:
-#             return super().get_queryset()
-
-#         if categories != None:
-#             # getting list of categories passed
-#             categories = categories.split(',')
-#             valid_categories = [c[0] for c in Resource.RESOURCE_CATEGORIES]
-#             for c in categories:
-#                 if not c in valid_categories:
-#                     raise ValidationError(detail = 'Invalid category passed in filter: {}'.format(c))
-
-#             queryset = queryset.filter(
-#                 category__in = categories
-#             )
-        
-#         # if both are supplied
-#         if start_date_r != None and end_date_r != None:
-#             # parsing as dates
-#             start_date_r = datetime.strptime(start_date_r, '%Y-%m-%d')
-#             end_date_r = datetime.strptime(end_date_r, '%Y-%m-%d')
-
-#             if start_date_r > end_date_r:
-#                 return Resource.objects.none()
-
-#             # getting resources with dates in the given range
-#             # all resources whose duration contains the range end date
-#             q1 = queryset.filter(
-#                 startDate__lte = end_date_r,
-#                 endDate__gte = end_date_r,
-#             )
-#             # all resources whose duration contains the range start date
-#             q2 = queryset.filter(
-#                 startDate__lte = start_date_r,
-#                 endDate__gte = start_date_r,
-#             )
-#             # all resources whose durations are contained within the passed range
-#             q3 = queryset.filter(
-#                 startDate__gte = start_date_r,
-#                 endDate__lte = end_date_r
-#             )
-
-#             # combining all results
-#             queryset = q1.union(q2)
-#             queryset = queryset.union(q3)
-
-#         # if only one date range param is supplied
-#         elif start_date_r != None:
-#             start_date_r = datetime.strptime(start_date_r, '%Y-%m-%d')
-#             queryset = queryset.filter(endDate__gte = start_date_r)     
-#         elif end_date_r != None:
-#             end_date_r = datetime.strptime(end_date_r, '%Y-%m-%d')
-#             queryset = queryset.filter(startDate__lte = end_date_r)
-
-#         # filtering by lat. & long. ranges passed
-#         if min_long != None:
-#             queryset = queryset.filter(location__longitude__gte = min_long)
-
-#         if max_long != None:
-#             queryset = queryset.filter(location__longitude__lte = max_long)
-
-#         if min_lat != None:
-#             queryset = queryset.filter(location__latitude__gte = min_lat)
-
-#         if max_lat != None:
-#             queryset = queryset.filter(location__latitude__lte = max_lat)
-
-#         return queryset
-        
-
-
+# 
+# LocationList
+# Purpose: View for retrieving list of all locations
+# Functionality: filters by latitude and longitude
+#
 class LocationList(ListAPIView):
     queryset = Location.objects.all()
     serializer_class = LocationSerializer
