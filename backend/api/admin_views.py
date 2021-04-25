@@ -8,6 +8,22 @@ import dotenv
 import os
 from django.views.decorators.csrf import csrf_protect
 
+def validate_incoming_admin(data):
+    def make_err_response(msg):
+        return {
+                "statusCode": 400,
+                "error": "Bad Request",
+                "message": msg,
+                "errorCode": "invalid_body"
+        }
+
+    if not "email" in data:
+        return make_err_response("Email field is missing")
+    if not "name" in data:
+        return make_err_response("Name field is missing")
+
+    return None
+
 @api_view(['GET'])
 # special permissions needed because GET is usually readonly (and therefore visible to all),
 # but we don't want just anyone seeing all of our admins' info
@@ -30,6 +46,9 @@ def delete_admin(request, id):
 @api_view(['POST'])
 def new_admin(request):
     payload = request.data
+    val_result = validate_incoming_admin(payload)
+    if val_result != None:
+        return JsonResponse(val_result)
     # get email and name out of request payload
     email = payload["email"]
     name = payload["name"]
@@ -55,6 +74,9 @@ def new_admin(request):
 @api_view(['PUT'])
 def update_admin(request, id):
     payload = request.data
+    val_result = validate_incoming_admin(payload)
+    if val_result != None:
+        return JsonResponse(val_result)
     email = payload["email"]
     name = payload["name"]
     payload = {

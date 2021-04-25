@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+
 import ResourceCard from 'components/ResourceCard';
 import SidebarFilter from 'components/SidebarFilter/SidebarFilter';
+
 import api from 'api';
 
-import styles from './resources.module.scss';
+import styles from './ResourceSearch.module.scss';
 
 export default function ResourcesPage({ data }) {
   const [values, setValues] = useState([]);
@@ -17,17 +19,7 @@ export default function ResourcesPage({ data }) {
 
       <div className={styles.right}>
         { data.map((r) => (
-          <ResourceCard
-            key={r.id}
-            resourceTitle={r.name}
-            organization={r.organization}
-            startDate={new Date(r.startDate)}
-            endDate={new Date(r.startDate)}
-            location={r.location}
-            imageSrc={r.flyer}
-            startTime={new Date(r.time)}
-            endTime={new Date(r.time)}
-          />
+          <ResourceCard key={r.id} {...r} />
         )) }
       </div>
     </div>

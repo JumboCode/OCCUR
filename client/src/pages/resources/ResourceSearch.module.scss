@@ -1,5 +1,8 @@
+@import '../../styles/mixins';
+
 .base {
   display: flex;
+  @include page-padding;
 
   .left {
     margin-right: 3em;

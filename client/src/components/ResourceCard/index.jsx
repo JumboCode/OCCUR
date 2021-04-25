@@ -1,8 +1,9 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { RESOURCE_PROP_TYPES, RESOURCE_DEFAULT_PROPS } from 'data/resources';
 import styles from './ResourceCard.module.scss';
 
-import MaybeLink from 'components/MaybeLink';
+import Link from 'next/link';
+import { DateRange, TimeRange } from 'components/DateRange';
 
 import ClockIcon from '../../../public/clock.svg';
 import PinIcon from '../../../public/pin.svg';
@@ -11,38 +12,50 @@ import ViewIcon from '../../../public/view.svg';
 import Calendar2Icon from '../../../public/calendar2.svg';
 import ShareIcon from '../../../public/share.svg';
 
+import { slugify } from 'utils';
+
 
 export default function ResourceCard({
-  resourceTitle, organization, startDate, location, imageSrc, startTime, endTime, href, as,
+  id, name, organization, startDate, endDate, location, flyer, startTime, endTime,
 }) {
   return (
     <div className={styles.base}>
-      <div className={styles.leftside} style={imageSrc && { backgroundImage: `url(${imageSrc})` }} />
+      <div className={styles.leftside} style={flyer && { backgroundImage: `url(${flyer})` }} />
 
       <div className={styles.rightside}>
         <div className={styles.content}>
-          <h3>{resourceTitle}</h3>
-          <p className={styles.subtitle}>{organization}</p>
-          <p className={styles['icon-line']}>
-            <CalendarIcon />
-            {startDate.toLocaleDateString()}
-          </p>
-          <p className={styles['icon-line']}>
-            <ClockIcon />
-            {startTime.toLocaleTimeString('en-US')}
-            {' to '}
-            {endTime.toLocaleTimeString('en-US')}
-          </p>
-          <p className={styles['icon-line']}>
-            <PinIcon />
-            {location}
-          </p>
+          <h3>{name}</h3>
+          {organization && <p className={styles.subtitle}>{organization}</p>}
+          { (startDate || endDate) && (
+            <p className={styles['icon-line']}>
+              <CalendarIcon />
+              <DateRange from={startDate} to={endDate} />
+            </p>
+          )}
+          {
+            (startTime || endTime) && (
+              <p className={styles['icon-line']}>
+                <ClockIcon />
+                <TimeRange from={startTime} to={endTime} />
+              </p>
+            )
+          }
+          {
+            location && (
+              <p className={styles['icon-line']}>
+                <PinIcon />
+                {[location?.street_address, location?.city].filter((n) => n).join(', ')}
+              </p>
+            )
+          }
         </div>
 
-        <MaybeLink href={href} as={as} className={styles.cta}>
-          View more
-          <ViewIcon />
-        </MaybeLink>
+        <Link href="/resources/[id]" as={`/resources/${id}-${slugify(name, 5)}`}>
+          <a className={styles.cta}>
+            View more
+            <ViewIcon />
+          </a>
+        </Link>
 
         <div className={styles.buttons}>
           <button type="button">
@@ -59,17 +72,5 @@ export default function ResourceCard({
   );
 }
 
-ResourceCard.propTypes = {
-  resourceTitle: PropTypes.string.isRequired,
-  imageSrc: PropTypes.string,
-  organization: PropTypes.string.isRequired,
-  startDate: PropTypes.instanceOf(Date).isRequired,
-  endDate: PropTypes.instanceOf(Date).isRequired,
-  location: PropTypes.string.isRequired,
-  startTime: PropTypes.instanceOf(Date).isRequired,
-  endTime: PropTypes.instanceOf(Date).isRequired,
-};
-
-ResourceCard.defaultProps = {
-  imageSrc: null,
-};
+ResourceCard.propTypes = RESOURCE_PROP_TYPES;
+ResourceCard.defaultProps = RESOURCE_DEFAULT_PROPS;
