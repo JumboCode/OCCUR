@@ -1,8 +1,9 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 // import ReactDOM from 'react-dom';
 import { useForm } from 'react-hook-form';
-import { isAdmin } from 'auth';
+import { isAdmin, useAuth } from 'auth';
+import { useApi } from 'api';
 import NotFound from 'pages/404';
 import styles from './manager.module.scss';
 
@@ -16,6 +17,8 @@ import Close from '../../../public/icons/close.svg';
 
 const cx = classNames.bind(styles);
 // temporary list of admin users
+
+
 const ADMINUSERS = [
   {
     name: 'Keisha Mukasa',
@@ -36,6 +39,21 @@ const ADMINUSERS = [
 ];
 
 export default function AdminManager({ blocked }) {
+  const api = useApi();
+  const [adminsLoaded, setAdminsLoaded] = useState(false);
+  const [admins, setAdmins] = useState([]);
+
+  useEffect(() => {
+    if (api.authenticated) {
+      api.get('/list/admin').then((response) => {
+        setAdmins(response);
+        setAdminsLoaded(true);
+      }).catch((error) => {
+        console.log(error);
+      });
+    }
+  }, [api.authenticated]);
+
   const [modal, setModal] = useState(false);
   function handleClick() {
     setModal(!modal);
@@ -57,33 +75,38 @@ export default function AdminManager({ blocked }) {
     </div>
   );
 
+  const adminList = () => {
+    if (!adminsLoaded) {
+      return <div>Loading admins...</div>;
+    }
+    return admins.map((user, idx) => {
+      <div className={cx('adminUser')} key={idx}>
+        <input className={cx('adminName')} type="text" value={user.name} />
+        <div className={cx('verticalBreak')} />
+        <input className={cx('adminEmail')} type="text" value={user.email} />
+        <Pen className={cx('penIcon')} />
+        <Trash className={cx('trashIcon')} />
+      </div>
+    });
+  };
+
   return blocked ? <NotFound /> : (
     <div className={cx('base')}>
       {modal ? <Modal /> : null }
       <div className={cx('mainAdminContainer')}>
         <div className={cx('buttonContainer')}>
-          <div className={cx('addAdmin')}>
+          <button className={cx('addAdmin')} type="button" onClick={handleClick}>
             <Circleplus className={cx('circleIcon')} />
-            <button
+            <div
               className={cx('addAdminButton')}
-              type="button"
-              onClick={handleClick}
             >
               Add Admin
-            </button>
-          </div>
+            </div>
+          </button>
         </div>
         <div className={cx('adminList')}>
           <h3 className={cx('adminListTitle')}>Admin List</h3>
-          {ADMINUSERS.map((user) => (
-            <div className={cx('adminUser')}>
-              <input className={cx('adminName')} type="text" value={user.name} />
-              <div className={cx('verticalBreak')} />
-              <input className={cx('adminEmail')} type="text" value={user.email} />
-              <Pen className={cx('penIcon')} />
-              <Trash className={cx('trashIcon')} />
-            </div>
-          ))}
+          {adminList()}
         </div>
       </div>
     </div>
