@@ -2,8 +2,6 @@ from django.shortcuts import render, get_object_or_404
 import io
 from rest_framework.parsers import JSONParser
 from rest_framework.renderers import JSONRenderer
-# Create your views here.
-
 from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView, ListCreateAPIView
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
