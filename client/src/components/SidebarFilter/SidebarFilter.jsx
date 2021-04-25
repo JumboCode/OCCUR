@@ -2,17 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styles from './SidebarFilter.module.scss';
-
-const RESOURCE_TYPES = [
-  { id: 'FOOD', label: 'Food' },
-  { id: 'HOUSING', label: 'Housing' },
-  { id: 'COMM_GIVE', label: 'Community Giveaways' },
-  { id: 'MENTAL_HEALTH', label: 'Mental Health' },
-  { id: 'INFO', label: 'Info Sessions/Webinars' },
-  { id: 'EVENTS', label: 'Events' },
-  { id: 'WIFI', label: 'Free Wifi' },
-  { id: 'OTHER', label: 'Other' },
-];
+import { RESOURCE_CATEGORIES } from 'data/resources';
 
 
 export default function SidebarFilter({ values, onChange }) {
@@ -21,7 +11,7 @@ export default function SidebarFilter({ values, onChange }) {
       <div className={styles.group}>
         <h4>Category</h4>
         {
-          RESOURCE_TYPES.map(({ id, label }) => (
+          RESOURCE_CATEGORIES.map(({ id, label }) => (
             <label key={id}>
               <input
                 type="checkbox"
@@ -46,15 +36,6 @@ export default function SidebarFilter({ values, onChange }) {
   );
 }
 SidebarFilter.propTypes = {
-  values: PropTypes.arrayOf(PropTypes.oneOf([
-    'FOOD',
-    'HOUSING',
-    'COMM_GIVE',
-    'MENTAL_HEALTH',
-    'INFO',
-    'EVENTS',
-    'WIFI',
-    'OTHER',
-  ])).isRequired,
+  values: PropTypes.arrayOf(PropTypes.oneOf(RESOURCE_CATEGORIES.map((cat) => cat.id))).isRequired,
   onChange: PropTypes.func.isRequired,
 };
