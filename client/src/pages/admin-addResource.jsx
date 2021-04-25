@@ -1,6 +1,6 @@
 import Reach from "react";
 import {useForm} from "react-hook-form";
-import RESOURCE_TYPES from 'components/SidebarFilter/SidebarFilter';
+import { RESOURCE_CATEGORIES } from 'data/resources';
 
 export default function addResource({ data }) {
   const { register, handleSubmit } = useForm();
@@ -10,7 +10,7 @@ export default function addResource({ data }) {
     <div className="resourceForm">
       <form onSubmit={handleSubmit(onSubmit)}>
           <h1>Add a Resource</h1>
-          
+
           <h2>Resource Name *</h2>
           <input {...register("resourceName", {required: true}) } placeholder="Enter resource name" />
           
@@ -20,6 +20,9 @@ export default function addResource({ data }) {
           <h2>Category *</h2>
           <select {...register("resourceCategory", {required: true}) }>
             <option value="Wifi">Wifi</option>
+            { RESOURCE_CATEGORIES.map((resource) => (
+              <option value={resource.id}>{resource.label}</option>
+            )) }
             /*PUT IN CATEGORIES*/
           </select>
           
