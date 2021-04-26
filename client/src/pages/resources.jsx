@@ -21,7 +21,7 @@ export default function ResourcesPage({ data }) {
 
       <div className={styles.right}>
         <div className = {styles.map}>
-          <Map values = {markers}/>
+          <Map values = {markers} onChange={console.log}/>
         </div>
         { data.map((r) => (
           <ResourceCard
@@ -63,25 +63,16 @@ function load_markers(resource_data) {
        address:  resource_data[i].location.street_address + ,resource.location.city",
        coords: [-120.26915291754872, 37.80375524992699]}] */
 
-  console.log('resource data : ' + resource_data);
-
   var newData = [];
   let i = 0;
   for (i; i < resource_data.length; i++) {
-    console.log("in for loop")
     if (resource_data[i].location != null) {
       var new_resource = {
         name: resource_data[i].name, 
-        endDate: resource_data[i].endDate,
-        startTime: resource_data[i].startTime,
-        endTime: resource_data[i].endTime,
         address:  resource_data[i].location.street_address + ", " + resource_data[i].location.city,
         coords: [resource_data[i].location.longitude, resource_data[i].location.latitude]}
-        console.log(new_resource)
     }
       newData.push(new_resource);
   }
-  console.log(newData);
-
   return(newData);
 }
