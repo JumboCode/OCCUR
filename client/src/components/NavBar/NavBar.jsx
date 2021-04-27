@@ -26,7 +26,7 @@ export default function NavBar() {
           : (
             <>
               {/* Links that only display for unauthenticated users */}
-              <a>Contact</a>
+              <a href="https://occurnow.org/contact">Contact</a>
             </>
           )
       }
