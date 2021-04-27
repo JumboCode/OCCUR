@@ -59,16 +59,38 @@ export default function AdminManager({ blocked }) {
     setModal(!modal);
   }
   const { register, handleSubmit } = useForm();
-  const onSubmit = (data) => console.log(data);
+
+  const onSubmit = (data) => {
+    const newAdmin = {
+      name: data.adminName,
+      email: data.adminEmail,
+    };
+    if (api.authenticated) {
+      api.post('/new/admin', undefined, newAdmin).then((response) => {
+        console.log(response);
+        // setAdmins(response);
+        // setAdminsLoaded(true);
+      }).catch((error) => {
+        console.log(error);
+      });
+      api.get('/list/admin').then((response) => {
+        setAdmins(response);
+        setAdminsLoaded(true);
+      }).catch((error) => {
+        console.log(error);
+      });
+    }
+  };
+
   const Modal = () => (
     <div className={cx('modalWindow')}>
       <form>
         <Close onClick={handleClick} className={cx('closeButton')} type="button"/>
         <h4>Add Admin</h4>
         Admin Name
-        <input name="Admin Name" {...register('Admin Name')} placeholder="Admin Name" />
+        <input name="adminName" {...register('adminName')} placeholder="Admin Name" />
         Admin Email
-        <input name="Admin Email" {...register('Admin Email')} placeholder="Admin Email" />
+        <input name="adminEmail" {...register('adminEmail')} placeholder="Admin Email" />
         <button onClick={handleSubmit(onSubmit)} className={cx('saveButton')} type="button">Save</button>
         <button onClick={handleClick} className={cx('cancelButton')} type="button">Cancel</button>
       </form>
@@ -79,15 +101,15 @@ export default function AdminManager({ blocked }) {
     if (!adminsLoaded) {
       return <div>Loading admins...</div>;
     }
-    return admins.map((user, idx) => {
-      <div className={cx('adminUser')} key={idx}>
+    return admins.map((user) => (
+      <div className={cx('adminUser')} key={user.user_id}>
         <input className={cx('adminName')} type="text" value={user.name} />
         <div className={cx('verticalBreak')} />
         <input className={cx('adminEmail')} type="text" value={user.email} />
         <Pen className={cx('penIcon')} />
         <Trash className={cx('trashIcon')} />
       </div>
-    });
+    ));
   };
 
   return blocked ? <NotFound /> : (
