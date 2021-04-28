@@ -9,6 +9,7 @@ import { formatPhoneNumber, slugify } from 'utils';
 import NotFound from 'pages/404';
 import Error from 'next/error';
 import { DateRange, TimeRange } from 'components/DateRange';
+import Map from 'components/Map/Map';
 
 import ArrowIcon from '../../../public/view.svg';
 import Calendar2Icon from '../../../public/calendar2.svg';
@@ -160,6 +161,9 @@ export default function ResourcePage({
             </p>
           </div>
         </div>
+      </div>
+      <div className={styles.map}>
+        <Map resources={[{ name, location }]} />
       </div>
     </div>
   );
