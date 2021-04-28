@@ -7,11 +7,12 @@ import { useApi } from 'api';
 import NotFound from 'pages/404';
 import styles from './manager.module.scss';
 import AddAdminModal from 'components/AddAdminModel';
+import EditAdminModal from 'components/editAdminModel';
 import classNames from 'classnames/bind';
 import Circleplus from '../../../public/icons/circle_plus.svg';
 import Pen from '../../../public/icons/pencil.svg';
 import Trash from '../../../public/icons/trash.svg';
-import Close from '../../../public/icons/close.svg';
+// import Close from '../../../public/icons/close.svg';
 // import { render } from 'sass';
 
 const cx = classNames.bind(styles);
@@ -22,7 +23,8 @@ export default function AdminManager({ blocked }) {
   const [adminsLoaded, setAdminsLoaded] = useState(false);
   const [admins, setAdmins] = useState([]);
   // const { register, handleSubmit } = useForm();
-  const [openAdminModal, setopenAdminModal] = useState(false);
+  const [openAddAdminModal, setopenAddAdminModal] = useState(false);
+  const [openEditAdminModal, setopenEditAdminModal] = useState(false);
 
   useEffect(() => {
     if (api.authenticated) {
@@ -39,22 +41,24 @@ export default function AdminManager({ blocked }) {
     if (!adminsLoaded) {
       return <div>Loading admins...</div>;
     }
+    console.log(admins);
     return admins.map((user) => (
       <div className={cx('adminUser')} key={user.user_id}>
-        <input className={cx('adminName')} type="text" value={user.name} />
+        <input className={cx('adminName')} type="text" readOnly value={user.name} />
         <div className={cx('verticalBreak')} />
-        <input className={cx('adminEmail')} type="text" value={user.email} />
-        <Pen className={cx('penIcon')} />
-        <Trash className={cx('trashIcon')} />
+        <input className={cx('adminEmail')} type="text" readOnly value={user.email} />
+        <Pen className={cx('penIcon') } type="button" onC />
+        <Trash className={cx('trashIcon')} onClick={() => setopenEditAdminModal(true)} />
       </div>
     ));
   };
   return blocked ? <NotFound /> : (
     <div className={cx('base')}>
-      <AddAdminModal open={openAdminModal} close={setopenAdminModal} />
+      <AddAdminModal open={openAddAdminModal} close={setopenAddAdminModal} />
+      <EditAdminModal open={openEditAdminModal} close={setopenEditAdminModal} />
       <div className={cx('mainAdminContainer')}>
         <div className={cx('buttonContainer')}>
-          <button className={cx('addAdmin')} type="button" onClick={() => setopenAdminModal(true)}>
+          <button className={cx('addAdmin')} type="button" onClick={() => setopenAddAdminModal(true)}>
             <Circleplus className={cx('circleIcon')} />
             <div
               className={cx('addAdminButton')}
