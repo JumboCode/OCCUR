@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+
 import ResourceCard from 'components/ResourceCard';
 import SidebarFilter from 'components/SidebarFilter/SidebarFilter';
 import Map from 'components/Map/Map';
+
 import api from 'api';
 
-import styles from './resources.module.scss';
+import styles from './ResourceSearch.module.scss';
 
 
 function loadMarkers(resourceData) {
@@ -38,17 +40,7 @@ export default function ResourcesPage({ data }) {
           <Map values={markers} />
         </div>
         { data.map((r) => (
-          <ResourceCard
-            key={r.id}
-            resourceTitle={r.name}
-            organization={r.organization}
-            startDate={r.startDate}
-            endDate={r.endDate}
-            location={r.location}
-            imageSrc={r.flyer}
-            startTime={r.startTime}
-            endTime={r.endTime}
-          />
+          <ResourceCard key={r.id} {...r} />
         )) }
       </div>
     </div>
