@@ -11,7 +11,7 @@ import mapboxgl from 'mapbox-gl/dist/mapbox-gl-csp';
 import MapboxWorker from 'worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker'; // eslint-disable-line import/no-unresolved
 
 mapboxgl.workerClass = MapboxWorker;
-mapboxgl.accessToken = 'pk.eyJ1IjoiY29udHJvdmVyc2lhbCIsImEiOiJja25veTRmMjcwMGx2Mm9zMjRrdXhuMmgzIn0.6tfRttzuBrfJOSsjiHrPRA';
+mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
 const markerHeight = 40;
 const markerRadius = 10;
