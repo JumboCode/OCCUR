@@ -1,8 +1,11 @@
 import React, { useRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import styles from './Map.module.scss';
+import { useRouter } from 'next/router';
+import { slugify } from 'utils';
 
 import { RESOURCE_PROP_TYPES } from 'data/resources';
+
+import styles from './Map.module.scss';
 
 import mapboxgl from 'mapbox-gl/dist/mapbox-gl-csp';
 import MapboxWorker from 'worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker'; // eslint-disable-line import/no-unresolved
@@ -30,6 +33,8 @@ export default function Map({ resources, onMove }) {
   const [map, setMap] = useState(null);
   const mapRef = useRef();
   mapRef.current = map;
+
+  const router = useRouter();
 
   // Set up map
   useEffect(() => {
@@ -65,7 +70,7 @@ export default function Map({ resources, onMove }) {
   useEffect(() => {
     if (!map) return () => {};
 
-    const markers = resources.map(({ name, location }) => {
+    const markers = resources.map(({ name, location, id }) => {
       const lnglat = [location.longitude, location.latitude];
       const newMarker = new mapboxgl.Marker({
         color: '#E1701D',
@@ -73,7 +78,9 @@ export default function Map({ resources, onMove }) {
         .setLngLat(lnglat)
         .addTo(map);
       // Click handler: open resource
-      newMarker.getElement().addEventListener('click', () => { /* TODO: navigate to resource */ });
+      newMarker.getElement().addEventListener('click', () => {
+        router.push('/resources/[id]', `/resources/${id}-${slugify(name, 5)}`);
+      });
       // Set up popup
       const popup = new mapboxgl.Popup({
         offset: popupOffsets,
