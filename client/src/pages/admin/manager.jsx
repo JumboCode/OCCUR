@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 // import ReactDOM from 'react-dom';
-import { useForm } from 'react-hook-form';
+// import { useForm } from 'react-hook-form';
 import { isAdmin, useAuth } from 'auth';
 import { useApi } from 'api';
 import NotFound from 'pages/404';
 import styles from './manager.module.scss';
-
+import AddAdminModal from 'components/AddAdminModel';
 import classNames from 'classnames/bind';
 import Circleplus from '../../../public/icons/circle_plus.svg';
 import Pen from '../../../public/icons/pencil.svg';
@@ -21,14 +21,8 @@ export default function AdminManager({ blocked }) {
   const api = useApi();
   const [adminsLoaded, setAdminsLoaded] = useState(false);
   const [admins, setAdmins] = useState([]);
-  const [modal, setModal] = useState(false);
-  const [modalType, setModalType] = useState('');
-  const { register, handleSubmit } = useForm();
-
-  function handleClick(type) {
-    setModal(!modal);
-    setModalType(type);
-  }
+  // const { register, handleSubmit } = useForm();
+  const [openAdminModal, setopenAdminModal] = useState(false);
 
   useEffect(() => {
     if (api.authenticated) {
@@ -40,72 +34,6 @@ export default function AdminManager({ blocked }) {
       });
     }
   }, [api.authenticated]);
-
-  const onSubmit = (data) => console.log(data);
-  // const onSubmit = (data) => {
-  //   const newAdmin = {
-  //     name: data.adminName,
-  //     email: data.adminEmail,
-  //   };
-  //   if (api.authenticated) {
-  //     api.post('/new/admin', undefined, newAdmin).then((response) => {
-  //       console.log(response);
-  //       // setAdmins(response);
-  //       // setAdminsLoaded(true);
-  //     }).catch((error) => {
-  //       console.log(error);
-  //     });
-  //     api.get('/list/admin').then((response) => {
-  //       setAdmins(response);
-  //       setAdminsLoaded(true);
-  //     }).catch((error) => {
-  //       console.log(error);
-  //     });
-  //   }
-  // };
-
-  const Modal = () => {
-    let title = '';
-    if (modalType === 'add') {
-      title = <h4>Add Admin</h4>;
-    } else if (modalType === 'edit') {
-      title = <h4>Edit Admin</h4>;
-    }
-    title = <h4>Delete Admin</h4>;
-
-    return (
-      <div className={cx('modalWindow')}>
-        <form>
-          <Close onClick={handleClick('')} className={cx('closeButton')} type="button" />
-          { title }
-          Admin Name
-          <input name="adminName" {...register('adminName')} placeholder="Admin Name" />
-          Admin Email
-          <input name="adminEmail" {...register('adminEmail')} placeholder="Admin Email" />
-          <button onClick={handleSubmit(onSubmit)} className={cx('saveButton')} type="button">Save</button>
-          <button onClick={handleClick('')} className={cx('cancelButton')} type="button">Cancel</button>
-        </form>
-      </div>
-    );
-  };
-
-  // const confirmDelete = (adminName) => {
-  //   console.log('in confirm delete');
-  //   return (
-  //     <div className={cx('modalWindow')}>
-  //       <form>
-  //         <Close onClick={handleClick('')} className={cx('closeButton')} type="button"/>
-  //         <h4>Delete Admin</h4>
-  //         Are you sure you would like to delete
-  //         {' '}
-  //         { adminName }
-  //         as an admin user?
-  //       </form>
-  //       <button onClick={handleClick('')} className={cx('saveButton')} type="button">Delete</button>
-  //       <button onClick={handleClick('')} className={cx('cancelButton')} type="button">Cancel</button>
-  //     </div>
-  //   );
-  // };
 
   const adminList = () => {
     if (!adminsLoaded) {
@@ -121,13 +49,12 @@ export default function AdminManager({ blocked }) {
       </div>
     ));
   };
-
   return blocked ? <NotFound /> : (
     <div className={cx('base')}>
-      {modal ? <Modal /> : null }
+      <AddAdminModal open={openAdminModal} close={setopenAdminModal} />
       <div className={cx('mainAdminContainer')}>
         <div className={cx('buttonContainer')}>
-          <button className={cx('addAdmin')} type="button" onClick={handleClick('add')}>
+          <button className={cx('addAdmin')} type="button" onClick={() => setopenAdminModal(true)}>
             <Circleplus className={cx('circleIcon')} />
             <div
               className={cx('addAdminButton')}
@@ -144,7 +71,6 @@ export default function AdminManager({ blocked }) {
     </div>
   );
 }
-
 AdminManager.propTypes = {
   blocked: PropTypes.bool.isRequired,
 };

@@ -1,0 +1,48 @@
+@import '../../styles/colors';
+
+.mainAddAdminModal{
+    .closeButton {
+        height: 25px;
+        width: 25px;
+        float: right;
+    }
+
+    form {
+        background: white;
+        margin: auto;
+        margin-top: 4%;
+        width: 40%;
+        padding: 3em;
+    }
+
+    input {
+        width: 100%;
+        margin-bottom: 10px;
+        padding: 4px;
+    }
+
+    h4 {
+        text-align: center;
+    }
+
+    button {
+        float: right;
+        padding: 8px 30px;
+        margin: 5px;
+    }
+    .cancelButton {
+        background-color: rgb(58, 56, 56, 0.5);
+        border-radius: 2px;
+        border:none ;
+        font-weight: bold;
+        color: white;
+    }
+
+    .saveButton {
+        background-color: #DC9766;
+        border-radius: 2px;
+        border:none;
+        font-weight: bold;
+        color: white;
+    }
+}
