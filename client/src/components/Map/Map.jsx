@@ -2,107 +2,104 @@ import React, { useRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styles from './Map.module.scss';
 
+import { RESOURCE_PROP_TYPES } from 'data/resources';
+
 import mapboxgl from 'mapbox-gl/dist/mapbox-gl-csp';
 import MapboxWorker from 'worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker'; // eslint-disable-line import/no-unresolved
 
 mapboxgl.workerClass = MapboxWorker;
 mapboxgl.accessToken = 'pk.eyJ1IjoiY29udHJvdmVyc2lhbCIsImEiOiJja25veTRmMjcwMGx2Mm9zMjRrdXhuMmgzIn0.6tfRttzuBrfJOSsjiHrPRA';
 
+const markerHeight = 40;
+const markerRadius = 10;
+const linearOffset = 25;
 
-function markerToHtml({ name, address }) {
-  const namePart = `<h3>${name}</h3>`;
-  const addressPart = `<p>${address}</p>`;
-
-  return (name ? namePart : '') + (address ? addressPart : '');
-}
+const popupOffsets = {
+  top: [0, 0],
+  'top-left': [0, 0],
+  'top-right': [0, 0],
+  bottom: [0, -markerHeight],
+  'bottom-left': [linearOffset, (markerHeight - markerRadius + linearOffset) * -1],
+  'bottom-right': [-linearOffset, (markerHeight - markerRadius + linearOffset) * -1],
+  left: [markerRadius, (markerHeight - markerRadius) * -1],
+  right: [-markerRadius, (markerHeight - markerRadius) * -1],
+};
 
 export default function Map({ values, onChange }) {
-  // will probably end up being data passed to the map function
-
   const mapContainer = useRef();
-  const [lat, setLat] = useState(-122.26915291754872);
-  const [lng, setLng] = useState(37.80375524992699);
-  const [zoom, setZoom] = useState(11);
+  const [map, setMap] = useState(null);
+  const mapRef = useRef();
+  mapRef.current = map;
 
-
+  // Set up map
   useEffect(() => {
-    const map = new mapboxgl.Map({
+    setMap(new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/streets-v11',
-      center: [lat, lng],
-      zoom,
-    });
-
-    /* Fit bounds?
-    var bounds = new mapboxgl.LngLatBounds();
-      markers.features.forEach(function(feature) {
-      bounds.extend(feature.geometry.coordinates);
-    });
-    map.fitBounds(bounds); */
+      center: [-122.26915291754872, 37.80375524992699],
+      zoom: 11,
+    }));
+    return () => { if (mapRef.current) mapRef.current.remove(); };
+  }, []);
 
 
-    // Create a default Marker and add it to the map.
-    values.forEach((marker) => {
+  // Set up map event listener
+  useEffect(() => {
+    if (!map || !onChange) return () => {};
+
+    const handler = () => {
+      const bounds = map.getBounds();
+      onChange({
+        minLat: bounds.getSouth(),
+        maxLat: bounds.getNorth(),
+        minLong: bounds.getWest(),
+        maxLong: bounds.getEast(),
+      });
+    };
+    map.on('move', handler);
+    return () => map.off('move', handler);
+  }, [map, onChange]);
+
+
+  // Add markers from props
+  useEffect(() => {
+    if (!map) return () => {};
+
+    const markers = values.map(({ name, location }) => {
+      const lnglat = [location.longitude, location.latitude];
       const newMarker = new mapboxgl.Marker({
         color: '#E1701D',
       })
-        .setLngLat(marker.coords)
+        .setLngLat(lnglat)
         .addTo(map);
-
-      newMarker.getElement().addEventListener('click', () => {
-        // TODO: navigate to resource
-      });
-
-      // popup configuration
-      const markerHeight = 40;
-      const markerRadius = 10;
-      const linearOffset = 25;
-
-      const popupOffsets = {
-        top: [0, 0],
-        'top-left': [0, 0],
-        'top-right': [0, 0],
-        bottom: [0, -markerHeight],
-        'bottom-left': [linearOffset, (markerHeight - markerRadius + linearOffset) * -1],
-        'bottom-right': [-linearOffset, (markerHeight - markerRadius + linearOffset) * -1],
-        left: [markerRadius, (markerHeight - markerRadius) * -1],
-        right: [-markerRadius, (markerHeight - markerRadius) * -1],
-      };
-
+      // Click handler: open resource
+      newMarker.getElement().addEventListener('click', () => { /* TODO: navigate to resource */ });
+      // Set up popup
       const popup = new mapboxgl.Popup({
         offset: popupOffsets,
         closeButton: false,
-        closeOnClick: false
+        closeOnClick: false,
       }).setMaxWidth('200px');
 
-
       newMarker.getElement().addEventListener('mouseover', () => {
-        popup.setLngLat(marker.coords).setHTML(markerToHtml(marker)).addTo(map);
+        popup
+          .setLngLat(lnglat)
+          // TODO: this has an XSS vulnerability
+          .setHTML(`<h3>${name}</h3><p>${location.street_address}<br>${location.city}, ${location.state}`)
+          .addTo(map);
       });
+      newMarker.getElement().addEventListener('mouseleave', () => popup.remove());
 
-      newMarker.getElement().addEventListener('mouseleave', () => {
-        popup.remove();
-      });
+      return newMarker;
     });
 
-    map.on('move', () => {
-      setLat(map.getCenter().lat.toFixed(4));
-      setLng(map.getCenter().lng.toFixed(4));
-      setZoom(map.getZoom().toFixed(2));
-      const bounds = map.getBounds();
-      if (onChange) {
-        onChange({
-          minLat: bounds.getSouth().toFixed(4),
-          maxLat: bounds.getNorth().toFixed(4),
-          minLong: bounds.getWest().toFixed(4),
-          maxLong: bounds.getEast().toFixed(4),
-        });
-      }
-    });
-
-    return () => { map.remove(); };
-  }, []);
-
+    // Clean up: remove old markers
+    return () => markers.forEach((m) => m.remove());
+  }, [
+    map,
+    // only refresh when values change meaningfully
+    JSON.stringify(values.map(({ name, location }) => ({ name, location }))),
+  ]);
 
   return (
     <div className={styles.map_container} ref={mapContainer} />
@@ -110,11 +107,7 @@ export default function Map({ values, onChange }) {
 }
 
 Map.propTypes = {
-  values: PropTypes.shape(PropTypes.shape({
-    coords: PropTypes.arrayOf(PropTypes.number),
-    name: PropTypes.string,
-    address: PropTypes.string,
-  })).isRequired,
+  values: PropTypes.arrayOf(PropTypes.shape(RESOURCE_PROP_TYPES)).isRequired,
 
   onChange: PropTypes.func,
 };
