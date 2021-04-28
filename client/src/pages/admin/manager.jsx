@@ -7,7 +7,8 @@ import { useApi } from 'api';
 import NotFound from 'pages/404';
 import styles from './manager.module.scss';
 import AddAdminModal from 'components/AddAdminModel';
-import EditAdminModal from 'components/editAdminModel';
+import EditAdminModal from 'components/EditAdminModal';
+import DeleteAdminModal from 'components/DeleteAdminModal';
 import classNames from 'classnames/bind';
 import Circleplus from '../../../public/icons/circle_plus.svg';
 import Pen from '../../../public/icons/pencil.svg';
@@ -25,6 +26,7 @@ export default function AdminManager({ blocked }) {
   // const { register, handleSubmit } = useForm();
   const [openAddAdminModal, setopenAddAdminModal] = useState(false);
   const [openEditAdminModal, setopenEditAdminModal] = useState(false);
+  const [openDeleteAdminModal, setopenDeleteAdminModal] = useState(false);
 
   useEffect(() => {
     if (api.authenticated) {
@@ -47,8 +49,8 @@ export default function AdminManager({ blocked }) {
         <input className={cx('adminName')} type="text" readOnly value={user.name} />
         <div className={cx('verticalBreak')} />
         <input className={cx('adminEmail')} type="text" readOnly value={user.email} />
-        <Pen className={cx('penIcon') } type="button" onC />
-        <Trash className={cx('trashIcon')} onClick={() => setopenEditAdminModal(true)} />
+        <Pen className={cx('penIcon')} type="button" onClick={() => setopenEditAdminModal(true)} />
+        <Trash className={cx('trashIcon')} type="button" onClick={() => setopenDeleteAdminModal(true)} />
       </div>
     ));
   };
@@ -56,6 +58,7 @@ export default function AdminManager({ blocked }) {
     <div className={cx('base')}>
       <AddAdminModal open={openAddAdminModal} close={setopenAddAdminModal} />
       <EditAdminModal open={openEditAdminModal} close={setopenEditAdminModal} />
+      <DeleteAdminModal open={openDeleteAdminModal} close={setopenDeleteAdminModal} />
       <div className={cx('mainAdminContainer')}>
         <div className={cx('buttonContainer')}>
           <button className={cx('addAdmin')} type="button" onClick={() => setopenAddAdminModal(true)}>
