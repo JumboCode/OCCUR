@@ -8,10 +8,24 @@ import api from 'api';
 import styles from './resources.module.scss';
 
 
+function loadMarkers(resourceData) {
+  const newData = [];
+  for (let i = 0; i < resourceData.length; i += 1) {
+    if (resourceData[i].location != null) {
+      const newResource = {
+        name: resourceData[i].name,
+        address: `${resourceData[i].location.street_address}, ${resourceData[i].location.city}`,
+        coords: [resourceData[i].location.longitude, resourceData[i].location.latitude]
+      };
+      newData.push(newResource);
+    }
+  }
+  return newData;
+}
+
 export default function ResourcesPage({ data }) {
   const [values, setValues] = useState([]);
-  console.log(data);
-  const [markers, setMarkers] = useState(load_markers(data));
+  const [markers, setMarkers] = useState(loadMarkers(data));
 
   return (
     <div className={styles.base}>
@@ -20,8 +34,8 @@ export default function ResourcesPage({ data }) {
       </div>
 
       <div className={styles.right}>
-        <div className = {styles.map}>
-          <Map values = {markers} onChange={console.log}/>
+        <div className={styles.map}>
+          <Map values={markers} />
         </div>
         { data.map((r) => (
           <ResourceCard
@@ -52,27 +66,4 @@ export async function getServerSideProps(context) {
   return {
     props: { data },
   };
-}
-
-function load_markers(resource_data) {
-  /* [{name: resource_data[i].name",
-       startDate: resource_data[i].startDate",
-       endDate: resource_data[i].endDate", 
-       startTime: resource_data[i].startTime",
-       endTime: resource_data[i].endTime",
-       address:  resource_data[i].location.street_address + ,resource.location.city",
-       coords: [-120.26915291754872, 37.80375524992699]}] */
-
-  var newData = [];
-  let i = 0;
-  for (i; i < resource_data.length; i++) {
-    if (resource_data[i].location != null) {
-      var new_resource = {
-        name: resource_data[i].name, 
-        address:  resource_data[i].location.street_address + ", " + resource_data[i].location.city,
-        coords: [resource_data[i].location.longitude, resource_data[i].location.latitude]}
-    }
-      newData.push(new_resource);
-  }
-  return(newData);
 }

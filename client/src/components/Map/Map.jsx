@@ -90,12 +90,14 @@ export default function Map({ values, onChange }) {
       setLng(map.getCenter().lng.toFixed(4));
       setZoom(map.getZoom().toFixed(2));
       const bounds = map.getBounds();
-      onChange({
-        minLat: bounds.getSouth().toFixed(4),
-        maxLat: bounds.getNorth().toFixed(4),
-        minLong: bounds.getWest().toFixed(4),
-        maxLong: bounds.getEast().toFixed(4),
-      });
+      if (onChange) {
+        onChange({
+          minLat: bounds.getSouth().toFixed(4),
+          maxLat: bounds.getNorth().toFixed(4),
+          minLong: bounds.getWest().toFixed(4),
+          maxLong: bounds.getEast().toFixed(4),
+        });
+      }
     });
 
     return () => { map.remove(); };
@@ -108,7 +110,7 @@ export default function Map({ values, onChange }) {
 }
 
 Map.propTypes = {
-  values: PropTypes.arrayOf(PropTypes.shape({
+  values: PropTypes.shape(PropTypes.shape({
     coords: PropTypes.arrayOf(PropTypes.number),
     name: PropTypes.string,
     address: PropTypes.string,
