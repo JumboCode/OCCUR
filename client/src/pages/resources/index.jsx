@@ -21,7 +21,7 @@ export default function ResourcesPage({ data }) {
 
       <div className={styles.right}>
         <div className={styles.map}>
-          <Map values={data} />
+          <Map resources={data} />
         </div>
         { data.map((r) => (
           <ResourceCard key={r.id} {...r} />

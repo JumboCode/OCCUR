@@ -25,7 +25,7 @@ const popupOffsets = {
   right: [-markerRadius, (markerHeight - markerRadius) * -1],
 };
 
-export default function Map({ values, onChange }) {
+export default function Map({ resources, onMove }) {
   const mapContainer = useRef();
   const [map, setMap] = useState(null);
   const mapRef = useRef();
@@ -45,11 +45,11 @@ export default function Map({ values, onChange }) {
 
   // Set up map event listener
   useEffect(() => {
-    if (!map || !onChange) return () => {};
+    if (!map || !onMove) return () => {};
 
     const handler = () => {
       const bounds = map.getBounds();
-      onChange({
+      onMove({
         minLat: bounds.getSouth(),
         maxLat: bounds.getNorth(),
         minLong: bounds.getWest(),
@@ -58,14 +58,14 @@ export default function Map({ values, onChange }) {
     };
     map.on('move', handler);
     return () => map.off('move', handler);
-  }, [map, onChange]);
+  }, [map, onMove]);
 
 
   // Add markers from props
   useEffect(() => {
     if (!map) return () => {};
 
-    const markers = values.map(({ name, location }) => {
+    const markers = resources.map(({ name, location }) => {
       const lnglat = [location.longitude, location.latitude];
       const newMarker = new mapboxgl.Marker({
         color: '#E1701D',
@@ -97,8 +97,8 @@ export default function Map({ values, onChange }) {
     return () => markers.forEach((m) => m.remove());
   }, [
     map,
-    // only refresh when values change meaningfully
-    JSON.stringify(values.map(({ name, location }) => ({ name, location }))),
+    // only refresh when data changes meaningfully
+    JSON.stringify(resources.map(({ name, location }) => ({ name, location }))),
   ]);
 
   return (
@@ -107,10 +107,10 @@ export default function Map({ values, onChange }) {
 }
 
 Map.propTypes = {
-  values: PropTypes.arrayOf(PropTypes.shape(RESOURCE_PROP_TYPES)).isRequired,
+  resources: PropTypes.arrayOf(PropTypes.shape(RESOURCE_PROP_TYPES)).isRequired,
 
-  onChange: PropTypes.func,
+  onMove: PropTypes.func,
 };
 Map.defaultProps = {
-  onChange: null,
+  onMove: null,
 };
