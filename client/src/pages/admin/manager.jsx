@@ -23,10 +23,53 @@ export default function AdminManager({ blocked }) {
   const api = useApi();
   const [adminsLoaded, setAdminsLoaded] = useState(false);
   const [admins, setAdmins] = useState([]);
-  // const { register, handleSubmit } = useForm();
   const [openAddAdminModal, setopenAddAdminModal] = useState(false);
   const [openEditAdminModal, setopenEditAdminModal] = useState(false);
   const [openDeleteAdminModal, setopenDeleteAdminModal] = useState(false);
+  const [userToEdit, setuserToEdit] = useState(null);
+  const [userToDelete, setuserToDelete] = useState(null);
+
+  const handleEditClick = (user) => {
+    setopenEditAdminModal(true);
+    setuserToEdit(user);
+  };
+
+  const handleDeleteClick = (user) => {
+    setopenDeleteAdminModal(true);
+    setuserToDelete(user);
+  };
+
+  const editUser = (currUser, data) => {
+    const id = (currUser.user_id.split('|'))[1];
+    api.put(`${id}/update/admin`, undefined, data)
+      .then((responsePut) => {
+        console.log(responsePut);
+        api.get('/list/admin').then((responseGet) => {
+          setAdmins(responseGet);
+        }).catch((error) => {
+          console.log(error);
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const deleteUser = (currUser) => {
+    const id = (currUser.user_id.split('|'))[1];
+    api.delete(`${id}/delete/admin`)
+      .then((responseDelete) => {
+        console.log(responseDelete);
+        api.get('/list/admin').then((responseGet) => {
+          setAdmins(responseGet);
+        }).catch((error) => {
+          console.log(error);
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   useEffect(() => {
     if (api.authenticated) {
@@ -43,22 +86,31 @@ export default function AdminManager({ blocked }) {
     if (!adminsLoaded) {
       return <div>Loading admins...</div>;
     }
-    console.log(admins);
     return admins.map((user) => (
       <div className={cx('adminUser')} key={user.user_id}>
         <input className={cx('adminName')} type="text" readOnly value={user.name} />
         <div className={cx('verticalBreak')} />
         <input className={cx('adminEmail')} type="text" readOnly value={user.email} />
-        <Pen className={cx('penIcon')} type="button" onClick={() => setopenEditAdminModal(true)} />
-        <Trash className={cx('trashIcon')} type="button" onClick={() => setopenDeleteAdminModal(true)} />
+        <Pen className={cx('penIcon')} type="button" onClick={() => handleEditClick(user)} />
+        <Trash className={cx('trashIcon')} type="button" onClick={() => handleDeleteClick(user)} />
       </div>
     ));
   };
   return blocked ? <NotFound /> : (
     <div className={cx('base')}>
       <AddAdminModal open={openAddAdminModal} close={setopenAddAdminModal} />
-      <EditAdminModal open={openEditAdminModal} close={setopenEditAdminModal} />
-      <DeleteAdminModal open={openDeleteAdminModal} close={setopenDeleteAdminModal} />
+      <EditAdminModal
+        open={openEditAdminModal}
+        close={setopenEditAdminModal}
+        user={userToEdit}
+        submit={editUser}
+      />
+      <DeleteAdminModal
+        open={openDeleteAdminModal}
+        close={setopenDeleteAdminModal}
+        user={userToDelete}
+        submit={deleteUser}
+      />
       <div className={cx('mainAdminContainer')}>
         <div className={cx('buttonContainer')}>
           <button className={cx('addAdmin')} type="button" onClick={() => setopenAddAdminModal(true)}>

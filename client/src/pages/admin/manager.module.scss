@@ -119,14 +119,15 @@
 
   .verticalBreak {
     display: inline;
-    border: 1px solid rgb(58, 56, 56, 0.4);
+    border: 1px solid rgb(58, 56, 56, 0.3);
     transform: rotate(90deg);
+    background-color: rgb(58, 56, 56, 0.5);
   }
 
   svg {
     padding: 2px;
-    height: 25px;
-    width: 25px;
+    height: 28px;
+    width: 28px;
     vertical-align: top;
     fill: #DC9766;
   }
