@@ -21,7 +21,10 @@ export default function EditAdminModal({ open, close, user, submit }) {
     }
   }, [user]);
 
-  const onSubmit = (data) => submit(user, data);
+  const onSubmit = (data) => {
+    submit(user, data);
+    close(false);
+  };
 
   return (
     <Modal open={open} onClose={() => close(false)}>
