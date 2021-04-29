@@ -1,6 +1,6 @@
 import { useAuth } from 'auth';
 
-const BASE_PATH = process.env.NEXT_PUBLIC_API_BASE ?? 'https://api.resources.occurnow.org/api/v1/';
+const BASE_PATH = process.env.NEXT_PUBLIC_API_BASE ?? 'https://api.resources.occurnow.org/';
 
 export class HTTPError extends Error {
   constructor(response, body) {
