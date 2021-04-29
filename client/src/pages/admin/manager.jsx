@@ -39,6 +39,21 @@ export default function AdminManager({ blocked }) {
     setuserToDelete(user);
   };
 
+  const addUser = (data) => {
+    api.post('/new/admin', undefined, data)
+      .then((responsePost) => {
+        console.log(responsePost);
+        api.get('/list/admin').then((responseGet) => {
+          setAdmins(responseGet);
+        }).catch((error) => {
+          console.log(error);
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   const editUser = (currUser, data) => {
     const id = (currUser.user_id.split('|'))[1];
     api.put(`${id}/update/admin`, undefined, data)
@@ -98,7 +113,11 @@ export default function AdminManager({ blocked }) {
   };
   return blocked ? <NotFound /> : (
     <div className={cx('base')}>
-      <AddAdminModal open={openAddAdminModal} close={setopenAddAdminModal} />
+      <AddAdminModal
+        open={openAddAdminModal}
+        close={setopenAddAdminModal}
+        submit={addUser}
+      />
       <EditAdminModal
         open={openEditAdminModal}
         close={setopenEditAdminModal}

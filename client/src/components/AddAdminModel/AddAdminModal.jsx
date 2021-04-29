@@ -8,9 +8,13 @@ import classNames from 'classnames/bind';
 
 const cx = classNames.bind(styles);
 
-export default function AddAdminModal({ open, close }) {
+export default function AddAdminModal({ open, close, submit }) {
   const { register, handleSubmit } = useForm();
-  const onSubmit = (data) => console.log(data);
+  const onSubmit = (data) => {
+    console.log(data);
+    submit(data);
+    close(false);
+  };
 
   return (
     <Modal open={open} onClose={() => close(false)}>
@@ -18,10 +22,10 @@ export default function AddAdminModal({ open, close }) {
         <Close onClick={() => close(false)} className={cx('closeButton')} type="button" />
         <h4>Add Admin</h4>
         Admin Name
-        <input name="adminName" {...register('adminName')} placeholder="Admin Name" />
+        <input name="name" {...register('name')} placeholder="Admin Name" />
         Admin Email
-        <input name="adminEmail" {...register('adminEmail')} placeholder="Admin Email" />
-        <button onClick={() => close(false)} className={cx('saveButton')} type="button">Save</button>
+        <input name="email" {...register('email')} placeholder="Admin Email" />
+        <button onClick={handleSubmit(onSubmit)} className={cx('saveButton')} type="button">Save</button>
         <button onClick={() => close(false)} className={cx('cancelButton')} type="button">Cancel</button>
       </form>
     </Modal>
@@ -31,4 +35,5 @@ export default function AddAdminModal({ open, close }) {
 AddAdminModal.propTypes = {
   open: PropTypes.bool.isRequired,
   close: PropTypes.func.isRequired,
+  submit: PropTypes.func.isRequired,
 };
