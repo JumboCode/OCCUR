@@ -20,15 +20,14 @@ from api import admin_views
 
 urlpatterns = [
     path('',views.apiUrlsList, name="apiUrlsList" ),
-    path('api/v1/new/resource/', views.ResourceCreate.as_view()),
-    path('api/v1/<int:id>/location', views.LocationRetrieveUpdateDestroy.as_view()),
-    path('api/v1/<int:id>/resource', views.ResourceRetrieveUpdateDestroy.as_view()),
-    path('api/v1/list/resource', views.ResourceList.as_view()),
-    path('api/v1/list/location', views.LocationList.as_view()),
-    path('api/v1/list/admin', admin_views.get_admins),
-    path('api/v1/<id>/delete/admin', admin_views.delete_admin),
-    path('api/v1/new/admin', admin_views.new_admin),
-    path('api/v1/<id>/update/admin', admin_views.update_admin),
-    path('admin/', admin.site.urls
-    ),
+    path('resources', views.ResourceListCreate.as_view()),
+    path('locations/<int:id>', views.LocationRetrieveUpdateDestroy.as_view()),
+    path('resources/<int:id>', views.ResourceRetrieveUpdateDestroy.as_view()),
+    path('resources', views.ResourceListCreate.as_view()),
+    path('locations', views.LocationList.as_view()),
+    path('admins', admin_views.get_admins),
+    path('admins/<id>', admin_views.delete_admin),
+    path('admins', admin_views.new_admin),
+    path('admins/<id>', admin_views.update_admin),
+    path('admin/', admin.site.urls),
 ]

@@ -35,7 +35,7 @@ ResourcesPage.propTypes = {
 };
 
 export async function getServerSideProps(context) {
-  const data = await api.get('/list/resource', context.query.search && {
+  const data = await api.get('/resources', context.query.search && {
     search: context.query.search,
   });
 

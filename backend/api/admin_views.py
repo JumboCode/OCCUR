@@ -45,7 +45,12 @@ def get_admins(request):
 def delete_admin(request, id):
     url = 'https://occur.us.auth0.com/api/v2/users/email|' + id 
     r = requests.delete(url, headers=get_header())
-    return get_http_response(r)
+    res = {}
+    if r.status_code == 204:
+        res['success'] = True
+    else:
+        res['success'] = False
+    return JsonResponse(res)
 
 # send post request to 'api/v1/new/admin' 
 # The body should have email and name
