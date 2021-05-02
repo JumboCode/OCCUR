@@ -9,9 +9,9 @@ class Resource(models.Model):
     RESOURCE_CATEGORIES = [
     ('FOOD', 'Food'),
     ('HOUSING', 'Housing'),
-    ('COMM_GIVE', 'Community Giveaways'),
+    ('COMM_SERVE', 'Community Services'),
     ('MENTAL_HEALTH', 'Mental Health'),
-    ('INFO', 'Info Sessions/Webinars'),
+    ('EDUCATION', 'Education/Information'),
     ('EVENTS', 'Events'),
     ('WIFI', 'Free Wifi'),
     ('OTHER', 'Other'),
@@ -36,10 +36,10 @@ class Resource(models.Model):
     isRecurring     = models.BooleanField(null=True, blank=True)
     recurrenceDays  = MultiSelectField(choices=DAYS_OF_WEEK, default=[], null=True, blank=True)
     flyer           = models.URLField(null=True, blank=True)
-    flyerId         = models.CharField(max_length=50, null=True, blank=True)
+    flyerId         = models.CharField(max_length=70, null=True, blank=True)
     link            = models.URLField(null=True, blank=True)
     meetingLink     = models.URLField(null=True, blank=True)
-    phone           = PhoneNumberField(null=True, blank=True)
+    phone           = models.CharField(null=True, blank=True,max_length=12)
     email           = models.EmailField(null=True, blank=True)
     description     = models.TextField(blank=False)
 
@@ -51,7 +51,8 @@ class Resource(models.Model):
 
 class Location(models.Model):
     resource        = models.OneToOneField(Resource, on_delete=models.CASCADE, null=True, blank=True)
-    street_address  = models.CharField(max_length=30, blank=True)
+    location_title  = models.CharField(max_length=70, blank=True)
+    street_address  = models.CharField(max_length=50, blank=True)
     city            = models.CharField(max_length=15, blank=True)
     state           = models.CharField(max_length=30, blank=True)
     zip_code        = models.CharField(max_length=5, blank=True)
@@ -59,7 +60,8 @@ class Location(models.Model):
     longitude       = models.FloatField(max_length=30, null=True, blank=True)
 
     def __str__(self):
-        return "{},\n{},\n{}, {}".format(
+        return "{}:\n{},\n{},\n{}, {}".format(
+            self.location_title,
             self.street_address,
             self.city,
             self.state,

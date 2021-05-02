@@ -56,7 +56,7 @@ export default function Home() {
             <SignUp />
           </div>
         </div>
-        <a href="https://occurnow.org/contact-us-1">
+        <a href="https://occurnow.org/contact">
           <div className={styles.contactButton}>
             <p> Contact Us </p>
           </div>

@@ -8,6 +8,12 @@ import dotenv
 import os
 from django.views.decorators.csrf import csrf_protect
 
+class IsAuthenticatedOrOptions(IsAuthenticated):
+    def has_permission(self, request, view):
+        if request.method == 'OPTIONS':
+            return True
+        return super(IsAuthenticatedOrOptions, self).has_permission(request, view)
+
 def validate_incoming_admin(data):
     def make_err_response(msg):
         return {
@@ -27,7 +33,7 @@ def validate_incoming_admin(data):
 @api_view(['GET'])
 # special permissions needed because GET is usually readonly (and therefore visible to all),
 # but we don't want just anyone seeing all of our admins' info
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticatedOrOptions])
 def get_admins(request):
     # send request to management api to get list of users
     r = requests.get('https://occur.us.auth0.com/api/v2/users', headers=get_header())
@@ -39,7 +45,12 @@ def get_admins(request):
 def delete_admin(request, id):
     url = 'https://occur.us.auth0.com/api/v2/users/email|' + id 
     r = requests.delete(url, headers=get_header())
-    return get_http_response(r)
+    res = {}
+    if r.status_code == 204:
+        res['success'] = True
+    else:
+        res['success'] = False
+    return JsonResponse(res)
 
 # send post request to 'api/v1/new/admin' 
 # The body should have email and name
@@ -121,3 +132,4 @@ def get_header():
     headers = {"content-type":"application/json",
                 'Authorization': token}  
     return headers
+

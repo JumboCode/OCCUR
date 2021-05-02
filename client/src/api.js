@@ -1,6 +1,18 @@
 import { useAuth } from 'auth';
 
-const BASE_PATH = process.env.NEXT_PUBLIC_API_BASE ?? 'https://api.resources.occurnow.org/api/v1/';
+const BASE_PATH = process.env.NEXT_PUBLIC_API_BASE ?? 'https://api.resources.occurnow.org/';
+
+export class HTTPError extends Error {
+  constructor(response, body) {
+    super(response.statusText || `Error ${response.status}`);
+
+    if (Error.captureStackTrace) Error.captureStackTrace(this, HTTPError);
+
+    this.name = 'HTTPError';
+    this.status = response.status;
+    this.body = body;
+  }
+}
 
 /* Low-level interface: make a request to the given path/parameters using the given method and
  * the given body/authorization. Light wrapper around the `fetch` API. */
@@ -20,6 +32,7 @@ export async function makeRequest(method, path, params = {}, body, token) {
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
   });
+  if (!response.ok) throw new HTTPError(response, await response.json());
   return response.json();
 }
 
