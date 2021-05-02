@@ -40,10 +40,10 @@ export default function AdminManager({ blocked }) {
   };
 
   const addUser = (data) => {
-    api.post('/new/admin', undefined, data)
+    api.post('admins', undefined, data)
       .then((responsePost) => {
         console.log(responsePost);
-        api.get('/list/admin').then((responseGet) => {
+        api.get('admins').then((responseGet) => {
           setAdmins(responseGet);
         }).catch((error) => {
           console.log(error);
@@ -56,10 +56,10 @@ export default function AdminManager({ blocked }) {
 
   const editUser = (currUser, data) => {
     const id = (currUser.user_id.split('|'))[1];
-    api.put(`${id}/update/admin`, undefined, data)
+    api.put(`admins/${id}`, undefined, data)
       .then((responsePut) => {
         console.log(responsePut);
-        api.get('/list/admin').then((responseGet) => {
+        api.get('admins').then((responseGet) => {
           setAdmins(responseGet);
         }).catch((error) => {
           console.log(error);
@@ -72,10 +72,10 @@ export default function AdminManager({ blocked }) {
 
   const deleteUser = (currUser) => {
     const id = (currUser.user_id.split('|'))[1];
-    api.delete(`${id}/delete/admin`)
+    api.delete(`admins/${id}`)
       .then((responseDelete) => {
         console.log(responseDelete);
-        api.get('/list/admin').then((responseGet) => {
+        api.get('admins').then((responseGet) => {
           setAdmins(responseGet);
         }).catch((error) => {
           console.log(error);
@@ -88,7 +88,7 @@ export default function AdminManager({ blocked }) {
 
   useEffect(() => {
     if (api.authenticated) {
-      api.get('/list/admin').then((response) => {
+      api.get('admins').then((response) => {
         setAdmins(response);
         setAdminsLoaded(true);
       }).catch((error) => {
