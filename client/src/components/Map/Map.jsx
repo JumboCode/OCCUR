@@ -70,28 +70,8 @@ export default function Map({ resources, onMove }) {
   useEffect(() => {
     if (!map) return () => {};
 
-    const defaultOffset = 0.01;
-    const bounds = {
-        maxLng: (resources[0].location.longitude + defaultOffset), 
-        minLng: (resources[0].location.longitude - defaultOffset), 
-        maxLat: (resources[0].location.latitude + defaultOffset), 
-        minLat: (resources[0].location.latitude - defaultOffset)
-    };
-
     const markers = resources.map(({ name, location, id }) => {
       const lnglat = [location.longitude, location.latitude];
-      if (location.longitude < bounds.minLng) { 
-          bounds.minLng = location.longitude 
-      }
-      if (location.longitude > bounds.maxLng) { 
-          bounds.maxLng = location.longitude 
-      };
-      if (location.latitude < bounds.minLat) { 
-          bounds.minLat = location.latitude 
-      };
-      if (location.latitude > bounds.maxLat) { 
-          bounds.maxLat = location.latitude 
-      };
 
       const newMarker = new mapboxgl.Marker({
         color: '#E1701D',
@@ -121,10 +101,30 @@ export default function Map({ resources, onMove }) {
       return newMarker;
     });
 
-    map.fitBounds([
-        [bounds.minLng - defaultOffset, bounds.minLat - defaultOffset],
-        [bounds.maxLng + defaultOffset, bounds.maxLat + defaultOffset]
-    ]);
+    if (resources.length > 1) {
+      // reverse sort by latitude, choose first one (northmost; highest latitude)
+      const coords = resources.map((a) => [a.location.longitude, a.location.latitude]);
+      const lngSorted = [...coords].sort((a, b) => a[0] - b[0]);
+      const latSorted = [...coords].sort((a, b) => a[1] - b[1]);
+
+      const [bottomPoint, topPoint, leftPoint, rightPoint] = [
+        latSorted[0], latSorted.slice(-1)[0], lngSorted[0], lngSorted.slice(-1)[0],
+      ].map((latlng) => map.project(latlng));
+
+      const padding = 50;
+      // 41 is marker height in px; 14 is its vertical offset from the point we placed it
+      const topBound = topPoint.y - (41 + 14) - padding;
+      const bottomBound = bottomPoint.y + padding;
+      const leftBound = leftPoint.x - padding;
+      const rightBound = rightPoint.x + padding;
+
+      const minBoundLngLat = map.unproject([leftBound, bottomBound]);
+      const maxBoundLngLat = map.unproject([rightBound, topBound]);
+
+      map.fitBounds([minBoundLngLat, maxBoundLngLat]);
+    } else if (resources.length === 1) {
+      map.setCenter([resources[0].location.longitude, resources[0].location.latitude]);
+    }
 
     // Clean up: remove old markers
     return () => markers.forEach((m) => m.remove());
