@@ -178,7 +178,7 @@ export async function getServerSideProps(ctx) {
   // Look for resource by ID and handle errors
   let data;
   try {
-    data = await api.get(`/${id}/resource`);
+    data = await api.get(`resources/${id}`);
   } catch (e) {
     let status = 500; // handle errors as 500 by default
     if (e instanceof HTTPError && e.status === 404) status = 404; // but 404 if resource not found
