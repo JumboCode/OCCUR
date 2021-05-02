@@ -14,6 +14,8 @@ const DAYS_OF_WEEK = [
   { id: 'SUN', label: 'Sunday' },
 ]
 
+const DATE_FORMAT = 'mm/dd/yyyy';
+
 export default function SidebarFilter({ values, onChange }) {
   return (
     <div className={styles.base}>
@@ -77,13 +79,20 @@ export default function SidebarFilter({ values, onChange }) {
           ))
         }
       </div>
+      <div className={styles.group}>
+        <h4>Date</h4>
+        <label for="date-range-begin">From</label>
+        <input id="date-range-begin" type="text" placeholder={DATE_FORMAT}></input>
+        <label for="date-range-end">To</label>
+        <input id="date-range-end" type="text" placeholder={DATE_FORMAT}></input>
+      </div>
     </div>
   );
 }
 SidebarFilter.propTypes = {
   values: PropTypes.shape({
     categories: PropTypes.arrayOf(PropTypes.oneOf(
-      RESOURCE_TYPES.map((e) => e.id)
+      RESOURCE_CATEGORIES.map((e) => e.id)
     )).isRequired,
     daysOfWeek: PropTypes.arrayOf(PropTypes.oneOf(
       DAYS_OF_WEEK.map((e) => e.id)
