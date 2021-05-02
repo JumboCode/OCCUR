@@ -60,8 +60,8 @@ export default function Map({ resources, onMove }) {
       onMove({
         minLat: bounds.getSouth(),
         maxLat: bounds.getNorth(),
-        minLong: bounds.getWest(),
-        maxLong: bounds.getEast(),
+        minLng: bounds.getWest(),
+        maxLng: bounds.getEast(),
       });
     };
     map.on('move', handler);

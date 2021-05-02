@@ -36,7 +36,7 @@ def apiUrlsList(request):
     }
     return Response(Urls)
 
-# ---------------------------------- RESOURCE API VIEWS ------------------------------------#    
+# ---------------------------------- RESOURCE API VIEWS ------------------------------------#
 
 #
 # ResourceListCreate
@@ -51,7 +51,7 @@ class ResourceListCreate(ListCreateAPIView):
     search_fields = ('name', 'organization',)
 
     # All unrequired fields are populated with None values if empty
-    defaultOptionalVals = { 'flyer': None, 'meetingLink': None, 'location': {}, 'flyerId': None, 'startDate': None, 'endDate': None, 'link': None, 'startTime': None, 'endTime': None, 'phone': None, 'email': None, 'isRecurring': None, 'recurrenceDays': [] } 
+    defaultOptionalVals = { 'flyer': None, 'meetingLink': None, 'location': {}, 'flyerId': None, 'startDate': None, 'endDate': None, 'link': None, 'startTime': None, 'endTime': None, 'phone': None, 'email': None, 'isRecurring': None, 'recurrenceDays': [] }
 
     def inputValidator(self, data):
         # dict of list matches the format of serializer.errors
@@ -59,7 +59,7 @@ class ResourceListCreate(ListCreateAPIView):
 
         if data['startDate'] and data['endDate'] and data['startDate'] > data['endDate']:
             errorCatalog['startDate'].append('Start date must occur after end date.')
-        
+
         nowStr = datetime.now().strftime('%Y-%m-%d')
         if data['startDate'] and data['startDate'] < nowStr:
             errorCatalog['startDate'].append('Start date must occur in the future.')
@@ -102,15 +102,15 @@ class ResourceListCreate(ListCreateAPIView):
                 # combine both lists of errors
                 sFieldErrors = sErrors[vFieldName] if vFieldName in sErrors else []
                 result[vFieldName] = sFieldErrors + vFieldErrors
-                
+
         return result
 
     # creates new resource
-    def create(self, request, *args, **kwargs): 
+    def create(self, request, *args, **kwargs):
         self.fillRequestBlanks(request.data, self.defaultOptionalVals)
-        vErrors = self.inputValidator(request.data)  
+        vErrors = self.inputValidator(request.data)
 
-        #---- retrieve geoCoordinates 
+        #---- retrieve geoCoordinates
         if 'location' in request.data and request.data['location']:
             address = request.data['location']
             geoCoordinates = getCoordinates(address)
@@ -136,7 +136,7 @@ class ResourceListCreate(ListCreateAPIView):
 
         errors = self.mergeFieldErrors(vErrors, serializer.errors)
         return Response(errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
 
     def parse_date(self, date_string):
         return datetime.strptime(date_string, '%Y-%m-%d')
@@ -209,7 +209,7 @@ class ResourceListCreate(ListCreateAPIView):
             # all resources that don't have a startDate and whose endDate's are captured in the range
             q5 = queryset.filter(
                     startDate__isnull = True,
-                    endDate__gte = start_date_r 
+                    endDate__gte = start_date_r
             )
 
             # all resources without startDate or endDate -- these are always considered active
@@ -225,7 +225,7 @@ class ResourceListCreate(ListCreateAPIView):
         elif start_date_r != None:
             start_date_r = self.parse_date(start_date_r)
             # all events that end after the start date are included
-            q1 = queryset.filter(endDate__gte = start_date_r)     
+            q1 = queryset.filter(endDate__gte = start_date_r)
             # all events that never end are also included
             q2 = queryset.filter(endDate__isnull = True)
             queryset = q1.union(q2)
@@ -273,7 +273,7 @@ class ResourceListCreate(ListCreateAPIView):
             # all resources that don't have a startTime and whose endTime's are captured in the range
             q5 = queryset.filter(
                     startTime__isnull = True,
-                    endTime__gte = start_time_r 
+                    endTime__gte = start_time_r
             )
 
             # all resources without startTime or endTime -- these are always considered active
@@ -289,7 +289,7 @@ class ResourceListCreate(ListCreateAPIView):
         elif start_time_r != None:
             start_time_r = self.parse_time(start_time_r)
             # all events that end after the start time are included
-            q1 = queryset.filter(endTime__gte = start_time_r)     
+            q1 = queryset.filter(endTime__gte = start_time_r)
             # all events that never end are also included
             q2 = queryset.filter(endTime__isnull = True)
             queryset = q1.union(q2)
@@ -302,11 +302,11 @@ class ResourceListCreate(ListCreateAPIView):
             queryset = q1.union(q2)
 
         # filtering by lat. & long. ranges passed
-        if min_long != None:
-            queryset = queryset.filter(location__longitude__gte = min_long)
+        if min_lng != None:
+            queryset = queryset.filter(location__longitude__gte = min_lng)
 
-        if max_long != None:
-            queryset = queryset.filter(location__longitude__lte = max_long)
+        if max_lng != None:
+            queryset = queryset.filter(location__longitude__lte = max_lng)
 
         if min_lat != None:
             queryset = queryset.filter(location__latitude__gte = min_lat)
@@ -316,7 +316,7 @@ class ResourceListCreate(ListCreateAPIView):
 
         return queryset
 
-# 
+#
 # ResourceRetrieveUpdateDestroy
 # Purpose: View for GET, DELETE, PUT, PATCH of resources
 # Functionality: given resource id, retreive resource, modify or delete it
@@ -342,7 +342,7 @@ class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
         return response
 
     def update(self, request, *args, **kwargs):
-        #---- retrieve geoCoordinates 
+        #---- retrieve geoCoordinates
         if 'location' in request.data and request.data['location']:
             address = request.data['location']
             geoCoordinates = getCoordinates(address)
@@ -353,7 +353,7 @@ class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
             request.data['location'] = {}
 
         response = super().update(request, *args, **kwargs)
-        
+
         if response.status_code == 200:
             from django.core.cache import cache
             Resource = response.data
@@ -385,7 +385,7 @@ class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
 
 # -------------------------------------- LOCATION API VIEWS ---------------------------------------#
 
-# 
+#
 # LocationRetrieveUpdateDestroy
 # Purpose: View for DELETE, PUT, PATCH
 # Functionality: given location id, location is retreived then modified or deleted
@@ -407,7 +407,7 @@ class LocationRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
         response = super().update(request, *args, **kwargs)
         if response.status_code == 200:
             from django.core.cache import cache
-            
+
             Location = response.data
             cache.set('Location_data_{}'.format(Location['id']), {
                 'street_address': Location['street_address'],
@@ -419,7 +419,7 @@ class LocationRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
             })
         return response
 
-# 
+#
 # LocationList
 # Purpose: View for retrieving list of all locations
 # Functionality: filters by latitude and longitude
