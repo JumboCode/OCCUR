@@ -36,6 +36,8 @@ export default function Map({ resources, onMove }) {
 
   const router = useRouter();
 
+  const isFittingRef = useRef();
+
   // Set up map
   useEffect(() => {
     setMap(new mapboxgl.Map({
@@ -53,6 +55,7 @@ export default function Map({ resources, onMove }) {
     if (!map || !onMove) return () => {};
 
     const handler = () => {
+      if (isFittingRef.current) return;
       const bounds = map.getBounds();
       onMove({
         minLat: bounds.getSouth(),
@@ -102,6 +105,7 @@ export default function Map({ resources, onMove }) {
     });
 
     if (resources.length > 1) {
+      isFittingRef.current = true;
       // reverse sort by latitude, choose first one (northmost; highest latitude)
       const coords = resources.map((a) => [a.location.longitude, a.location.latitude]);
       const lngSorted = [...coords].sort((a, b) => a[0] - b[0]);
@@ -122,8 +126,11 @@ export default function Map({ resources, onMove }) {
       const maxBoundLngLat = map.unproject([rightBound, topBound]);
 
       map.fitBounds([minBoundLngLat, maxBoundLngLat]);
+      map.once('moveend', () => { isFittingRef.current = false; });
     } else if (resources.length === 1) {
+      isFittingRef.current = true;
       map.setCenter([resources[0].location.longitude, resources[0].location.latitude]);
+      map.once('moveend', () => { isFittingRef.current = false; });
     }
 
     // Clean up: remove old markers
