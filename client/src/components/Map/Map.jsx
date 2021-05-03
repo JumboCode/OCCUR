@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { escapeHTML, slugify } from 'utils';
@@ -8,12 +8,15 @@ import { RESOURCE_PROP_TYPES } from 'data/resources';
 import styles from './Map.module.scss';
 
 import mapboxgl from 'mapbox-gl/dist/mapbox-gl-csp';
+import geoViewport from '@mapbox/geo-viewport';
 import MapboxWorker from 'worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker'; // eslint-disable-line import/no-unresolved
 
 mapboxgl.workerClass = MapboxWorker;
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
 const markerHeight = 40;
+const markerOffset = 14;
+const padding = 35;
 const markerRadius = 10;
 const linearOffset = 25;
 
@@ -26,6 +29,13 @@ const popupOffsets = {
   'bottom-right': [-linearOffset, (markerHeight - markerRadius + linearOffset) * -1],
   left: [markerRadius, (markerHeight - markerRadius) * -1],
   right: [-markerRadius, (markerHeight - markerRadius) * -1],
+};
+
+const mapPadding = {
+  top: padding + markerHeight - markerOffset,
+  bottom: padding - markerOffset,
+  left: padding,
+  right: padding,
 };
 
 export default function Map({ resources, onMove }) {
@@ -71,8 +81,18 @@ export default function Map({ resources, onMove }) {
     return () => map.off('move', handler);
   }, [map, onMove]);
 
+  // get { minLat, minLng, maxLat, maxLng } object approate for 'onMove' from a target center/zoom
+  const getBounds = useCallback((center, zoom) => {
+    const dpr = window.devicePixelRatio || 1;
+    const [minLng, minLat, maxLng, maxLat] = geoViewport.bounds(
+      [center.lng, center.lat],
+      zoom,
+      [mapContainer.current.offsetWidth / dpr, mapContainer.current.offsetHeight / dpr],
+    );
+    return { minLat, minLng, maxLat, maxLng };
+  }, []);
 
-  // Add markers from props
+  // Add markers from props and zoom to fit
   useEffect(() => {
     if (!map) return () => {};
 
@@ -109,45 +129,27 @@ export default function Map({ resources, onMove }) {
       });
 
     if (locationResources.length > 1) {
-      isFittingRef.current += 1;
-      // reverse sort by latitude, choose first one (northmost; highest latitude)
-      const coords = locationResources.map((a) => [a.location.longitude, a.location.latitude]);
-      const lngSorted = [...coords].sort((a, b) => a[0] - b[0]);
-      const latSorted = [...coords].sort((a, b) => a[1] - b[1]);
+      isFittingRef.current = true;
+      const bounds = locationResources
+        .map((a) => [a.location.longitude, a.location.latitude])
+        .reduce((accum, current) => accum.extend(current), new mapboxgl.LngLatBounds());
 
-      const [bottomPoint, topPoint, leftPoint, rightPoint] = [
-        latSorted[0], latSorted.slice(-1)[0], lngSorted[0], lngSorted.slice(-1)[0],
-      ].map((latlng) => map.project(latlng));
+      const options = { padding: mapPadding, maxZoom: 15 };
+      map.fitBounds(bounds, options);
 
-      const padding = 50;
-      // 41 is marker height in px; 14 is its vertical offset from the point we placed it
-      const topBound = topPoint.y - (41 + 14) - padding;
-      const bottomBound = bottomPoint.y + padding;
-      const leftBound = leftPoint.x - padding;
-      const rightBound = rightPoint.x + padding;
-
-      const minBoundLngLat = map.unproject([leftBound, bottomBound]);
-      const maxBoundLngLat = map.unproject([rightBound, topBound]);
-
-      map.fitBounds([minBoundLngLat, maxBoundLngLat]);
       if (onMove) {
-        onMove({
-          minLat: minBoundLngLat.lat,
-          minLng: minBoundLngLat.lng,
-          maxLat: maxBoundLngLat.lat,
-          maxLng: maxBoundLngLat.lng,
-        });
+        // Calculate and report what the final resting position will be
+        const camera = map.cameraForBounds(bounds, options);
+        onMove(getBounds(camera.center, camera.zoom));
       }
-      map.once('moveend', () => { isFittingRef.current = Math.max(isFittingRef.current - 1, 0); });
+      map.once('moveend', () => { isFittingRef.current = false; });
     } else if (locationResources.length === 1) {
-      isFittingRef.current += 1;
-      const { latitude, longitude } = locationResources[0].location;
-      const padding = 0.025;
-      const minLat = latitude - padding; const minLng = longitude - padding;
-      const maxLat = latitude + padding; const maxLng = longitude + padding;
-      if (onMove) onMove({ minLat, minLng, maxLat, maxLng });
-      map.fitBounds([[minLng, minLat], [maxLng, maxLat]]);
-      map.once('moveend', () => { isFittingRef.current = Math.max(isFittingRef.current - 1, 0); });
+      isFittingRef.current = true;
+      const { latitude: lat, longitude: lng } = locationResources[0].location;
+      const center = { lat, lng }; const zoom = 12;
+      map.flyTo({ center, zoom });
+      if (onMove) onMove(getBounds(center, zoom));
+      map.once('moveend', () => { isFittingRef.current = false; });
     }
 
     // Clean up: remove old markers
