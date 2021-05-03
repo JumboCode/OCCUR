@@ -48,7 +48,7 @@ export function AuthProvider({ children }) {
         setIdToken(JSON.parse(Cookies.get('id_token') ?? null));
       }
     }
-  });
+  }, [accessToken]);
 
   // On the client: dynamic import auth0-js and create a webAuth object
   const [webAuth, setWebAuth] = useState(null);

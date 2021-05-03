@@ -11,7 +11,7 @@ export default function NavBar() {
     <nav className={styles.base}>
       <Link href="/"><a className={styles.logo}><img alt="OCCUR logo" src="/logo.png" /></a></Link>
 
-      <SearchBar />
+      <SearchBar live />
       <Link href="/"><a>Home</a></Link>
       <Link href="/resources"><a>Resources</a></Link>
       <a>Wifi Hotspot</a>
