@@ -35,7 +35,6 @@ def validate_incoming_admin(data):
 # but we don't want just anyone seeing all of our admins' info
 @permission_classes([IsAuthenticatedOrOptions])
 def get_create_admins(request):
-
     if request.method == 'GET':
         # send request to management api to get list of users
         r = requests.get('https://occur.us.auth0.com/api/v2/users', headers=get_header())
