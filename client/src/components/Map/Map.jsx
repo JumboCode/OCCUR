@@ -55,7 +55,7 @@ const Map = forwardRef(({ resources, onMove }, ref) => {
   useEffect(() => {
     const newMap = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/streets-v11',
+      style: 'mapbox://styles/mapbox/streets-v11?optimize=true',
       center: [-122.26915291754872, 37.80375524992699],
       zoom: 11,
       dragRotate: false,
