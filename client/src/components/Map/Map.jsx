@@ -53,13 +53,15 @@ export default function Map({ resources, onMove }) {
 
   // Set up map
   useEffect(() => {
-    setMap(new mapboxgl.Map({
+    const newMap = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/streets-v11',
       center: [-122.26915291754872, 37.80375524992699],
       zoom: 11,
-    }));
-    return () => { if (mapRef.current) mapRef.current.remove(); };
+    });
+    newMap.addControl(new mapboxgl.NavigationControl());
+    setMap(newMap);
+    return () => { newMap.remove(); };
   }, []);
 
 
