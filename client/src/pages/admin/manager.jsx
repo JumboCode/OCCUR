@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-// import ReactDOM from 'react-dom';
-// import { useForm } from 'react-hook-form';
-import { isAdmin, useAuth } from 'auth';
+import { isAdmin } from 'auth';
 import { useApi } from 'api';
 import NotFound from 'pages/404';
 import styles from './manager.module.scss';
@@ -13,11 +11,8 @@ import classNames from 'classnames/bind';
 import Circleplus from '../../../public/icons/circle_plus.svg';
 import Pen from '../../../public/icons/pencil.svg';
 import Trash from '../../../public/icons/trash.svg';
-// import Close from '../../../public/icons/close.svg';
-// import { render } from 'sass';
 
 const cx = classNames.bind(styles);
-// temporary list of admin users
 
 export default function AdminManager({ blocked }) {
   const api = useApi();
