@@ -16,12 +16,13 @@ import { slugify } from 'utils';
 
 
 export default function ResourceCard({
-  id, name, organization, startDate, endDate, location, flyer, startTime, endTime,
+  id, name, organization, category, startDate, endDate, location, flyer, startTime, endTime,
 }) {
+  const defaultImage = `/images/category-defaults/${category || 'OTHER'}.jpeg`;
   return (
     <div className={styles.base}>
       <div className={styles.leftside}>
-        <img alt="Resource flyer" src={flyer} />
+        <img alt="Resource flyer" src={flyer || defaultImage} />
       </div>
 
       <div className={styles.rightside}>
