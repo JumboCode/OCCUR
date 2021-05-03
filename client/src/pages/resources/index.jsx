@@ -6,7 +6,8 @@ import { useRouter } from 'next/router';
 import api from 'api';
 import fuzzysort from 'fuzzysort';
 
-import throttle from 'lodash.throttle';
+import throttle from 'lodash/throttle';
+import omit from 'lodash/omit';
 
 import ResourceCard from 'components/ResourceCard';
 import SidebarFilter from 'components/SidebarFilter/SidebarFilter';
@@ -55,11 +56,22 @@ export default function ResourcesPage({ data: resources }) {
   filteredResourcesRef.current = filteredResources;
   const visibleResources = geoFilterResources(filteredResources, router.query);
 
+  const setQueryParams = useCallback((params) => {
+    const oldQuery = omit(routerRef.current.query, Object.keys(params));
+    routerRef.current.replace({
+      path: '/resources',
+      query: {
+        ...oldQuery,
+        // Exclude completely keys that are set to undefined
+        ...Object.fromEntries(Object.entries(params).filter(([, v]) => typeof v !== 'undefined')),
+      },
+    }, undefined, { shallow: true });
+  }, []);
+
   const onMapMove = useCallback( // eslint-disable-line react-hooks/exhaustive-deps
     throttle(
       ({ minLat, maxLat, minLng, maxLng }) => {
         const newQuery = {
-          ...routerRef.current.query,
           min_lat: minLat.toFixed(5),
           max_lat: maxLat.toFixed(5),
           min_lng: minLng.toFixed(5),
@@ -69,11 +81,10 @@ export default function ResourcesPage({ data: resources }) {
         const currentResourceSet = filteredResourcesRef.current;
         const resourcesWithLoc = currentResourceSet.filter((r) => r.location);
         if (geoFilterResources(currentResourceSet, newQuery).length < resourcesWithLoc.length) {
-          routerRef.current.replace({ path: '/resources', query: newQuery }, undefined, { shallow: true });
+          setQueryParams(newQuery);
         // Once the filter makes no difference, remove it
         } else {
-          const { min_lat: _a, max_lat: _b, min_lng: _c, max_lng: _d, ...otherFilters } = newQuery;
-          routerRef.current.replace({ path: '/resources', query: otherFilters }, undefined, { shallow: true });
+          setQueryParams(Object.fromEntries(Object.entries(newQuery).map(([k]) => [k, undefined])));
         }
       },
       50,
