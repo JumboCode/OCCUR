@@ -34,11 +34,12 @@ const geoFilterResources = (
   resources,
   { min_lat: minLat, max_lat: maxLat, min_lng: minLng, max_lng: maxLng },
 ) => resources.filter(({ location }) => {
+  if ((minLat || maxLat || minLng || maxLng) && !location) return false;
   const { latitude: resourceLat, longitude: resourceLng } = location || {};
-  if (minLat && resourceLat < minLat) return false;
-  if (maxLat && resourceLat > maxLat) return false;
-  if (minLng && resourceLng < minLng) return false;
-  if (maxLng && resourceLng > maxLng) return false;
+  if (minLat && (resourceLat < minLat)) return false;
+  if (maxLat && (resourceLat > maxLat)) return false;
+  if (minLng && (resourceLng < minLng)) return false;
+  if (maxLng && (resourceLng > maxLng)) return false;
   return true;
 });
 
@@ -66,7 +67,8 @@ export default function ResourcesPage({ data: resources }) {
         };
         // If the filter makes a difference, apply it
         const currentResourceSet = filteredResourcesRef.current;
-        if (geoFilterResources(currentResourceSet, newQuery).length < currentResourceSet.length) {
+        const resourcesWithLoc = currentResourceSet.filter((r) => r.location);
+        if (geoFilterResources(currentResourceSet, newQuery).length < resourcesWithLoc.length) {
           routerRef.current.replace({ path: '/resources', query: newQuery }, undefined, { shallow: true });
         // Once the filter makes no difference, remove it
         } else {
