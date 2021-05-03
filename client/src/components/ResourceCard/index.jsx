@@ -20,7 +20,9 @@ export default function ResourceCard({
 }) {
   return (
     <div className={styles.base}>
-      <div className={styles.leftside} style={flyer && { backgroundImage: `url(${flyer})` }} />
+      <div className={styles.leftside}>
+        <img alt="Resource flyer" src={flyer} />
+      </div>
 
       <div className={styles.rightside}>
         <div className={styles.content}>
