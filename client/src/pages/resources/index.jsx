@@ -128,7 +128,7 @@ export default function ResourcesPage({ data: resources }) {
           <div className={cx('message')}>
             {visibleResources.length ? visibleResources.length : 'No'}
             {' resource'}
-            {visibleResources.length === '1' ? ' ' : 's '}
+            {visibleResources.length === 1 ? ' ' : 's '}
             found
           </div>
           <button
