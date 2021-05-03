@@ -11,7 +11,7 @@ def csv_to_json(csvFilePath, jsonFilePath):
     #read csv file
     with open(csvFilePath, encoding='utf-8') as csvf: 
         #load csv file data using csv library's dictionary reader
-        location_keys = ['street_address', 'city', 'state', 'zip_code']
+        location_keys = ['location_title','street_address', 'city', 'state', 'zip_code']
         csvReader = csv.DictReader(csvf)
         #convert each csv row into python dict
         for row in csvReader: 

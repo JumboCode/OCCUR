@@ -14,7 +14,7 @@ def readData(jsonArray):
         access_token = get_token()
         token = 'Bearer ' + access_token
         headers = {'content-type': 'application/json', 'Authorization': token}
-        response = requests.post('https://api.resources.occurnow.org/api/v1/new/resource/', data=resource_data, headers=headers)
+        response = requests.post('https://api.resources.occurnow.org/resources', data=resource_data, headers=headers)
         print(response.json)
 
 # reads json file from argv
