@@ -11,7 +11,7 @@ const cx = classNames.bind(styles);
 export default function AddAdminModal({ open, close, submit }) {
   const { register, handleSubmit } = useForm();
   const onSubmit = (data) => {
-    console.log(data);
+    // console.log(data);
     submit(data);
     close(false);
   };

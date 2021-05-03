@@ -37,47 +37,47 @@ export default function AdminManager({ blocked }) {
   const addUser = (data) => {
     api.post('admins', undefined, data)
       .then((responsePost) => {
-        console.log(responsePost);
+        // console.log(responsePost);
         api.get('admins').then((responseGet) => {
           setAdmins(responseGet);
         }).catch((error) => {
-          console.log(error);
+          console.error(error);
         });
       })
       .catch((error) => {
-        console.log(error);
+        // console.log(error);
       });
   };
 
   const editUser = (currUser, data) => {
     const id = (currUser.user_id.split('|'))[1];
     api.put(`admins/${id}`, undefined, data)
-      .then((responsePut) => {
-        console.log(responsePut);
+      .then(() => {
+        // console.log(responsePut);
         api.get('admins').then((responseGet) => {
           setAdmins(responseGet);
         }).catch((error) => {
-          console.log(error);
+          console.error(error);
         });
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
       });
   };
 
   const deleteUser = (currUser) => {
     const id = (currUser.user_id.split('|'))[1];
     api.delete(`admins/${id}`)
-      .then((responseDelete) => {
-        console.log(responseDelete);
+      .then(() => {
+        // console.log(responseDelete);
         api.get('admins').then((responseGet) => {
           setAdmins(responseGet);
         }).catch((error) => {
-          console.log(error);
+          console.error(error);
         });
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
       });
   };
 
@@ -87,10 +87,10 @@ export default function AdminManager({ blocked }) {
         setAdmins(response);
         setAdminsLoaded(true);
       }).catch((error) => {
-        console.log(error);
+        console.error(error);
       });
     }
-  }, [api.authenticated]);
+  }, [api, api.authenticated]);
 
   const adminList = () => {
     if (!adminsLoaded) {
