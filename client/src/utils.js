@@ -16,3 +16,10 @@ export function formatPhoneNumber(phoneNumberString) {
   }
   return null;
 }
+
+// Escape HTML characters to prevent XSS
+export function escapeHTML(htmlString) {
+  const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#x27;', '/': '&#x2F;' };
+  const reg = /[&<>"'/]/ig;
+  return htmlString.replace(reg, (match) => (map[match]));
+}
