@@ -29,6 +29,7 @@ const popupOffsets = {
 };
 
 export default function Map({ resources, onMove }) {
+  const locationResources = resources.filter((r) => r.location);
   const mapContainer = useRef();
   const [map, setMap] = useState(null);
   const mapRef = useRef();
@@ -75,40 +76,42 @@ export default function Map({ resources, onMove }) {
   useEffect(() => {
     if (!map) return () => {};
 
-    const markers = resources.map(({ name, location, id }) => {
-      const lnglat = [location.longitude, location.latitude];
+    const markers = locationResources
+      .filter(({ location }) => location)
+      .map(({ name, location, id }) => {
+        const lnglat = [location.longitude, location.latitude];
 
-      const newMarker = new mapboxgl.Marker({
-        color: '#E1701D',
-      })
-        .setLngLat(lnglat)
-        .addTo(map);
-      // Click handler: open resource
-      newMarker.getElement().addEventListener('click', () => {
-        routerRef.current.push('/resources/[id]', `/resources/${id}-${slugify(name, 5)}`);
-      });
-      // Set up popup
-      const popup = new mapboxgl.Popup({
-        offset: popupOffsets,
-        closeButton: false,
-        closeOnClick: false,
-      }).setMaxWidth('200px');
-
-      newMarker.getElement().addEventListener('mouseover', () => {
-        popup
+        const newMarker = new mapboxgl.Marker({
+          color: '#E1701D',
+        })
           .setLngLat(lnglat)
-          .setHTML(`<h3>${escapeHTML(name)}</h3><p>${escapeHTML(location.street_address)}<br>${escapeHTML(location.city)}, ${escapeHTML(location.state)}`)
           .addTo(map);
+        // Click handler: open resource
+        newMarker.getElement().addEventListener('click', () => {
+          routerRef.current.push('/resources/[id]', `/resources/${id}-${slugify(name, 5)}`);
+        });
+        // Set up popup
+        const popup = new mapboxgl.Popup({
+          offset: popupOffsets,
+          closeButton: false,
+          closeOnClick: false,
+        }).setMaxWidth('200px');
+
+        newMarker.getElement().addEventListener('mouseover', () => {
+          popup
+            .setLngLat(lnglat)
+            .setHTML(`<h3>${escapeHTML(name)}</h3><p>${escapeHTML(location.street_address)}<br>${escapeHTML(location.city)}, ${escapeHTML(location.state)}`)
+            .addTo(map);
+        });
+        newMarker.getElement().addEventListener('mouseleave', () => popup.remove());
+
+        return newMarker;
       });
-      newMarker.getElement().addEventListener('mouseleave', () => popup.remove());
 
-      return newMarker;
-    });
-
-    if (resources.length > 1) {
+    if (locationResources.length > 1) {
       isFittingRef.current += 1;
       // reverse sort by latitude, choose first one (northmost; highest latitude)
-      const coords = resources.map((a) => [a.location.longitude, a.location.latitude]);
+      const coords = locationResources.map((a) => [a.location.longitude, a.location.latitude]);
       const lngSorted = [...coords].sort((a, b) => a[0] - b[0]);
       const latSorted = [...coords].sort((a, b) => a[1] - b[1]);
 
@@ -136,9 +139,9 @@ export default function Map({ resources, onMove }) {
         });
       }
       map.once('moveend', () => { isFittingRef.current = Math.max(isFittingRef.current - 1, 0); });
-    } else if (resources.length === 1) {
+    } else if (locationResources.length === 1) {
       isFittingRef.current += 1;
-      const { latitude, longitude } = resources[0].location;
+      const { latitude, longitude } = locationResources[0].location;
       const padding = 0.025;
       const minLat = latitude - padding; const minLng = longitude - padding;
       const maxLat = latitude + padding; const maxLng = longitude + padding;

@@ -29,7 +29,8 @@ function filterResources(passedResources, filters) {
 const geoFilterResources = (
   resources,
   { min_lat: minLat, max_lat: maxLat, min_lng: minLng, max_lng: maxLng },
-) => resources.filter(({ location: { latitude: resourceLat, longitude: resourceLng } = {} }) => {
+) => resources.filter(({ location }) => {
+  const { latitude: resourceLat, longitude: resourceLng } = location || {};
   if (minLat && resourceLat < minLat) return false;
   if (maxLat && resourceLat > maxLat) return false;
   if (minLng && resourceLng < minLng) return false;
