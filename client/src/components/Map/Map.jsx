@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, useCallback } from 'react';
+import React, { useRef, useEffect, useState, useCallback, forwardRef, useImperativeHandle } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { escapeHTML, slugify } from 'utils';
@@ -38,7 +38,7 @@ const mapPadding = {
   right: padding,
 };
 
-export default function Map({ resources, onMove }) {
+const Map = forwardRef(({ resources, onMove }, ref) => {
   const locationResources = resources.filter((r) => r.location);
   const mapContainer = useRef();
   const [map, setMap] = useState(null);
@@ -95,6 +95,34 @@ export default function Map({ resources, onMove }) {
     return { minLat, minLng, maxLat, maxLng };
   }, []);
 
+  const resetBounds = () => {
+    if (locationResources.length > 1) {
+      isFittingRef.current = true;
+      const bounds = locationResources
+        .map((a) => [a.location.longitude, a.location.latitude])
+        .reduce((accum, current) => accum.extend(current), new mapboxgl.LngLatBounds());
+
+      const options = { padding: mapPadding, maxZoom: 15 };
+      map.fitBounds(bounds, options);
+
+      if (onMove) {
+        // Calculate and report what the final resting position will be
+        const camera = map.cameraForBounds(bounds, options);
+        onMove(getBounds(camera.center, camera.zoom));
+      }
+      map.once('moveend', () => { isFittingRef.current = false; });
+    } else if (locationResources.length === 1) {
+      isFittingRef.current = true;
+      const { latitude: lat, longitude: lng } = locationResources[0].location;
+      const center = { lat, lng }; const zoom = 12;
+      map.flyTo({ center, zoom });
+      if (onMove) onMove(getBounds(center, zoom));
+      map.once('moveend', () => { isFittingRef.current = false; });
+    }
+  };
+
+  useImperativeHandle(ref, () => ({ resetBounds }));
+
   // Add markers from props and zoom to fit
   useEffect(() => {
     if (!map) return () => {};
@@ -131,30 +159,7 @@ export default function Map({ resources, onMove }) {
         return newMarker;
       });
 
-    if (locationResources.length > 1) {
-      isFittingRef.current = true;
-      const bounds = locationResources
-        .map((a) => [a.location.longitude, a.location.latitude])
-        .reduce((accum, current) => accum.extend(current), new mapboxgl.LngLatBounds());
-
-      const options = { padding: mapPadding, maxZoom: 15 };
-      map.fitBounds(bounds, options);
-
-      if (onMove) {
-        // Calculate and report what the final resting position will be
-        const camera = map.cameraForBounds(bounds, options);
-        onMove(getBounds(camera.center, camera.zoom));
-      }
-      map.once('moveend', () => { isFittingRef.current = false; });
-    } else if (locationResources.length === 1) {
-      isFittingRef.current = true;
-      const { latitude: lat, longitude: lng } = locationResources[0].location;
-      const center = { lat, lng }; const zoom = 12;
-      map.flyTo({ center, zoom });
-      if (onMove) onMove(getBounds(center, zoom));
-      map.once('moveend', () => { isFittingRef.current = false; });
-    }
-
+    resetBounds();
     // Clean up: remove old markers
     return () => markers.forEach((m) => m.remove());
   },
@@ -170,7 +175,7 @@ export default function Map({ resources, onMove }) {
   return (
     <div className={styles.map_container} ref={mapContainer} />
   );
-}
+});
 
 Map.propTypes = {
   resources: PropTypes.arrayOf(PropTypes.shape({
@@ -184,3 +189,5 @@ Map.propTypes = {
 Map.defaultProps = {
   onMove: null,
 };
+
+export default Map;
