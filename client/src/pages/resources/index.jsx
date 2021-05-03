@@ -4,7 +4,7 @@ import { RESOURCE_PROP_TYPES } from 'data/resources';
 
 import { useRouter } from 'next/router';
 import api from 'api';
-import Fuse from 'fuse.js';
+import fuzzysort from 'fuzzysort';
 
 import throttle from 'lodash.throttle';
 
@@ -18,8 +18,12 @@ import styles from './ResourceSearch.module.scss';
 function filterResources(passedResources, filters) {
   let resources = passedResources;
   if (filters.search) {
-    const fuse = new Fuse(resources, { keys: ['name', 'organization', 'category'] });
-    resources = fuse.search(filters.search).map((result) => result.item);
+    const results = fuzzysort.go(
+      filters.search,
+      resources,
+      { keys: ['name', 'organization', 'category'] },
+    );
+    resources = results.map((result) => result.obj);
   }
 
   return resources;
