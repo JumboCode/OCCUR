@@ -13,8 +13,10 @@ import ResourceCard from 'components/ResourceCard';
 import SidebarFilter from 'components/SidebarFilter/SidebarFilter';
 import Map from 'components/Map/Map';
 
-
+import classNames from 'classnames/bind';
 import styles from './ResourceSearch.module.scss';
+const cx = classNames.bind(styles);
+
 
 function filterResources(passedResources, filters) {
   let resources = passedResources;
@@ -54,9 +56,11 @@ const geoFilterResources = (
   return true;
 });
 
+
 export default function ResourcesPage({ data: resources }) {
   const routerRef = useRef();
   const router = useRouter();
+  const mapRef = useRef();
   routerRef.current = router;
 
   const filteredResourcesRef = useRef();
@@ -117,7 +121,26 @@ export default function ResourcesPage({ data: resources }) {
           <Map
             resources={filteredResources}
             onMove={onMapMove}
+            ref={mapRef}
           />
+        </div>
+        <div className={cx('results-summary', { empty: !visibleResources.length })}>
+          <div className={cx('message')}>
+            {visibleResources.length ? visibleResources.length : 'No'}
+            {' resource'}
+            {visibleResources.length === '1' ? ' ' : 's '}
+            found
+          </div>
+          <button
+            type="button"
+            className={cx('clear')}
+            onClick={() => {
+              mapRef.current.resetBounds();
+              router.replace('/resources', undefined, { shallow: true });
+            }}
+          >
+            Clear filters
+          </button>
         </div>
         { visibleResources.map((r) => (
           <ResourceCard key={r.id} {...r} />
