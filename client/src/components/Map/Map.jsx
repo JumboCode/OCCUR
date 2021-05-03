@@ -35,8 +35,10 @@ export default function Map({ resources, onMove }) {
   mapRef.current = map;
 
   const router = useRouter();
+  const routerRef = useRef();
+  routerRef.current = router;
 
-  const isFittingRef = useRef();
+  const isFittingRef = useRef(0);
 
   // Set up map
   useEffect(() => {
@@ -83,7 +85,7 @@ export default function Map({ resources, onMove }) {
         .addTo(map);
       // Click handler: open resource
       newMarker.getElement().addEventListener('click', () => {
-        router.push('/resources/[id]', `/resources/${id}-${slugify(name, 5)}`);
+        routerRef.current.push('/resources/[id]', `/resources/${id}-${slugify(name, 5)}`);
       });
       // Set up popup
       const popup = new mapboxgl.Popup({
@@ -104,7 +106,7 @@ export default function Map({ resources, onMove }) {
     });
 
     if (resources.length > 1) {
-      isFittingRef.current = true;
+      isFittingRef.current += 1;
       // reverse sort by latitude, choose first one (northmost; highest latitude)
       const coords = resources.map((a) => [a.location.longitude, a.location.latitude]);
       const lngSorted = [...coords].sort((a, b) => a[0] - b[0]);
@@ -125,23 +127,37 @@ export default function Map({ resources, onMove }) {
       const maxBoundLngLat = map.unproject([rightBound, topBound]);
 
       map.fitBounds([minBoundLngLat, maxBoundLngLat]);
-      map.once('moveend', () => { isFittingRef.current = false; });
+      if (onMove) {
+        onMove({
+          minLat: minBoundLngLat.lat,
+          minLng: minBoundLngLat.lng,
+          maxLat: maxBoundLngLat.lat,
+          maxLng: maxBoundLngLat.lng,
+        });
+      }
+      map.once('moveend', () => { isFittingRef.current = Math.max(isFittingRef.current - 1, 0); });
     } else if (resources.length === 1) {
-      isFittingRef.current = true;
-      map.flyTo({
-        center: [resources[0].location.longitude, resources[0].location.latitude],
-        zoom: 11,
-      });
-      map.once('moveend', () => { isFittingRef.current = false; });
+      isFittingRef.current += 1;
+      const { latitude, longitude } = resources[0].location;
+      const padding = 0.025;
+      const minLat = latitude - padding; const minLng = longitude - padding;
+      const maxLat = latitude + padding; const maxLng = longitude + padding;
+      if (onMove) onMove({ minLat, minLng, maxLat, maxLng });
+      map.fitBounds([[minLng, minLat], [maxLng, maxLat]]);
+      map.once('moveend', () => { isFittingRef.current = Math.max(isFittingRef.current - 1, 0); });
     }
 
     // Clean up: remove old markers
     return () => markers.forEach((m) => m.remove());
-  }, [
+  },
+  /* eslint-disable react-hooks/exhaustive-deps */
+  [
     map,
     // only refresh when data changes meaningfully
-    JSON.stringify(resources.map(({ name, location }) => ({ name, location }))),
+    JSON.stringify(resources.map(({ name, location, id }) => ({ name, location, id }))),
+    onMove,
   ]);
+  /* eslint-enable */
 
   return (
     <div className={styles.map_container} ref={mapContainer} />
