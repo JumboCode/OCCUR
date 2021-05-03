@@ -150,8 +150,8 @@ class ResourceListCreate(ListCreateAPIView):
 
         start_date_r = self.request.query_params.get('start_date_r', None)
         end_date_r = self.request.query_params.get('end_date_r', None)
-        min_long = self.request.query_params.get('min_long', None)
-        max_long = self.request.query_params.get('max_long', None)
+        min_long = self.request.query_params.get('min_lng', None)
+        max_long = self.request.query_params.get('max_lng', None)
         min_lat = self.request.query_params.get('min_lat', None)
         max_lat = self.request.query_params.get('max_lat', None)
         categories = self.request.query_params.get('category', None)
@@ -302,11 +302,11 @@ class ResourceListCreate(ListCreateAPIView):
             queryset = q1.union(q2)
 
         # filtering by lat. & long. ranges passed
-        if min_lng != None:
-            queryset = queryset.filter(location__longitude__gte = min_lng)
+        if min_long != None:
+            queryset = queryset.filter(location__longitude__gte = min_long)
 
-        if max_lng != None:
-            queryset = queryset.filter(location__longitude__lte = max_lng)
+        if max_long != None:
+            queryset = queryset.filter(location__longitude__lte = max_long)
 
         if min_lat != None:
             queryset = queryset.filter(location__latitude__gte = min_lat)
