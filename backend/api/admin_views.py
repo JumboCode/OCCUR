@@ -30,81 +30,77 @@ def validate_incoming_admin(data):
 
     return None
 
-@api_view(['GET'])
+@api_view(['GET', 'POST'])
 # special permissions needed because GET is usually readonly (and therefore visible to all),
 # but we don't want just anyone seeing all of our admins' info
 @permission_classes([IsAuthenticatedOrOptions])
-def get_admins(request):
-    # send request to management api to get list of users
-    r = requests.get('https://occur.us.auth0.com/api/v2/users', headers=get_header())
-    return get_http_response(r)
+def get_create_admins(request):
+
+    if request.method == 'GET':
+        # send request to management api to get list of users
+        r = requests.get('https://occur.us.auth0.com/api/v2/users', headers=get_header())
+        return get_http_response(r)
+    
+    if request.method == 'POST':
+        payload = request.data
+        val_result = validate_incoming_admin(payload)
+        if val_result != None:
+            return JsonResponse(val_result)
+        # get email and name out of request payload
+        email = payload["email"]
+        name = payload["name"]
+        payload = {
+            "email": email,
+            "user_metadata": {},
+            "blocked": False,
+            "email_verified": False,
+            "app_metadata": {},
+            "name": name,
+            "connection": "email",
+            "verify_email": False
+        }
+        # send post request to auth0 management api 
+        conn = http.client.HTTPSConnection("occur.us.auth0.com")
+        conn.request("POST", "/api/v2/users", json.dumps(payload), get_header())
+        res = conn.getresponse()
+        return JsonResponse(json.loads(res.read()))
 
 # send a request to 'api/v1/<id>/delete/admin' 
 # can get the id from the get request (do not add email| on beginning)
-@api_view(['DELETE'])
-def delete_admin(request, id):
-    url = 'https://occur.us.auth0.com/api/v2/users/email|' + id 
-    r = requests.delete(url, headers=get_header())
-    res = {}
-    if r.status_code == 204:
-        res['success'] = True
-    else:
-        res['success'] = False
-    return JsonResponse(res)
+@api_view(['DELETE', 'PUT'])
+def update_delete_admin(request, id):
+    if request.method == 'DELETE':
+        url = 'https://occur.us.auth0.com/api/v2/users/email|' + id 
+        r = requests.delete(url, headers=get_header())
+        res = {}
+        if r.status_code == 204:
+            res['success'] = True
+        else:
+            res['success'] = False
+        return JsonResponse(res)
 
-# send post request to 'api/v1/new/admin' 
-# The body should have email and name
-@api_view(['POST'])
-def new_admin(request):
-    payload = request.data
-    val_result = validate_incoming_admin(payload)
-    if val_result != None:
-        return JsonResponse(val_result)
-    # get email and name out of request payload
-    email = payload["email"]
-    name = payload["name"]
-    payload = {
-        "email": email,
-        "user_metadata": {},
-        "blocked": False,
-        "email_verified": False,
-        "app_metadata": {},
-        "name": name,
-        "connection": "email",
-        "verify_email": False
-    }
-    # send post request to auth0 management api 
-    conn = http.client.HTTPSConnection("occur.us.auth0.com")
-    conn.request("POST", "/api/v2/users", json.dumps(payload), get_header())
-    res = conn.getresponse()
-    return JsonResponse(json.loads(res.read()))
-
-# send put request to 'api/v1/<id>/update/admin' 
-# can get the id from the get request (do not add email| on beginning)
-# The body should have email and name
-@api_view(['PUT'])
-def update_admin(request, id):
-    payload = request.data
-    val_result = validate_incoming_admin(payload)
-    if val_result != None:
-        return JsonResponse(val_result)
-    email = payload["email"]
-    name = payload["name"]
-    payload = {
-        "email": email,
-        "user_metadata": {},
-        "blocked": False,
-        "email_verified": False,
-        "app_metadata": {},
-        "name": name,
-        "connection": "email",
-        "verify_email": False
-    }
-    # send patch request to auth0 management api 
-    conn = http.client.HTTPSConnection("occur.us.auth0.com")
-    conn.request("PATCH", "/api/v2/users/email|" + id, json.dumps(payload), get_header())
-    res = conn.getresponse()
-    return JsonResponse(json.loads(res.read()))
+    if request.method == 'PUT':
+        payload = request.data
+        val_result = validate_incoming_admin(payload)
+        if val_result != None:
+            return JsonResponse(val_result)
+        email = payload["email"]
+        name = payload["name"]
+        payload = {
+            "email": email,
+            "user_metadata": {},
+            "blocked": False,
+            "email_verified": False,
+            "app_metadata": {},
+            "name": name,
+            "connection": "email",
+            "verify_email": False
+        }
+        # send patch request to auth0 management api 
+        conn = http.client.HTTPSConnection("occur.us.auth0.com")
+        conn.request("PATCH", "/api/v2/users/email|" + id, json.dumps(payload), get_header())
+        res = conn.getresponse()
+        return JsonResponse(json.loads(res.read()))
 
 def get_http_response(r):
     return HttpResponse(
