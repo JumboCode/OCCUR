@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useAuth } from 'auth';
 
 const BASE_PATH = process.env.NEXT_PUBLIC_API_BASE ?? 'https://api.resources.occurnow.org/';
@@ -59,7 +60,7 @@ export function useApi() {
   const { ready, isAuthenticated, accessToken } = useAuth();
   const token = (ready && isAuthenticated) ? accessToken : undefined;
 
-  const methods = getApi(token);
+  const methods = useMemo(() => getApi(token), [token]);
   return {
     ...methods,
     authenticated: ready && isAuthenticated,

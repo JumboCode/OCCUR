@@ -20,7 +20,7 @@ export default function NavBar() {
           ? (
             <>
               {/* Links that only display for authenticated users */}
-              <a>Admin Manager</a>
+              <Link href="/admin/manager"><a>Admin Manager</a></Link>
             </>
           )
           : (
