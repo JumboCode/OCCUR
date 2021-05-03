@@ -3,6 +3,7 @@
 .base {
   display: flex;
   @include page-padding;
+  min-height: calc(100vh - 60px);
 
   .left {
     margin-right: 3em;
