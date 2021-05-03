@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { RESOURCE_PROP_TYPES } from 'data/resources';
 
 import { useRouter } from 'next/router';
 import api from 'api';
 import Fuse from 'fuse.js';
+
+import throttle from 'lodash.throttle';
 
 import ResourceCard from 'components/ResourceCard';
 import SidebarFilter from 'components/SidebarFilter/SidebarFilter';
@@ -39,8 +41,29 @@ export default function ResourcesPage({ data: resources }) {
   const [values, setValues] = useState([]);
 
   const router = useRouter();
+  const routerRef = useRef();
+  routerRef.current = router;
   const filteredResources = filterResources(resources, router.query);
   const visibleResources = geoFilterResources(filteredResources, router.query);
+
+  const onMapMove = useCallback( // eslint-disable-line react-hooks/exhaustive-deps
+    throttle(
+      ({ minLat, maxLat, minLng, maxLng }) => {
+        routerRef.current.replace({
+          path: '/resources',
+          query: {
+            ...routerRef.current.query,
+            min_lat: minLat.toFixed(5),
+            max_lat: maxLat.toFixed(5),
+            min_lng: minLng.toFixed(5),
+            max_lng: maxLng.toFixed(5),
+          },
+        }, undefined, { shallow: true });
+      },
+      50,
+    ),
+    [],
+  );
 
   return (
     <div className={styles.base}>
@@ -52,18 +75,7 @@ export default function ResourcesPage({ data: resources }) {
         <div className={styles.map}>
           <Map
             resources={filteredResources}
-            onMove={({ minLat, maxLat, minLng, maxLng }) => {
-              router.replace({
-                path: '/resources',
-                query: {
-                  ...router.query,
-                  min_lat: minLat.toFixed(5),
-                  max_lat: maxLat.toFixed(5),
-                  min_lng: minLng.toFixed(5),
-                  max_lng: maxLng.toFixed(5),
-                },
-              }, undefined, { shallow: true });
-            }}
+            onMove={onMapMove}
           />
         </div>
         { visibleResources.map((r) => (
