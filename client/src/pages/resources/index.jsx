@@ -40,25 +40,34 @@ const geoFilterResources = (
 export default function ResourcesPage({ data: resources }) {
   const [values, setValues] = useState([]);
 
-  const router = useRouter();
   const routerRef = useRef();
+  const router = useRouter();
   routerRef.current = router;
+
+  const filteredResourcesRef = useRef();
   const filteredResources = filterResources(resources, router.query);
+  filteredResourcesRef.current = filteredResources;
   const visibleResources = geoFilterResources(filteredResources, router.query);
 
   const onMapMove = useCallback( // eslint-disable-line react-hooks/exhaustive-deps
     throttle(
       ({ minLat, maxLat, minLng, maxLng }) => {
-        routerRef.current.replace({
-          path: '/resources',
-          query: {
-            ...routerRef.current.query,
-            min_lat: minLat.toFixed(5),
-            max_lat: maxLat.toFixed(5),
-            min_lng: minLng.toFixed(5),
-            max_lng: maxLng.toFixed(5),
-          },
-        }, undefined, { shallow: true });
+        const newQuery = {
+          ...routerRef.current.query,
+          min_lat: minLat.toFixed(5),
+          max_lat: maxLat.toFixed(5),
+          min_lng: minLng.toFixed(5),
+          max_lng: maxLng.toFixed(5),
+        };
+        // If the filter makes a difference, apply it
+        const currentResourceSet = filteredResourcesRef.current;
+        if (geoFilterResources(currentResourceSet, newQuery).length < currentResourceSet.length) {
+          routerRef.current.replace({ path: '/resources', query: newQuery }, undefined, { shallow: true });
+        // Once the filter makes no difference, remove it
+        } else {
+          const { min_lat: _a, max_lat: _b, min_lng: _c, max_lng: _d, ...otherFilters } = newQuery;
+          routerRef.current.replace({ path: '/resources', query: otherFilters }, undefined, { shallow: true });
+        }
       },
       50,
     ),
