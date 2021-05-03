@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 
@@ -7,8 +7,11 @@ import styles from './SearchBar.module.scss';
 
 
 function SearchBar({ live }) {
-  const [text, setText] = useState('');
+  const [stateText, setStateText] = useState('');
   const router = useRouter();
+
+  const isLive = live && router.pathname === '/resources';
+  const text = isLive ? (router.query.search || '') : stateText;
 
   // If we're already on the search page this function can just update the search shallowly instead
   // of re-navigating
@@ -24,25 +27,22 @@ function SearchBar({ live }) {
     return false;
   }, [router]);
 
-  // In “live” mode, if we're already on the resources page, update the query as the user types.
-  useEffect(() => {
-    if (!live) return;
-    updateSearch(text);
-  }, [text, live]);
-
   const go = useCallback(() => {
     const didShallowUpdate = updateSearch(text);
     if (!didShallowUpdate) {
       router.push({ pathname: '/resources', query: text ? { search: text } : undefined });
     }
-  }, [text]);
+  }, [text, router, updateSearch]);
 
   return (
     <div className={`searchbar ${styles.searchbar}`}>
       <input
         type="text"
         value={text}
-        onChange={(e) => setText(e.target.value)}
+        onChange={(e) => {
+          const didUpdateLive = isLive && updateSearch(e.target.value);
+          if (!didUpdateLive) setStateText(e.target.value);
+        }}
         placeholder="Search for resources..."
         name="s"
       />
