@@ -128,7 +128,10 @@ export default function Map({ resources, onMove }) {
       map.once('moveend', () => { isFittingRef.current = false; });
     } else if (resources.length === 1) {
       isFittingRef.current = true;
-      map.setCenter([resources[0].location.longitude, resources[0].location.latitude]);
+      map.flyTo({
+        center: [resources[0].location.longitude, resources[0].location.latitude],
+        zoom: 11,
+      });
       map.once('moveend', () => { isFittingRef.current = false; });
     }
 
