@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { RESOURCE_PROP_TYPES } from 'data/resources';
 
@@ -18,14 +18,24 @@ import styles from './ResourceSearch.module.scss';
 
 function filterResources(passedResources, filters) {
   let resources = passedResources;
+  // Text search
   if (filters.search) {
     const results = fuzzysort.go(
       filters.search,
       resources,
-      { keys: ['name', 'organization', 'category'] },
+      { keys: ['name', 'organization'] },
     );
     resources = results.map((result) => result.obj);
   }
+  // Other filters
+  resources = resources.filter((r) => {
+    // Category filter
+    if (filters.categories && filters.categories.length) {
+      return filters.categories.includes(r.category);
+    }
+    // TODO: more filters when implemented
+    return true;
+  });
 
   return resources;
 }
@@ -45,8 +55,6 @@ const geoFilterResources = (
 });
 
 export default function ResourcesPage({ data: resources }) {
-  const [values, setValues] = useState([]);
-
   const routerRef = useRef();
   const router = useRouter();
   routerRef.current = router;
@@ -95,7 +103,13 @@ export default function ResourcesPage({ data: resources }) {
   return (
     <div className={styles.base}>
       <div className={styles.left}>
-        <SidebarFilter values={values} onChange={setValues} />
+        <SidebarFilter
+          values={router.query.categories ? router.query.categories.split(',') : []}
+          onChange={(cats) => {
+            const joined = cats.join(',');
+            setQueryParams({ categories: joined.length ? joined : undefined });
+          }}
+        />
       </div>
 
       <div className={styles.right}>
