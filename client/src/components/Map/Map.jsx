@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
-import { slugify } from 'utils';
+import { escapeHTML, slugify } from 'utils';
 
 import { RESOURCE_PROP_TYPES } from 'data/resources';
 
@@ -95,8 +95,7 @@ export default function Map({ resources, onMove }) {
       newMarker.getElement().addEventListener('mouseover', () => {
         popup
           .setLngLat(lnglat)
-          // TODO: this has an XSS vulnerability
-          .setHTML(`<h3>${name}</h3><p>${location.street_address}<br>${location.city}, ${location.state}`)
+          .setHTML(`<h3>${escapeHTML(name)}</h3><p>${escapeHTML(location.street_address)}<br>${escapeHTML(location.city)}, ${escapeHTML(location.state)}`)
           .addTo(map);
       });
       newMarker.getElement().addEventListener('mouseleave', () => popup.remove());
