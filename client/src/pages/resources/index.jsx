@@ -3,17 +3,23 @@ import PropTypes from 'prop-types';
 import { RESOURCE_PROP_TYPES } from 'data/resources';
 
 import { useRouter } from 'next/router';
+import api from 'api';
+import Fuse from 'fuse.js';
 
 import ResourceCard from 'components/ResourceCard';
 import SidebarFilter from 'components/SidebarFilter/SidebarFilter';
 import Map from 'components/Map/Map';
 
-import api from 'api';
 
 import styles from './ResourceSearch.module.scss';
 
-function filterResources(resources, filters) {
-  // TODO: filters here
+function filterResources(passedResources, filters) {
+  let resources = passedResources;
+  if (filters.search) {
+    const fuse = new Fuse(resources, { keys: ['name', 'organization', 'category'] });
+    resources = fuse.search(filters.search).map((result) => result.item);
+  }
+
   return resources;
 }
 
