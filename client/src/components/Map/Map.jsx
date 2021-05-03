@@ -149,7 +149,11 @@ export default function Map({ resources, onMove }) {
 }
 
 Map.propTypes = {
-  resources: PropTypes.arrayOf(PropTypes.shape(RESOURCE_PROP_TYPES)).isRequired,
+  resources: PropTypes.arrayOf(PropTypes.shape({
+    id: RESOURCE_PROP_TYPES.id,
+    name: RESOURCE_PROP_TYPES.name,
+    location: RESOURCE_PROP_TYPES.location,
+  })).isRequired,
 
   onMove: PropTypes.func,
 };
