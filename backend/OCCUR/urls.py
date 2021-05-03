@@ -25,9 +25,7 @@ urlpatterns = [
     path('resources/<int:id>', views.ResourceRetrieveUpdateDestroy.as_view()),
     path('resources', views.ResourceListCreate.as_view()),
     path('locations', views.LocationList.as_view()),
-    path('admins', admin_views.get_admins),
-    path('admins/<id>', admin_views.delete_admin),
-    path('admins', admin_views.new_admin),
-    path('admins/<id>', admin_views.update_admin),
+    path('admins', admin_views.get_create_admins),
+    path('admins/<id>', admin_views.update_delete_admin),
     path('admin/', admin.site.urls),
 ]

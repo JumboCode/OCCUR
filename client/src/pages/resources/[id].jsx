@@ -21,6 +21,7 @@ import styles from './ResourceDetail.module.scss';
 export default function ResourcePage({
   errorCode,
   data: {
+    id,
     name,
     organization,
     flyer,
@@ -163,7 +164,7 @@ export default function ResourcePage({
         </div>
       </div>
       <div className={styles.map}>
-        <Map resources={[{ name, location }]} />
+        <Map resources={[{ id, name, location }]} />
       </div>
     </div>
   );
