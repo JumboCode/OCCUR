@@ -13,6 +13,7 @@ export default function Footer() {
         <div>
           <p>Join Our Email List</p>
           <p>Donate Today</p>
+          <p>Credits</p>
         </div>
         <div>
           <p>OCCUR Business Office</p>
