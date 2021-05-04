@@ -127,40 +127,44 @@ export default function ResourcePage({
               Share
             </div>
           </div>
-          <div className={styles.contact}>
-            <h3>Address and Contact Information</h3>
-            {resourceLocation.street_address && (
-              <p className={styles.address}>
-                {/* TODO: replace location name */}
-                Location Name
-                <br />
-                {resourceLocation.street_address}
-                <br />
-                {resourceLocation.city}
-                {', '}
-                {resourceLocation.state}
-                {' '}
-                {resourceLocation.zip_code}
-              </p>
-            )}
-            <p className={styles.contactDetails}>
-              {meetingLink && (
-                <>
-                  <a href={meetingLink}>{meetingLink}</a>
-                  <br />
-                </>
-              )}
-              {phone && (
-                <>
-                  <a href={`tel:${phone}`}>{formatPhoneNumber(phone)}</a>
-                  <br />
-                </>
-              )}
-              {email && (
-                <a href={`mailto:${email}`}>{email}</a>
-              )}
-            </p>
-          </div>
+          {
+            resourceLocation?.street_address || meetingLink || phone || email && (
+              <div className={styles.contact}>
+                <h3>Address and Contact Information</h3>
+                {resourceLocation?.street_address && (
+                  <p className={styles.address}>
+                    {/* TODO: replace location name */}
+                    Location Name
+                    <br />
+                    {resourceLocation.street_address}
+                    <br />
+                    {resourceLocation.city}
+                    {', '}
+                    {resourceLocation.state}
+                    {' '}
+                    {resourceLocation.zip_code}
+                  </p>
+                )}
+                <p className={styles.contactDetails}>
+                  {meetingLink && (
+                    <>
+                      <a href={meetingLink}>{meetingLink}</a>
+                      <br />
+                    </>
+                  )}
+                  {phone && (
+                    <>
+                      <a href={`tel:${phone}`}>{formatPhoneNumber(phone)}</a>
+                      <br />
+                    </>
+                  )}
+                  {email && (
+                    <a href={`mailto:${email}`}>{email}</a>
+                  )}
+                </p>
+              </div>
+            )
+          }
         </div>
       </div>
       <div className={styles.map}>
