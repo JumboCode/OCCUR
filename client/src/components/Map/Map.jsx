@@ -7,11 +7,9 @@ import { RESOURCE_PROP_TYPES } from 'data/resources';
 
 import styles from './Map.module.scss';
 
-import mapboxgl from 'mapbox-gl/dist/mapbox-gl-csp';
 import geoViewport from '@mapbox/geo-viewport';
-import MapboxWorker from 'worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker'; // eslint-disable-line import/no-unresolved
+import mapboxgl from 'mapbox-gl';
 
-mapboxgl.workerClass = MapboxWorker;
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
 const markerHeight = 40;
