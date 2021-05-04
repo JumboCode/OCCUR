@@ -3,19 +3,21 @@ import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { RESOURCE_PROP_TYPES } from 'data/resources';
 
+import dynamic from 'next/dynamic';
 import api, { HTTPError } from 'api';
 import { formatPhoneNumber, slugify } from 'utils';
 
 import NotFound from 'pages/404';
 import Error from 'next/error';
 import { DateRange, TimeRange } from 'components/DateRange';
-import Map from 'components/Map/Map';
 
 import ArrowIcon from '../../../public/view.svg';
 import Calendar2Icon from '../../../public/calendar2.svg';
 import ShareIcon from '../../../public/share.svg';
 
 import styles from './ResourceDetail.module.scss';
+
+const Map = dynamic(import('components/Map'));
 
 
 export default function ResourcePage({

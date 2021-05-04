@@ -6,16 +6,18 @@ import { useRouter } from 'next/router';
 import api from 'api';
 import fuzzysort from 'fuzzysort';
 
+import dynamic from 'next/dynamic';
 import throttle from 'lodash/throttle';
 import omit from 'lodash/omit';
 
 import ResourceCard from 'components/ResourceCard';
 import SidebarFilter from 'components/SidebarFilter/SidebarFilter';
-import Map from 'components/Map/Map';
 
 import classNames from 'classnames/bind';
 import styles from './ResourceSearch.module.scss';
 const cx = classNames.bind(styles);
+
+const Map = dynamic(import('components/Map'));
 
 
 function filterResources(passedResources, filters) {
