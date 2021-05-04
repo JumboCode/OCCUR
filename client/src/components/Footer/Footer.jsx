@@ -1,6 +1,8 @@
 import React from 'react';
 import styles from './Footer.module.scss';
 
+import Link from 'next/link';
+
 import FacebookIcon from '../../../public/icons/facebook.svg';
 import InstagramIcon from '../../../public/icons/instagram.svg';
 import LinkedinIcon from '../../../public/icons/linkedin.svg';
@@ -11,27 +13,29 @@ export default function Footer() {
     <div className={styles.base}>
       <div className={styles.columns}>
         <div>
-          <p>Join Our Email List</p>
-          <p>Donate Today</p>
-          <p>Credits</p>
+          <p style={{ cursor: 'not-allowed' }}>Join Our Email List</p>
+          <p>
+            <a href="https://donorbox.org/occur" target="_blank" rel="noopener noreferrer">Donate Today</a>
+          </p>
+          <p>
+            <Link href="/credits"><a>Credits</a></Link>
+          </p>
         </div>
         <div>
           <p>OCCUR Business Office</p>
           <p className={styles.address}>
-            360 14th Street
-            <br />
-            Ste 100
+            360 14th Street, Ste 100
             <br />
             Oakland, CA 94612
-            <br />
-            US
           </p>
-          <p className={styles.phoneNumber}>
-            (510) 839 – 2440
-          </p>
+          <a className={styles.phoneNumber}>
+            (510) 839-2440
+          </a>
         </div>
         <div>
-          Contact Us
+          <p>
+            <a href="https://www.occurnow.org/contact" target="_blank" rel="nooopener noreferrer">Contact Us</a>
+          </p>
           <div className={styles.icons}>
             <a href="https://www.facebook.com/occurnow/" target="_blank" rel="noopener noreferrer">
               <FacebookIcon />
