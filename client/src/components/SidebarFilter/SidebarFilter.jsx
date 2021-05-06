@@ -16,6 +16,25 @@ const DAYS_OF_WEEK = [
 
 const DATE_FORMAT = 'mm/dd/yyyy';
 
+// taken from Luke's codepen.io: https://codesandbox.io/s/lively-cache-67v89?file=/src/App.js
+// slightly modified to simply return the nicely formatted date
+const formatDateInput = (e) => {
+  // Only take numeric characters from the input
+  const val = [...e.target.value]
+    .filter((c) => c.charCodeAt(0) >= 48 && c.charCodeAt(0) <= 57)
+    .join("");
+  // Automatically format with slashes when we put the new value in the input
+  let out = val.slice(0, 2);
+  if (val.length > 2) {
+    out += "/" + val.slice(2, 4);
+  }
+  if (val.length > 4) {
+    out += "/" + val.slice(4, 8);
+  }
+  
+  return out;
+}
+
 export default function SidebarFilter({ values, onChange }) {
   return (
     <div className={styles.base}>
