@@ -32,12 +32,12 @@ export default function AdminLogin() {
           setErrorMessage('Something went wrong');
         }
       });
-  }, [email]);
+  }, [login, email]);
 
   const doLogout = useCallback(() => {
     logout();
     router.push('/');
-  });
+  }, [logout, router]);
 
   // Login page 1: enter email address and send email
   const page1 = (

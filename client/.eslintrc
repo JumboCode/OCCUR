@@ -1,5 +1,5 @@
 {
-  "extends": ["airbnb"],
+  "extends": ["airbnb", "airbnb/hooks"],
   "env": { "browser": true },
   "parser": "babel-eslint",
 
@@ -10,6 +10,7 @@
     "import/no-webpack-loader-syntax": "off",
     "import/extensions": "off",
     "import/order": "off",
+    "import/newline-after-import": "off",
     "react/static-property-placement": "off",
     "react/state-in-constructor": "off",
     "jsx-a11y/anchor-is-valid": "off",

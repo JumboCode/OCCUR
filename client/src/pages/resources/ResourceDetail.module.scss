@@ -131,7 +131,7 @@
   }
 
   border: 1px solid rgba(0, 0, 0, 0.45);
-  border-radius: 5px;
+  border-radius: 6px;
 
   svg {
     height: 1.75em;
@@ -177,7 +177,7 @@
   }
 
   border: 1px solid rgba(0, 0, 0, 0.45);
-  border-radius: 5px;
+  border-radius: 6px;
 
   svg {
     height: 1.75em;
@@ -206,4 +206,14 @@
       font-weight: 600;
     }
   }
+}
+
+.map {
+  position: relative;
+  width: 100%;
+  padding-top: 33%;
+  margin-top: 1.5rem;
+  border-radius: 6px;
+  overflow: hidden;
+  min-height: 200px;
 }

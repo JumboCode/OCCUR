@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import styles from './SidebarFilter.module.scss';
 import { RESOURCE_CATEGORIES } from 'data/resources';
 
+console.log(RESOURCE_CATEGORIES);
+
 const DAYS_OF_WEEK = [
   { id: 'MON', label: 'Monday' },
   { id: 'TUES', label: 'Tuesday' },
@@ -22,18 +24,17 @@ const formatDateInput = (e) => {
   // Only take numeric characters from the input
   const val = [...e.target.value]
     .filter((c) => c.charCodeAt(0) >= 48 && c.charCodeAt(0) <= 57)
-    .join("");
+    .join('');
   // Automatically format with slashes when we put the new value in the input
   let out = val.slice(0, 2);
   if (val.length > 2) {
-    out += "/" + val.slice(2, 4);
+    out += `/${val.slice(2, 4)}`;
   }
   if (val.length > 4) {
-    out += "/" + val.slice(4, 8);
+    out += `/${val.slice(4, 8)}`;
   }
-  
   return out;
-}
+};
 
 export default function SidebarFilter({ values, onChange }) {
   return (
@@ -111,7 +112,7 @@ export default function SidebarFilter({ values, onChange }) {
 SidebarFilter.propTypes = {
   values: PropTypes.shape({
     categories: PropTypes.arrayOf(PropTypes.oneOf(
-      RESOURCE_CATEGORIES.map((e) => e.id)
+      RESOURCE_CATEGORIES.map((e) => e.id),
     )).isRequired,
     daysOfWeek: PropTypes.arrayOf(PropTypes.oneOf(
       DAYS_OF_WEEK.map((e) => e.id),
