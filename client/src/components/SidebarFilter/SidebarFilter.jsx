@@ -12,7 +12,7 @@ const DAYS_OF_WEEK = [
   { id: 'FRI', label: 'Friday' },
   { id: 'SAT', label: 'Saturday' },
   { id: 'SUN', label: 'Sunday' },
-]
+];
 
 export default function SidebarFilter({ values, onChange }) {
   return (
@@ -83,10 +83,10 @@ export default function SidebarFilter({ values, onChange }) {
 SidebarFilter.propTypes = {
   values: PropTypes.shape({
     categories: PropTypes.arrayOf(PropTypes.oneOf(
-      RESOURCE_TYPES.map((e) => e.id)
+      RESOURCE_CATEGORIES.map((e) => e.id)
     )).isRequired,
     daysOfWeek: PropTypes.arrayOf(PropTypes.oneOf(
-      DAYS_OF_WEEK.map((e) => e.id)
+      DAYS_OF_WEEK.map((e) => e.id),
     )).isRequired,
     startTime: PropTypes.shape({
       hour: PropTypes.string.isRequired,
