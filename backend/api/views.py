@@ -147,6 +147,18 @@ class ResourceListCreate(ListCreateAPIView):
         for k,v in self.default_filter_vals.items():
             if not k in filters:
                 filters[k] = v
+
+    def validate_filters(self, filters):
+        error_catalog = defaultdict(list)
+
+        if filters['start_date_r']:
+            try:
+                self.parse_date(filters['start_date_r'])
+            except ValueError as e:
+                error_catalog['start_date_r'].append(str(e))
+        
+        return dict(error_catalog)
+                
     
     def parse_date(self, date_string):
         return datetime.strptime(date_string, '%Y-%m-%d')
@@ -160,6 +172,9 @@ class ResourceListCreate(ListCreateAPIView):
 
         filters = self.request.query_params.dict()
         self.fill_filter_blanks(filters)
+        errors = self.validate_filters(filters)
+        if errors:
+            raise ValidationError(errors)
 
         start_date_r = filters['start_date_r']
         end_date_r = filters['end_date_r']
