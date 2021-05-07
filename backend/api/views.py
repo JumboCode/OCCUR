@@ -136,8 +136,18 @@ class ResourceListCreate(ListCreateAPIView):
 
         errors = self.mergeFieldErrors(vErrors, serializer.errors)
         return Response(errors, status=status.HTTP_400_BAD_REQUEST)
-    
 
+
+    ### FILTERING
+    default_filter_vals = { 'start_date_r': None, 'end_date_r': None, 'min_long': None,
+            'max_long': None, 'min_lat': None, 'max_lat': None, 'category': None,
+            'end_time_r': None, 'start_time_r': None }
+
+    def fill_filter_blanks(self, filters):
+        for k,v in self.default_filter_vals.items():
+            if not k in filters:
+                filters[k] = v
+    
     def parse_date(self, date_string):
         return datetime.strptime(date_string, '%Y-%m-%d')
 
@@ -148,15 +158,18 @@ class ResourceListCreate(ListCreateAPIView):
         # retrieving query params from request
         queryset = Resource.objects.all()
 
-        start_date_r = self.request.query_params.get('start_date_r', None)
-        end_date_r = self.request.query_params.get('end_date_r', None)
-        min_long = self.request.query_params.get('min_long', None)
-        max_long = self.request.query_params.get('max_long', None)
-        min_lat = self.request.query_params.get('min_lat', None)
-        max_lat = self.request.query_params.get('max_lat', None)
-        categories = self.request.query_params.get('category', None)
-        start_time_r = self.request.query_params.get('start_time_r', None)
-        end_time_r = self.request.query_params.get('end_time_r', None)
+        filters = self.request.query_params.dict()
+        self.fill_filter_blanks(filters)
+
+        start_date_r = filters['start_date_r']
+        end_date_r = filters['end_date_r']
+        min_long = filters['min_long']
+        max_long = filters['max_long']
+        min_lat = filters['min_lat']
+        max_lat = filters['max_lat']
+        categories = filters['category']
+        start_time_r = filters['start_time_r']
+        end_time_r = filters['end_time_r']
 
         # Base case, no filters
         if start_date_r == None and end_date_r == None and min_long == None and max_long == None and min_lat == None and max_lat == None and categories == None and start_time_r == None and end_time_r == None:
