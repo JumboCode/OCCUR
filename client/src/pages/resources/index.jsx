@@ -24,12 +24,12 @@ export default function ResourcesPage({ data }) {
     },
     startDate: {
       month: '',
-      date: '',
+      day: '',
       year: '',
     },
     endDate: {
       month: '',
-      date: '',
+      day: '',
       year: '',
     },
   });
