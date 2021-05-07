@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styles from './SidebarFilter.module.scss';
 import { RESOURCE_CATEGORIES } from 'data/resources';
@@ -35,7 +35,13 @@ const formatDateInput = (e) => {
   return out;
 }
 
+// parses the date according to DATE_FORMAT
+const parseValidDate = (dateStr) => {
+  return [dateStr.substring(0, 2), dateStr.substring(3, 5), dateStr.substring(6, 11)];
+}
+
 export default function SidebarFilter({ values, onChange }) {
+  const [endDate, setEndDate] = useState('');
   return (
     <div className={styles.base}>
       <div className={styles.group}>
@@ -100,10 +106,38 @@ export default function SidebarFilter({ values, onChange }) {
       </div>
       <div className={styles.group}>
         <h4>Date</h4>
-        <label for="date-range-begin">From</label>
+        <label htmlFor="date-range-begin">From</label>
         <input id="date-range-begin" type="text" placeholder={DATE_FORMAT}></input>
-        <label for="date-range-end">To</label>
-        <input id="date-range-end" type="text" placeholder={DATE_FORMAT}></input>
+        <label htmlFor="date-range-end">To</label>
+        <input id="date-range-end" type="text" placeholder={DATE_FORMAT}
+          onChange={(e) => {
+            setEndDate(formatDateInput(e));
+            if (endDate.length === DATE_FORMAT.length) {
+              const [month, day, year] = parseValidDate(endDate);
+              onChange({
+                ...values,
+                endDate: {
+                  month: month,
+                  day: day,
+                  year: year,
+                },
+              });
+            }
+            else {
+              if (endDate.length !== 0) {
+                // set edges to red for error
+              }
+              onChange({
+                ...values,
+                endDate: {
+                  month: '',
+                  day: '',
+                  year: '',
+                },
+              });
+            }
+          }}
+          value={endDate}></input>
       </div>
     </div>
   );
@@ -128,12 +162,12 @@ SidebarFilter.propTypes = {
     }),
     startDate: PropTypes.shape({
       month: PropTypes.string.isRequired,
-      date: PropTypes.string.isRequired,
+      day: PropTypes.string.isRequired,
       year: PropTypes.string.isRequired,
     }),
     endDate: PropTypes.shape({
       month: PropTypes.string.isRequired,
-      date: PropTypes.string.isRequired,
+      day: PropTypes.string.isRequired,
       year: PropTypes.string.isRequired,
     }),
   }),
