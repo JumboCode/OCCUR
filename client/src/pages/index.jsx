@@ -39,10 +39,8 @@ export default function Home() {
           Your generous support enables OCCUR to continue to provide
           effective capacity building programs and services.
         </p>
-        <a href="https://donorbox.org/occur">
-          <div className={styles.donateButton}>
-            <p>Donate Today</p>
-          </div>
+        <a href="https://donorbox.org/occur" className={styles.button}>
+          Donate Today
         </a>
       </section>
 
@@ -56,10 +54,8 @@ export default function Home() {
             <SignUp />
           </div>
         </div>
-        <a href="https://occurnow.org/contact-us-1">
-          <div className={styles.contactButton}>
-            <p> Contact Us </p>
-          </div>
+        <a href="https://occurnow.org/contact" className={styles.button}>
+          Contact Us
         </a>
       </section>
 

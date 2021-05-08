@@ -11,7 +11,7 @@ export default function NavBar() {
     <nav className={styles.base}>
       <Link href="/"><a className={styles.logo}><img alt="OCCUR logo" src="/logo.png" /></a></Link>
 
-      <SearchBar />
+      <SearchBar live />
       <Link href="/"><a>Home</a></Link>
       <Link href="/resources"><a>Resources</a></Link>
       <a>Wifi Hotspot</a>
@@ -20,13 +20,13 @@ export default function NavBar() {
           ? (
             <>
               {/* Links that only display for authenticated users */}
-              <a>Admin Manager</a>
+              <Link href="/admin/manager"><a>Admin Manager</a></Link>
             </>
           )
           : (
             <>
               {/* Links that only display for unauthenticated users */}
-              <a>Contact</a>
+              <a href="https://occurnow.org/contact">Contact</a>
             </>
           )
       }

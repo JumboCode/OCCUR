@@ -1,0 +1,35 @@
+@import '../../styles/colors';
+
+.base {
+  opacity: 0;
+  pointer-events: none;
+  &.open { opacity: 1; pointer-events: all; }
+
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+
+  background-color: rgba(0, 0, 0, 0.3);
+
+  .window {
+    // Position in the center
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    // Default sizing
+    min-width: 50%;
+    min-height: 200px;
+    max-width: 100%;
+    max-height: 80%;
+    overflow: auto;
+    // Window styles
+    background: $white;
+    border-radius: 6px;
+    box-shadow: 0 8px 40px -10px rgba(0, 0, 0, 0.35);
+    padding: 1rem 1.5rem;
+  }
+}
