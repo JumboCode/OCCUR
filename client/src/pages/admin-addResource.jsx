@@ -5,6 +5,7 @@ import Modal from 'components/Modal';
 import styles from './admin-addResource.module.scss';
 import classNames from 'classnames/bind';
 import PropTypes from 'prop-types';
+import Close from '../../public/icons/close.svg';
 
 const cx = classNames.bind(styles);
 
@@ -22,6 +23,7 @@ export default function AddResourceModal({ open, close, submit }) {
   return (
     <Modal className={styles.resourceForm} open={open} onClose={() => close(false)}>
       <form onSubmit={handleSubmit(onSubmit)}>
+        <Close onClick={() => close(false)} className={cx('closeButton')} type="button" />
           <h1>Add a Resource</h1>
 
           <h2>Resource Name <span className={styles.required}>*</span></h2>
@@ -141,8 +143,8 @@ export default function AddResourceModal({ open, close, submit }) {
           <input {...register("resourceLink") } placeholder="Enter link" />
 
           <div className={styles.cancelsavebutton}>
-            <button onClick={() => close(false)} style={{ backgroundColor: 'rgb(155, 155, 155)' }}>Cancel</button>
-            <button onClick={handleSubmit(onSubmit)} type="submit">Save</button>
+            <button onClick={() => close(false)} className={cx('cancelButton')}>Cancel</button>
+            <button onClick={handleSubmit(onSubmit)} className={cx('saveButton')} type="submit">Save</button>
           </div>
       </form>
     </Modal>

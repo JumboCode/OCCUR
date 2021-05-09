@@ -54,6 +54,28 @@ span.required {
     }
 }
 
+
+.closeButton {
+    height: 25px;
+    width: 25px;
+    float: right;
+}
+
+.cancelButton {
+    background-color: rgb(58, 56, 56, 0.5);
+    border-radius: 2px;
+    border:none ;
+    font-weight: bold;
+    color: white;
+}
+.saveButton {
+    background-color: #DC9766;
+    border-radius: 2px;
+    border:none;
+    font-weight: bold;
+    color: white;
+}
+
 .cancelsavebutton {
     margin-top: 20px;
     margin-bottom: 10px;
