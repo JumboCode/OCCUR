@@ -118,7 +118,21 @@ export default function ResourcesPage({ blocked, data: resources }) {
         // console.log(error);
       });
   };
-
+  // const deleteResource = (resource) => {
+  //   const id = (currUser.id.split('|'))[1];
+  //   api.delete(`admins/${id}`)
+  //     .then(() => {
+  //       // console.log(responseDelete);
+  //       api.get('admins').then((responseGet) => {
+  //         setAdmins(responseGet);
+  //       }).catch((error) => {
+  //         console.error(error);
+  //       });
+  //     })
+  //     .catch((error) => {
+  //       console.error(error);
+  //     });
+  // };
   return (
     
     <div className={styles.base}>
@@ -146,7 +160,7 @@ export default function ResourcesPage({ blocked, data: resources }) {
           />
         </div>
         <div className={cx('results-summary', { empty: !visibleResources.length })}>
-         {blocked ? <NotFound /> :
+         {blocked ? <div/> :
           <div className={cx('buttonContainer')}>
             <button className={cx('addResource')} type="button" onClick={() => setopenAddResourceModal(true)}>
               <Circleplus className={cx('circleIcon')} />
