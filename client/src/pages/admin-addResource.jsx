@@ -20,7 +20,7 @@ export default function AddResourceModal({ open, close, submit }) {
   const isVirtual = watch('virtual', false);
 
   return (
-    <Modal open={open} onClose={() => close(false)}>
+    <Modal className={styles.resourceForm} open={open} onClose={() => close(false)}>
       <form onSubmit={handleSubmit(onSubmit)}>
           <h1>Add a Resource</h1>
 
@@ -141,8 +141,8 @@ export default function AddResourceModal({ open, close, submit }) {
           <input {...register("resourceLink") } placeholder="Enter link" />
 
           <div className={styles.cancelsavebutton}>
-            <button style={{ backgroundColor: 'rgb(155, 155, 155)' }}>Cancel</button>
-            <button type="submit">Save</button>
+            <button onClick={() => close(false)} style={{ backgroundColor: 'rgb(155, 155, 155)' }}>Cancel</button>
+            <button onClick={handleSubmit(onSubmit)} type="submit">Save</button>
           </div>
       </form>
     </Modal>
