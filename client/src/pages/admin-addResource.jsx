@@ -1,18 +1,26 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { RESOURCE_CATEGORIES, DAYS_OF_WEEK } from 'data/resources';
-
+import Modal from 'components/Modal';
 import styles from './admin-addResource.module.scss';
+import classNames from 'classnames/bind';
+import PropTypes from 'prop-types';
 
-export default function addResource({ data }) {
+const cx = classNames.bind(styles);
+
+export default function AddResourceModal({ open, close, submit }) {
   const { register, handleSubmit, watch } = useForm();
-  const onSubmit = data => console.log(data);
+  const onSubmit = (data) => {
+    // console.log(data);
+    submit(data);
+    close(false);
+  };
 
   const isRecurring = watch('recurring', false);
   const isVirtual = watch('virtual', false);
 
   return (
-    <div className={styles.resourceForm}>
+    <Modal open={open} onClose={() => close(false)}>
       <form onSubmit={handleSubmit(onSubmit)}>
           <h1>Add a Resource</h1>
 
@@ -137,8 +145,12 @@ export default function addResource({ data }) {
             <button type="submit">Save</button>
           </div>
       </form>
-
-    
-    </div>
+    </Modal>
   );
 }
+
+AddResourceModal.propTypes = {
+  open: PropTypes.bool.isRequired,
+  close: PropTypes.func.isRequired,
+  submit: PropTypes.func.isRequired,
+};

@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef,  useState } from 'react';
 import PropTypes from 'prop-types';
 import { RESOURCE_PROP_TYPES } from 'data/resources';
 
@@ -16,6 +16,9 @@ import Map from 'components/Map/lazy';
 import classNames from 'classnames/bind';
 import styles from './ResourceSearch.module.scss';
 import Circleplus from '../../../public/icons/circle_plus.svg';
+import { isAdmin } from 'auth';
+import AddResourceModal from 'pages/admin-addResource'
+
 const cx = classNames.bind(styles);
 
 
@@ -58,7 +61,7 @@ const geoFilterResources = (
 });
 
 
-export default function ResourcesPage({ data: resources, blocked }) {
+export default function ResourcesPage({ blocked, data: resources }) {
   const routerRef = useRef();
   const router = useRouter();
   const mapRef = useRef();
@@ -68,6 +71,7 @@ export default function ResourcesPage({ data: resources, blocked }) {
   const filteredResources = filterResources(resources, router.query);
   filteredResourcesRef.current = filteredResources;
   const visibleResources = geoFilterResources(filteredResources, router.query);
+  const [openAddResourceModal, setopenAddResourceModal] = useState(false);
 
   const setQueryParams = useCallback((params) => {
     const oldQuery = omit(routerRef.current.query, Object.keys(params));
@@ -105,8 +109,24 @@ export default function ResourcesPage({ data: resources, blocked }) {
     [],
   );
 
+  const addResource = (resource) => {
+    api.post('resources', undefined, resource)
+      .then((responsePost) => {
+        console.log(responsePost);
+      })
+      .catch((error) => {
+        // console.log(error);
+      });
+  };
+
   return (
+    
     <div className={styles.base}>
+      <AddResourceModal
+        open={openAddResourceModal}
+        close={setopenAddResourceModal}
+        submit={addResource}
+      />
       <div className={styles.left}>
         <SidebarFilter
           values={router.query.categories ? router.query.categories.split(',') : []}
@@ -126,8 +146,9 @@ export default function ResourcesPage({ data: resources, blocked }) {
           />
         </div>
         <div className={cx('results-summary', { empty: !visibleResources.length })}>
+         {blocked ? <NotFound /> :
           <div className={cx('buttonContainer')}>
-            <button className={cx('addResource')} type="button" onClick={() => setopenAddAdminModal(true)}>
+            <button className={cx('addResource')} type="button" onClick={() => setopenAddResourceModal(true)}>
               <Circleplus className={cx('circleIcon')} />
               <div
                 className={cx('addResourceButton')}
@@ -136,6 +157,7 @@ export default function ResourcesPage({ data: resources, blocked }) {
               </div>
             </button>
           </div>
+          }
           <div className={cx('message')}>
             {visibleResources.length ? visibleResources.length : 'No'}
             {' resource'}
@@ -161,11 +183,13 @@ export default function ResourcesPage({ data: resources, blocked }) {
   );
 }
 ResourcesPage.propTypes = {
+  blocked: PropTypes.bool.isRequired,
   data: PropTypes.arrayOf(PropTypes.shape(RESOURCE_PROP_TYPES)).isRequired,
 };
 
-export async function getServerSideProps() {
+export async function getServerSideProps(ctx) {
+  const blocked = !isAdmin(ctx);
   return {
-    props: { data: await api.get('/resources') },
+    props: {blocked, data: await api.get('/resources')},
   };
 }
