@@ -56,6 +56,11 @@ const parseValidDate = (dateStr) => {
   return [dateStr.substring(0, 2), dateStr.substring(3, 5), dateStr.substring(6, 11)];
 }
 
+// parses the time according to TIME_FORMAT
+const parseValidTime = (timeStr) => {
+  return [timeStr.substring(0,2), timeStr.substring(3, 5)];
+}
+
 export default function SidebarFilter({ values, onChange }) {
   const [endDate, setEndDate] = useState('');
   const [startDate, setStartDate] = useState('');
@@ -188,7 +193,13 @@ export default function SidebarFilter({ values, onChange }) {
         <h4>Time</h4>
         <label htmlFor="time-range-start">From</label>
         <input id="time-range-start" type="text" placeholder={TIME_FORMAT}
-          onChange={(e) => { setStartTime(formatTimeInput(e)); }}
+          onChange={(e) => { 
+              setStartTime(formatTimeInput(e));
+              if (startTime.length === TIME_FORMAT.length) {
+              }
+              else {
+              }
+          }}
           value={startTime}></input>
       </div>
     </div>
