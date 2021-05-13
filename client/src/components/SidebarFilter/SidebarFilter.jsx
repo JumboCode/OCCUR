@@ -42,6 +42,7 @@ const parseValidDate = (dateStr) => {
 
 export default function SidebarFilter({ values, onChange }) {
   const [endDate, setEndDate] = useState('');
+  const [startDate, setStartDate] = useState('');
   return (
     <div className={styles.base}>
       <div className={styles.group}>
@@ -107,7 +108,34 @@ export default function SidebarFilter({ values, onChange }) {
       <div className={styles.group}>
         <h4>Date</h4>
         <label htmlFor="date-range-begin">From</label>
-        <input id="date-range-begin" type="text" placeholder={DATE_FORMAT}></input>
+        <input id="date-range-begin" type="text" placeholder={DATE_FORMAT}
+          onChange={(e) => {
+            setStartDate(formatDateInput(e));
+              if (startDate.length === DATE_FORMAT.length) {
+                  const [month, day, year] = parseValidDate(startDate);
+                  onChange({
+                    ...values,
+                    startDate: {
+                      month: month,
+                      day: day,
+                      year: year,
+                    },
+                  });
+              }
+              else {
+                if (startDate.length !== 0) {
+                    // set edges to red for error
+                }
+                onChange({
+                  ...values,
+                  startDate: {
+                    month: '',
+                    day: '',
+                    year: '',
+                  },
+                });
+              }
+          }} value={startDate}></input>
         <label htmlFor="date-range-end">To</label>
         <input id="date-range-end" type="text" placeholder={DATE_FORMAT}
           onChange={(e) => {
