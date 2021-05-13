@@ -44,9 +44,9 @@ export default function EditAdminModal({ open, close, user, submit, errorMessage
           <input name="name" {...register('name')} />
           Admin Email
           <input name="email" {...register('email')} />
+          <button onClick={handleSubmit(onSubmit)} className={cx('saveButton')} type="button">Save</button>
+          <button onClick={() => { close(false); setErrorMessage(null); }} className={cx('cancelButton')} type="button">Cancel</button>
         </div>
-        <button onClick={handleSubmit(onSubmit)} className={cx('saveButton')} type="button">Save</button>
-        <button onClick={() => { close(false); setErrorMessage(null); }} className={cx('cancelButton')} type="button">Cancel</button>
       </form>
     </Modal>
   );
