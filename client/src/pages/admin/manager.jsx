@@ -94,8 +94,8 @@ export default function AdminManager({ blocked }) {
         <input className={cx('adminName')} type="text" readOnly value={user.name} />
         <div className={cx('verticalBreak')} />
         <input className={cx('adminEmail')} type="text" readOnly value={user.email} />
-        <Pen className={cx('penIcon')} type="button" onClick={() => handleEditClick(user)} />
         <Trash className={cx('trashIcon')} type="button" onClick={() => handleDeleteClick(user)} />
+        <Pen className={cx('penIcon')} type="button" onClick={() => handleEditClick(user)} />
       </div>
     ));
   };
