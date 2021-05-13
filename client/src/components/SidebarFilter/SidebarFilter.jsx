@@ -15,6 +15,7 @@ const DAYS_OF_WEEK = [
 ]
 
 const DATE_FORMAT = 'mm/dd/yyyy';
+const TIME_FORMAT = 'hh:mm';
 
 // taken from Luke's codepen.io: https://codesandbox.io/s/lively-cache-67v89?file=/src/App.js
 // slightly modified to simply return the nicely formatted date
@@ -35,6 +36,21 @@ const formatDateInput = (e) => {
   return out;
 }
 
+// does pretty much the same thing as formatDateInput, but for time 
+const formatTimeInput = (e) => {
+  // only taking numeric characters from input
+  const val = [...e.target.value]
+    .filter((c) => c.charCodeAt(0) >= 48 && c.charCodeAt(0) <= 57)
+    .join('');
+  // automatically format with colon
+  let out = val.slice(0, 2);
+  if (val.length > 2) {
+      out += ':' + val.slice(2, 4);
+  } 
+
+  return out;
+}
+
 // parses the date according to DATE_FORMAT
 const parseValidDate = (dateStr) => {
   return [dateStr.substring(0, 2), dateStr.substring(3, 5), dateStr.substring(6, 11)];
@@ -43,6 +59,7 @@ const parseValidDate = (dateStr) => {
 export default function SidebarFilter({ values, onChange }) {
   const [endDate, setEndDate] = useState('');
   const [startDate, setStartDate] = useState('');
+  const [startTime, setStartTime] = useState('');
   return (
     <div className={styles.base}>
       <div className={styles.group}>
@@ -166,6 +183,13 @@ export default function SidebarFilter({ values, onChange }) {
             }
           }}
           value={endDate}></input>
+      </div>
+      <div className={styles.group}>
+        <h4>Time</h4>
+        <label htmlFor="time-range-start">From</label>
+        <input id="time-range-start" type="text" placeholder={TIME_FORMAT}
+          onChange={(e) => { setStartTime(formatTimeInput(e)); }}
+          value={startTime}></input>
       </div>
     </div>
   );
