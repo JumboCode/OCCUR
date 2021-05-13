@@ -13,6 +13,8 @@ import ResourceCard from 'components/ResourceCard';
 import SidebarFilter from 'components/SidebarFilter/SidebarFilter';
 import Map from 'components/Map/lazy';
 
+import Exclamation from '../../../public/icons/exclamation.svg';
+
 import classNames from 'classnames/bind';
 import styles from './ResourceSearch.module.scss';
 const cx = classNames.bind(styles);
@@ -104,6 +106,20 @@ export default function ResourcesPage({ data: resources }) {
     [],
   );
 
+const ResourceList = (visibleResources) => {
+  console.log(`visible resources ${visibleResources}`);
+  if (visibleResources && visibleResources.length > 0) {
+    return visibleResources.map((r) => (
+      <ResourceCard key={r.id} {...r} />
+    ))
+  }
+  return (<div className={styles.noResults}>
+    <Exclamation className={styles.exclamation}/>
+    <h4>No results found.</h4>
+    <div>We cannot find any matching resources.</div>
+  </div>)
+};
+
   return (
     <div className={styles.base}>
       <div className={styles.left}>
@@ -141,11 +157,7 @@ export default function ResourcesPage({ data: resources }) {
           >
             Clear filters
           </button>
-        </div>
-        { visibleResources.map((r) => (
-          <ResourceCard key={r.id} {...r} />
-        )) }
-      </div>
+        </div>{ResourceList()}</div>
     </div>
   );
 }
