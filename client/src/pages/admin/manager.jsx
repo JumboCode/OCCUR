@@ -39,13 +39,13 @@ export default function AdminManager({ blocked }) {
     try {
       const responsePost = await api.post('admins', undefined, data);
       if (responsePost.statusCode == 400) {
-        setaddAdminErrorrMessage(responsePost.message);
+        setaddAdminErrorrMessage('* Invalid email address or admin name');
         return false;
       }
       setaddAdminErrorrMessage(null);
       return true;
     } catch (err) {
-      setaddAdminErrorrMessage('Invalid admin name or email address: ', error);
+      setaddAdminErrorrMessage('* Invalid email address or admin name');
       return false;
     }
   };

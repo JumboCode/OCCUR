@@ -28,10 +28,12 @@ export default function AddAdminModal({ open, close, submit, errorMessage, setEr
         <div className={cx('error', { hidden: !errorMessage })}>
           {errorMessage}
         </div>
-        Admin Name
-        <input name="name" {...register('name')} placeholder="Admin Name" />
-        Admin Email
-        <input name="email" {...register('email')} placeholder="Admin Email" />
+        <div className={cx('input-group')}>
+          Admin Name
+          <input name="name" {...register('name')} placeholder="Admin Name" />
+          Admin Email
+          <input name="email" {...register('email')} placeholder="Admin Email" />
+        </div>
         <button onClick={handleSubmit(onSubmit)} className={cx('saveButton')} type="button">Save</button>
         <button onClick={() => {close(false); setErrorMessage(null);}} className={cx('cancelButton')} type="button">Cancel</button>
       </form>
