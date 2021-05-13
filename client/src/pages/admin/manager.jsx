@@ -23,7 +23,7 @@ export default function AdminManager({ blocked }) {
   const [openDeleteAdminModal, setopenDeleteAdminModal] = useState(false);
   const [userToEdit, setuserToEdit] = useState(null);
   const [userToDelete, setuserToDelete] = useState(null);
-  const [addAdminErrorMessage, setaddAdminErrorrMessage] = useState(null);
+  const [errorMessage, setErrorrMessage] = useState(null);
 
   const handleEditClick = (user) => {
     setopenEditAdminModal(true);
@@ -39,27 +39,32 @@ export default function AdminManager({ blocked }) {
     try {
       const responsePost = await api.post('admins', undefined, data);
       if (responsePost.statusCode == 400) {
-        setaddAdminErrorrMessage('* Invalid email address or admin name');
+        setErrorrMessage('* Invalid email address or admin name');
         return false;
       }
-      setaddAdminErrorrMessage(null);
+      setErrorrMessage(null);
       return true;
     } catch (err) {
-      setaddAdminErrorrMessage('* Invalid email address or admin name');
+      setErrorrMessage('* Invalid email address or admin name');
       return false;
     }
   };
 
-  const editUser = (currUser, data) => {
+  const editUser =  async (currUser, data) => {
     const id = (currUser.user_id.split('|'))[1];
-    api.put(`admins/${id}`, undefined, data)
-      .then(() => {
-        return true;
-      })
-      .catch((error) => {
-        console.error(error);
+    try {
+      const responsePut = await api.put(`admins/${id}`, undefined, data);
+      console.log(responsePut);
+      if (responsePut.statusCode === 400) {
+        setErrorrMessage('* Invalid email address or admin name');
         return false;
-      });
+      }
+      setErrorrMessage(null);
+        return true;
+      } catch (err) {
+        setErrorrMessage('* Invalid email address or admin name');
+        return false;
+      }
   };
 
   const deleteUser = (currUser) => {
@@ -105,14 +110,16 @@ export default function AdminManager({ blocked }) {
         open={openAddAdminModal}
         close={setopenAddAdminModal}
         submit={addUser}
-        errorMessage={addAdminErrorMessage}
-        setErrorMessage={setaddAdminErrorrMessage}
+        errorMessage={errorMessage}
+        setErrorMessage={setErrorrMessage}
       />
       <EditAdminModal
         open={openEditAdminModal}
         close={setopenEditAdminModal}
         user={userToEdit}
         submit={editUser}
+        errorMessage={errorMessage}
+        setErrorMessage={setErrorrMessage}
       />
       <DeleteAdminModal
         open={openDeleteAdminModal}
