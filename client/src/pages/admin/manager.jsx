@@ -23,6 +23,7 @@ export default function AdminManager({ blocked }) {
   const [openDeleteAdminModal, setopenDeleteAdminModal] = useState(false);
   const [userToEdit, setuserToEdit] = useState(null);
   const [userToDelete, setuserToDelete] = useState(null);
+  const [addAdminErrorMessage, setaddAdminErrorrMessage] = useState(null);
 
   const handleEditClick = (user) => {
     setopenEditAdminModal(true);
@@ -34,34 +35,30 @@ export default function AdminManager({ blocked }) {
     setuserToDelete(user);
   };
 
-  const addUser = (data) => {
-    api.post('admins', undefined, data)
-      .then((responsePost) => {
-        // console.log(responsePost);
-        api.get('admins').then((responseGet) => {
-          setAdmins(responseGet);
-        }).catch((error) => {
-          console.error(error);
-        });
-      })
-      .catch((error) => {
-        // console.log(error);
-      });
+  const addUser = async (data) => {
+    try {
+      const responsePost = await api.post('admins', undefined, data);
+      if (responsePost.statusCode == 400) {
+        setaddAdminErrorrMessage(responsePost.message);
+        return false;
+      }
+      setaddAdminErrorrMessage(null);
+      return true;
+    } catch (err) {
+      setaddAdminErrorrMessage('Invalid admin name or email address: ', error);
+      return false;
+    }
   };
 
   const editUser = (currUser, data) => {
     const id = (currUser.user_id.split('|'))[1];
     api.put(`admins/${id}`, undefined, data)
       .then(() => {
-        // console.log(responsePut);
-        api.get('admins').then((responseGet) => {
-          setAdmins(responseGet);
-        }).catch((error) => {
-          console.error(error);
-        });
+        return true;
       })
       .catch((error) => {
         console.error(error);
+        return false;
       });
   };
 
@@ -69,15 +66,11 @@ export default function AdminManager({ blocked }) {
     const id = (currUser.user_id.split('|'))[1];
     api.delete(`admins/${id}`)
       .then(() => {
-        // console.log(responseDelete);
-        api.get('admins').then((responseGet) => {
-          setAdmins(responseGet);
-        }).catch((error) => {
-          console.error(error);
-        });
+        return true;
       })
       .catch((error) => {
         console.error(error);
+        return false;
       });
   };
 
@@ -90,7 +83,7 @@ export default function AdminManager({ blocked }) {
         console.error(error);
       });
     }
-  }, [api, api.authenticated]);
+  }, [api.authenticated, admins]);
 
   const adminList = () => {
     if (!adminsLoaded) {
@@ -112,6 +105,8 @@ export default function AdminManager({ blocked }) {
         open={openAddAdminModal}
         close={setopenAddAdminModal}
         submit={addUser}
+        errorMessage={addAdminErrorMessage}
+        setErrorMessage={setaddAdminErrorrMessage}
       />
       <EditAdminModal
         open={openEditAdminModal}
