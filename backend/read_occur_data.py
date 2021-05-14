@@ -15,7 +15,10 @@ def readData(jsonArray):
         token = 'Bearer ' + access_token
         headers = {'content-type': 'application/json', 'Authorization': token}
         response = requests.post('https://api.resources.occurnow.org/resources', data=resource_data, headers=headers)
-        print(response.json)
+        print(response.status_code)
+        if not response.status_code == 201:
+            print(response.json())
+
 
 # reads json file from argv
 if len(sys.argv) == 2:

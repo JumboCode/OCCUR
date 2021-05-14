@@ -15,9 +15,10 @@ def csv_to_json(csvFilePath, jsonFilePath):
         csvReader = csv.DictReader(csvf)
         #convert each csv row into python dict
         for row in csvReader: 
-            #add this python dict to json array
+            #add this python dict to json array & removes empty strings
             recurrenceDays_str = row.pop('recurrenceDays')
             recurrenceDays = re.split(' ',recurrenceDays_str)
+            recurrenceDays = [val for val in recurrenceDays if val != ""]
             row['recurrenceDays'] = recurrenceDays
 
             # Convert null strings to None
