@@ -106,20 +106,6 @@ export default function ResourcesPage({ data: resources }) {
     [],
   );
 
-const ResourceList = (visibleResources) => {
-  console.log(`visible resources ${visibleResources}`);
-  if (visibleResources && visibleResources.length > 0) {
-    return visibleResources.map((r) => (
-      <ResourceCard key={r.id} {...r} />
-    ))
-  }
-  return (<div className={styles.noResults}>
-    <Exclamation className={styles.exclamation}/>
-    <h4>No results found.</h4>
-    <div>We cannot find any matching resources.</div>
-  </div>)
-};
-
   return (
     <div className={styles.base}>
       <div className={styles.left}>
@@ -157,7 +143,17 @@ const ResourceList = (visibleResources) => {
           >
             Clear filters
           </button>
-        </div>{ResourceList()}</div>
+        </div>
+        {visibleResources?.length > 0
+          ? visibleResources.map((r) => <ResourceCard key={r.id} {...r} />)
+          : (
+            <div className={styles.noResults}>
+              <Exclamation className={styles.exclamation} />
+              <h4>No results found.</h4>
+              <div>We cannot find any matching resources.</div>
+            </div>
+          )}
+      </div>
     </div>
   );
 }
