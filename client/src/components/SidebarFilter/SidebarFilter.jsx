@@ -2,17 +2,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styles from './SidebarFilter.module.scss';
-import { RESOURCE_CATEGORIES } from 'data/resources';
-
-const DAYS_OF_WEEK = [
-  { id: 'MON', label: 'Monday' },
-  { id: 'TUES', label: 'Tuesday' },
-  { id: 'WED', label: 'Wednesday' },
-  { id: 'THURS', label: 'Thursday' },
-  { id: 'FRI', label: 'Friday' },
-  { id: 'SAT', label: 'Saturday' },
-  { id: 'SUN', label: 'Sunday' },
-]
+import { RESOURCE_CATEGORIES, DAYS_OF_WEEK } from 'data/resources';
 
 const DATE_FORMAT = 'mm/dd/yyyy';
 const TIME_FORMAT = 'hh:mm';
@@ -23,17 +13,17 @@ const formatDateInput = (e) => {
   // Only take numeric characters from the input
   const val = [...e.target.value]
     .filter((c) => c.charCodeAt(0) >= 48 && c.charCodeAt(0) <= 57)
-    .join("");
+    .join('');
   // Automatically format with slashes when we put the new value in the input
   let out = val.slice(0, 2);
   if (val.length > 2) {
-    out += "/" + val.slice(2, 4);
+    out += `/${val.slice(2, 4)}`;
   }
   if (val.length > 4) {
-    out += "/" + val.slice(4, 8);
+    out += `/${val.slice(4, 8)}`;
   }
   return out;
-}
+};
 
 // does pretty much the same thing as formatDateInput, but for time
 const formatTimeInput = (e) => {
@@ -44,21 +34,19 @@ const formatTimeInput = (e) => {
   // automatically format with colon
   let out = val.slice(0, 2);
   if (val.length > 2) {
-      out += ':' + val.slice(2, 4);
+    out += `:${val.slice(2, 4)}`;
   }
 
   return out;
-}
+};
 
 // parses the date according to DATE_FORMAT
-const parseValidDate = (dateStr) => {
-  return [dateStr.substring(0, 2), dateStr.substring(3, 5), dateStr.substring(6, 11)];
-}
+const parseValidDate = (dateStr) => [
+  dateStr.substring(0, 2), dateStr.substring(3, 5), dateStr.substring(6, 11),
+];
 
 // parses the time according to TIME_FORMAT
-const parseValidTime = (timeStr) => {
-  return [timeStr.substring(0,2), timeStr.substring(3, 5)];
-}
+const parseValidTime = (timeStr) => [timeStr.substring(0, 2), timeStr.substring(3, 5)];
 
 export default function SidebarFilter({ values, onChange }) {
   const [endDate, setEndDate] = useState('');
@@ -133,52 +121,50 @@ export default function SidebarFilter({ values, onChange }) {
       <div className={styles.group}>
         <h4>Date</h4>
         <label htmlFor="date-range-begin">From</label>
-        <input id="date-range-begin" type="text" placeholder={DATE_FORMAT}
+        <input
+          id="date-range-begin"
+          type="text"
+          placeholder={DATE_FORMAT}
           className={startDate.length > 0 && startDate.length < DATE_FORMAT.length ? styles.invalid : ''}
           onChange={(e) => {
             const newValue = formatDateInput(e);
             setStartDate(newValue);
             if (newValue === DATE_FORMAT.length) {
-                  const [month, day, year] = parseValidDate(newValue);
-                  onChange({
-                    ...values,
-                    startDate: {
-                      month: month,
-                      day: day,
-                      year: year,
-                    },
-                  });
+              const [month, day, year] = parseValidDate(newValue);
+              onChange({
+                ...values,
+                startDate: { month, day, year },
+              });
+            } else {
+              if (newValue.length !== 0) {
+                // set edges to red for error
               }
-              else {
-                if (newValue.length !== 0) {
-                    // set edges to red for error
-                }
-                onChange({
-                  ...values,
-                  startDate: {
-                    month: '',
-                    day: '',
-                    year: '',
-                  },
-                });
-              }
-          }} value={startDate}></input>
+              onChange({
+                ...values,
+                startDate: {
+                  month: '',
+                  day: '',
+                  year: '',
+                },
+              });
+            }
+          }}
+          value={startDate}
+        />
         <label htmlFor="date-range-end">To</label>
-        <input id="date-range-end" type="text" placeholder={DATE_FORMAT}
+        <input
+          id="date-range-end"
+          type="text"
+          placeholder={DATE_FORMAT}
           onChange={(e) => {
             setEndDate(formatDateInput(e));
             if (endDate.length === DATE_FORMAT.length) {
               const [month, day, year] = parseValidDate(endDate);
               onChange({
                 ...values,
-                endDate: {
-                  month: month,
-                  day: day,
-                  year: year,
-                },
+                endDate: { month, day, year },
               });
-            }
-            else {
+            } else {
               if (endDate.length !== 0) {
                 // set edges to red for error
               }
@@ -192,42 +178,50 @@ export default function SidebarFilter({ values, onChange }) {
               });
             }
           }}
-          value={endDate}></input>
+          value={endDate}
+        />
       </div>
       <div className={styles.group}>
         <h4>Time</h4>
         <label htmlFor="time-range-start">From</label>
-        <input id="time-range-start" type="text" placeholder={TIME_FORMAT}
+        <input
+          id="time-range-start"
+          type="text"
+          placeholder={TIME_FORMAT}
           onChange={(e) => {
-              setStartTime(formatTimeInput(e));
-              if (startTime.length === TIME_FORMAT.length) {
-                const [hour, min] = parseValidTime(startTime);
-                onChange({
-                  ...values,
-                  startTime: {
-                    hour: hour,
-                    min: min,
-                    timePeriod: startTimePeriod,
-                  },
-                });
+            setStartTime(formatTimeInput(e));
+            if (startTime.length === TIME_FORMAT.length) {
+              const [hour, min] = parseValidTime(startTime);
+              onChange({
+                ...values,
+                startTime: {
+                  hour,
+                  min,
+                  timePeriod: startTimePeriod,
+                },
+              });
+            } else {
+              if (startTime.length !== 0) {
+                // set edges to red for error
               }
-              else {
-                if (startTime.length !== 0) {
-                  // set edges to red for error
-                }
-                onChange({
-                  ...values,
-                  startTime: {
-                    hour: '',
-                    min: '',
-                    timePeriod: ''
-                  }
-                });
-              }
+              onChange({
+                ...values,
+                startTime: {
+                  hour: '',
+                  min: '',
+                  timePeriod: '',
+                },
+              });
+            }
           }}
-          value={startTime}></input>
+          value={startTime}
+        />
         <label htmlFor="time-range-start-AM">AM</label>
-        <input id="time-range-start-AM" type="radio" name="start-period" value="AM"
+        <input
+          id="time-range-start-AM"
+          type="radio"
+          name="start-period"
+          value="AM"
           onChange={(e) => {
             setStartTimePeriod(e.target.value);
             if (startTime.length === TIME_FORMAT.length) {
@@ -235,13 +229,12 @@ export default function SidebarFilter({ values, onChange }) {
               onChange({
                 ...values,
                 startTime: {
-                  hour: hour,
-                  min: min,
+                  hour,
+                  min,
                   timePeriod: startTimePeriod,
                 },
               });
-            }
-            else {
+            } else {
               if (startTime.length !== 0) {
                 // set edges to red for error
               }
@@ -250,72 +243,86 @@ export default function SidebarFilter({ values, onChange }) {
                 startTime: {
                   hour: '',
                   min: '',
-                  timePeriod: ''
-                }
-              });
-            }
-          }} checked={startTimePeriod === 'AM'}></input>
-        <label htmlFor="time-range-start-PM">PM</label>
-        <input id="time-range-start-PM" type="radio" name="start-period" value="PM"
-          onChange={(e) => {
-            setStartTimePeriod(e.target.value);
-            if (startTime.length === TIME_FORMAT.length) {
-              const [hour, min] = parseValidTime(startTime);
-              onChange({
-                ...values,
-                startTime: {
-                  hour: hour,
-                  min: min,
-                  timePeriod: startTimePeriod,
+                  timePeriod: '',
                 },
               });
             }
-            else {
-              if (startTime.length !== 0) {
-                // set edges to red for error
-              }
-              onChange({
-                ...values,
-                startTime: {
-                  hour: '',
-                  min: '',
-                  timePeriod: ''
-                }
-              });
-            }
-          }} checked={startTimePeriod === 'PM'}></input>
-          <label htmlFor="time-range-end">To</label>
-        <input id="time-range-end" type="text" placeholder={TIME_FORMAT}
-          onChange={(e) => {
-              setEndTime(formatTimeInput(e));
-              if (endTime.length === TIME_FORMAT.length) {
-                const [hour, min] = parseValidTime(endTime);
-                onChange({
-                  ...values,
-                  endTime: {
-                    hour: hour,
-                    min: min,
-                    timePeriod: endTimePeriod,
-                  },
-                });
-              }
-              else {
-                if (endTime.length !== 0) {
-                  // set edges to red for error
-                }
-                onChange({
-                  ...values,
-                  endTime: {
-                    hour: '',
-                    min: '',
-                    timePeriod: ''
-                  }
-                });
-              }
           }}
-          value={endTime}></input>
+          checked={startTimePeriod === 'AM'}
+        />
+        <label htmlFor="time-range-start-PM">PM</label>
+        <input
+          id="time-range-start-PM"
+          type="radio"
+          name="start-period"
+          value="PM"
+          onChange={(e) => {
+            setStartTimePeriod(e.target.value);
+            if (startTime.length === TIME_FORMAT.length) {
+              const [hour, min] = parseValidTime(startTime);
+              onChange({
+                ...values,
+                startTime: {
+                  hour,
+                  min,
+                  timePeriod: startTimePeriod,
+                },
+              });
+            } else {
+              if (startTime.length !== 0) {
+                // set edges to red for error
+              }
+              onChange({
+                ...values,
+                startTime: {
+                  hour: '',
+                  min: '',
+                  timePeriod: '',
+                },
+              });
+            }
+          }}
+          checked={startTimePeriod === 'PM'}
+        />
+        <label htmlFor="time-range-end">To</label>
+        <input
+          id="time-range-end"
+          type="text"
+          placeholder={TIME_FORMAT}
+          onChange={(e) => {
+            setEndTime(formatTimeInput(e));
+            if (endTime.length === TIME_FORMAT.length) {
+              const [hour, min] = parseValidTime(endTime);
+              onChange({
+                ...values,
+                endTime: {
+                  hour,
+                  min,
+                  timePeriod: endTimePeriod,
+                },
+              });
+            } else {
+              if (endTime.length !== 0) {
+                // set edges to red for error
+              }
+              onChange({
+                ...values,
+                endTime: {
+                  hour: '',
+                  min: '',
+                  timePeriod: '',
+                },
+              });
+            }
+          }}
+          value={endTime}
+        />
         <label htmlFor="time-range-end-AM">AM</label>
-        <input id="time-range-end-AM" type="radio" name="end-period" value="AM"
+        <input
+          id="time-range-end-AM"
+          type="radio"
+          name="end-period"
+          value="AM"
           onChange={(e) => {
             setEndTimePeriod(e.target.value);
             if (endTime.length === TIME_FORMAT.length) {
@@ -323,13 +330,12 @@ export default function SidebarFilter({ values, onChange }) {
               onChange({
                 ...values,
                 endTime: {
-                  hour: hour,
-                  min: min,
+                  hour,
+                  min,
                   timePeriod: endTimePeriod,
                 },
               });
-            }
-            else {
+            } else {
               if (endTime.length !== 0) {
                 // set edges to red for error
               }
@@ -338,13 +344,19 @@ export default function SidebarFilter({ values, onChange }) {
                 endTime: {
                   hour: '',
                   min: '',
-                  timePeriod: ''
-                }
+                  timePeriod: '',
+                },
               });
             }
-          }} checked={endTimePeriod === 'AM'}></input>
+          }}
+          checked={endTimePeriod === 'AM'}
+        />
         <label htmlFor="time-range-end-PM">PM</label>
-        <input id="time-range-end-PM" type="radio" name="end-period" value="PM"
+        <input
+          id="time-range-end-PM"
+          type="radio"
+          name="end-period"
+          value="PM"
           onChange={(e) => {
             setEndTimePeriod(e.target.value);
             if (endTime.length === TIME_FORMAT.length) {
@@ -352,13 +364,12 @@ export default function SidebarFilter({ values, onChange }) {
               onChange({
                 ...values,
                 endTime: {
-                  hour: hour,
-                  min: min,
+                  hour,
+                  min,
                   timePeriod: endTimePeriod,
                 },
               });
-            }
-            else {
+            } else {
               if (endTime.length !== 0) {
                 // set edges to red for error
               }
@@ -367,11 +378,13 @@ export default function SidebarFilter({ values, onChange }) {
                 endTime: {
                   hour: '',
                   min: '',
-                  timePeriod: ''
-                }
+                  timePeriod: '',
+                },
               });
             }
-          }} checked={endTimePeriod === 'PM'}></input>
+          }}
+          checked={endTimePeriod === 'PM'}
+        />
       </div>
     </div>
   );
@@ -379,10 +392,10 @@ export default function SidebarFilter({ values, onChange }) {
 SidebarFilter.propTypes = {
   values: PropTypes.shape({
     categories: PropTypes.arrayOf(PropTypes.oneOf(
-      RESOURCE_CATEGORIES.map((e) => e.id)
+      RESOURCE_CATEGORIES.map((e) => e.id),
     )).isRequired,
     daysOfWeek: PropTypes.arrayOf(PropTypes.oneOf(
-      DAYS_OF_WEEK.map((e) => e.id)
+      DAYS_OF_WEEK.map((e) => e.id),
     )).isRequired,
     startTime: PropTypes.shape({
       hour: PropTypes.string.isRequired,
@@ -404,6 +417,6 @@ SidebarFilter.propTypes = {
       day: PropTypes.string.isRequired,
       year: PropTypes.string.isRequired,
     }),
-  }),
+  }).isRequired,
   onChange: PropTypes.func.isRequired,
 };
