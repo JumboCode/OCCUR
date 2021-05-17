@@ -128,7 +128,7 @@ export default function ResourcePage({
             </div>
           </div>
           {
-            resourceLocation?.street_address || meetingLink || phone || email && (
+            (resourceLocation?.street_address || meetingLink || phone || email) && (
               <div className={styles.contact}>
                 <h3>Address and Contact Information</h3>
                 {resourceLocation?.street_address && (
