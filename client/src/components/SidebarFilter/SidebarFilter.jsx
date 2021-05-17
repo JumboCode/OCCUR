@@ -32,11 +32,10 @@ const formatDateInput = (e) => {
   if (val.length > 4) {
     out += "/" + val.slice(4, 8);
   }
-  
   return out;
 }
 
-// does pretty much the same thing as formatDateInput, but for time 
+// does pretty much the same thing as formatDateInput, but for time
 const formatTimeInput = (e) => {
   // only taking numeric characters from input
   const val = [...e.target.value]
@@ -46,7 +45,7 @@ const formatTimeInput = (e) => {
   let out = val.slice(0, 2);
   if (val.length > 2) {
       out += ':' + val.slice(2, 4);
-  } 
+  }
 
   return out;
 }
@@ -135,10 +134,12 @@ export default function SidebarFilter({ values, onChange }) {
         <h4>Date</h4>
         <label htmlFor="date-range-begin">From</label>
         <input id="date-range-begin" type="text" placeholder={DATE_FORMAT}
+          className={startDate.length > 0 && startDate.length < DATE_FORMAT.length ? styles.invalid : ''}
           onChange={(e) => {
-            setStartDate(formatDateInput(e));
-              if (startDate.length === DATE_FORMAT.length) {
-                  const [month, day, year] = parseValidDate(startDate);
+            const newValue = formatDateInput(e);
+            setStartDate(newValue);
+            if (newValue === DATE_FORMAT.length) {
+                  const [month, day, year] = parseValidDate(newValue);
                   onChange({
                     ...values,
                     startDate: {
@@ -149,7 +150,7 @@ export default function SidebarFilter({ values, onChange }) {
                   });
               }
               else {
-                if (startDate.length !== 0) {
+                if (newValue.length !== 0) {
                     // set edges to red for error
                 }
                 onChange({
@@ -197,7 +198,7 @@ export default function SidebarFilter({ values, onChange }) {
         <h4>Time</h4>
         <label htmlFor="time-range-start">From</label>
         <input id="time-range-start" type="text" placeholder={TIME_FORMAT}
-          onChange={(e) => { 
+          onChange={(e) => {
               setStartTime(formatTimeInput(e));
               if (startTime.length === TIME_FORMAT.length) {
                 const [hour, min] = parseValidTime(startTime);
@@ -226,7 +227,7 @@ export default function SidebarFilter({ values, onChange }) {
           }}
           value={startTime}></input>
         <label htmlFor="time-range-start-AM">AM</label>
-        <input id="time-range-start-AM" type="radio" name="start-period" value="AM" 
+        <input id="time-range-start-AM" type="radio" name="start-period" value="AM"
           onChange={(e) => {
             setStartTimePeriod(e.target.value);
             if (startTime.length === TIME_FORMAT.length) {
@@ -255,7 +256,7 @@ export default function SidebarFilter({ values, onChange }) {
             }
           }} checked={startTimePeriod === 'AM'}></input>
         <label htmlFor="time-range-start-PM">PM</label>
-        <input id="time-range-start-PM" type="radio" name="start-period" value="PM" 
+        <input id="time-range-start-PM" type="radio" name="start-period" value="PM"
           onChange={(e) => {
             setStartTimePeriod(e.target.value);
             if (startTime.length === TIME_FORMAT.length) {
@@ -285,7 +286,7 @@ export default function SidebarFilter({ values, onChange }) {
           }} checked={startTimePeriod === 'PM'}></input>
           <label htmlFor="time-range-end">To</label>
         <input id="time-range-end" type="text" placeholder={TIME_FORMAT}
-          onChange={(e) => { 
+          onChange={(e) => {
               setEndTime(formatTimeInput(e));
               if (endTime.length === TIME_FORMAT.length) {
                 const [hour, min] = parseValidTime(endTime);
@@ -314,7 +315,7 @@ export default function SidebarFilter({ values, onChange }) {
           }}
           value={endTime}></input>
         <label htmlFor="time-range-end-AM">AM</label>
-        <input id="time-range-end-AM" type="radio" name="end-period" value="AM" 
+        <input id="time-range-end-AM" type="radio" name="end-period" value="AM"
           onChange={(e) => {
             setEndTimePeriod(e.target.value);
             if (endTime.length === TIME_FORMAT.length) {
@@ -343,7 +344,7 @@ export default function SidebarFilter({ values, onChange }) {
             }
           }} checked={endTimePeriod === 'AM'}></input>
         <label htmlFor="time-range-end-PM">PM</label>
-        <input id="time-range-end-PM" type="radio" name="end-period" value="PM" 
+        <input id="time-range-end-PM" type="radio" name="end-period" value="PM"
           onChange={(e) => {
             setEndTimePeriod(e.target.value);
             if (endTime.length === TIME_FORMAT.length) {
