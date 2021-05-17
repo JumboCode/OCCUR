@@ -9,25 +9,33 @@
     "lint": "eslint . --ext=js,jsx"
   },
   "dependencies": {
-    "auth0-js": "^9.14.0",
-    "classnames": "^2.2.6",
+    "@mapbox/geo-viewport": "^0.4.1",
+    "@next/bundle-analyzer": "^10.2.0",
+    "auth0-js": "^9.16.0",
+    "classnames": "^2.3.1",
     "cookie": "^0.4.1",
+    "fuzzysort": "^1.1.4",
     "js-cookie": "^2.2.1",
     "jwt-decode": "^3.1.2",
-    "next": "^9.5.3",
+    "lodash": "^4.17.21",
+    "mapbox-gl": "^2.2.0",
+    "next": "^10.2.0",
     "prop-types": "^15.7.2",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-hook-form": "^7.3.6"
   },
   "devDependencies": {
+    "@babel/core": "^7.14.2",
+    "@babel/eslint-parser": "^7.14.2",
     "@svgr/webpack": "^5.5.0",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^7.10.0",
-    "eslint-config-airbnb": "^18.2.0",
-    "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-jsx-a11y": "^6.3.1",
-    "eslint-plugin-react": "^7.21.2",
-    "eslint-plugin-react-hooks": "^4.1.2",
-    "sass": "^1.28.0"
+    "eslint": "^7.26.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-plugin-import": "^2.23.2",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-react": "^7.23.2",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "sass": "^1.32.12",
+    "worker-loader": "^3.0.8"
   }
 }
