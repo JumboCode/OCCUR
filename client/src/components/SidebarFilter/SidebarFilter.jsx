@@ -66,6 +66,8 @@ export default function SidebarFilter({ values, onChange }) {
   const [startDate, setStartDate] = useState('');
   const [startTime, setStartTime] = useState('');
   const [startTimePeriod, setStartTimePeriod] = useState('AM');
+  const [endTime, setEndTime] = useState('');
+  const [endTimePeriod, setEndTimePeriod] = useState('AM');
 
   return (
     <div className={styles.base}>
@@ -281,6 +283,94 @@ export default function SidebarFilter({ values, onChange }) {
               });
             }
           }} checked={startTimePeriod === 'PM'}></input>
+          <label htmlFor="time-range-end">To</label>
+        <input id="time-range-end" type="text" placeholder={TIME_FORMAT}
+          onChange={(e) => { 
+              setEndTime(formatTimeInput(e));
+              if (endTime.length === TIME_FORMAT.length) {
+                const [hour, min] = parseValidTime(endTime);
+                onChange({
+                  ...values,
+                  endTime: {
+                    hour: hour,
+                    min: min,
+                    timePeriod: endTimePeriod,
+                  },
+                });
+              }
+              else {
+                if (endTime.length !== 0) {
+                  // set edges to red for error
+                }
+                onChange({
+                  ...values,
+                  endTime: {
+                    hour: '',
+                    min: '',
+                    timePeriod: ''
+                  }
+                });
+              }
+          }}
+          value={endTime}></input>
+        <label htmlFor="time-range-end-AM">AM</label>
+        <input id="time-range-end-AM" type="radio" name="end-period" value="AM" 
+          onChange={(e) => {
+            setEndTimePeriod(e.target.value);
+            if (endTime.length === TIME_FORMAT.length) {
+              const [hour, min] = parseValidTime(endTime);
+              onChange({
+                ...values,
+                endTime: {
+                  hour: hour,
+                  min: min,
+                  timePeriod: endTimePeriod,
+                },
+              });
+            }
+            else {
+              if (endTime.length !== 0) {
+                // set edges to red for error
+              }
+              onChange({
+                ...values,
+                endTime: {
+                  hour: '',
+                  min: '',
+                  timePeriod: ''
+                }
+              });
+            }
+          }} checked={endTimePeriod === 'AM'}></input>
+        <label htmlFor="time-range-end-PM">PM</label>
+        <input id="time-range-end-PM" type="radio" name="end-period" value="PM" 
+          onChange={(e) => {
+            setEndTimePeriod(e.target.value);
+            if (endTime.length === TIME_FORMAT.length) {
+              const [hour, min] = parseValidTime(endTime);
+              onChange({
+                ...values,
+                endTime: {
+                  hour: hour,
+                  min: min,
+                  timePeriod: endTimePeriod,
+                },
+              });
+            }
+            else {
+              if (endTime.length !== 0) {
+                // set edges to red for error
+              }
+              onChange({
+                ...values,
+                endTime: {
+                  hour: '',
+                  min: '',
+                  timePeriod: ''
+                }
+              });
+            }
+          }} checked={endTimePeriod === 'PM'}></input>
       </div>
     </div>
   );
