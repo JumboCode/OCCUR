@@ -65,6 +65,8 @@ export default function SidebarFilter({ values, onChange }) {
   const [endDate, setEndDate] = useState('');
   const [startDate, setStartDate] = useState('');
   const [startTime, setStartTime] = useState('');
+  const [startTimePeriod, setStartTimePeriod] = useState('AM');
+
   return (
     <div className={styles.base}>
       <div className={styles.group}>
@@ -196,11 +198,89 @@ export default function SidebarFilter({ values, onChange }) {
           onChange={(e) => { 
               setStartTime(formatTimeInput(e));
               if (startTime.length === TIME_FORMAT.length) {
+                const [hour, min] = parseValidTime(startTime);
+                onChange({
+                  ...values,
+                  startTime: {
+                    hour: hour,
+                    min: min,
+                    timePeriod: startTimePeriod,
+                  },
+                });
               }
               else {
+                if (startTime.length !== 0) {
+                  // set edges to red for error
+                }
+                onChange({
+                  ...values,
+                  startTime: {
+                    hour: '',
+                    min: '',
+                    timePeriod: ''
+                  }
+                });
               }
           }}
           value={startTime}></input>
+        <label htmlFor="time-range-start-AM">AM</label>
+        <input id="time-range-start-AM" type="radio" name="start-period" value="AM" 
+          onChange={(e) => {
+            setStartTimePeriod(e.target.value);
+            if (startTime.length === TIME_FORMAT.length) {
+              const [hour, min] = parseValidTime(startTime);
+              onChange({
+                ...values,
+                startTime: {
+                  hour: hour,
+                  min: min,
+                  timePeriod: startTimePeriod,
+                },
+              });
+            }
+            else {
+              if (startTime.length !== 0) {
+                // set edges to red for error
+              }
+              onChange({
+                ...values,
+                startTime: {
+                  hour: '',
+                  min: '',
+                  timePeriod: ''
+                }
+              });
+            }
+          }} checked={startTimePeriod === 'AM'}></input>
+        <label htmlFor="time-range-start-PM">PM</label>
+        <input id="time-range-start-PM" type="radio" name="start-period" value="PM" 
+          onChange={(e) => {
+            setStartTimePeriod(e.target.value);
+            if (startTime.length === TIME_FORMAT.length) {
+              const [hour, min] = parseValidTime(startTime);
+              onChange({
+                ...values,
+                startTime: {
+                  hour: hour,
+                  min: min,
+                  timePeriod: startTimePeriod,
+                },
+              });
+            }
+            else {
+              if (startTime.length !== 0) {
+                // set edges to red for error
+              }
+              onChange({
+                ...values,
+                startTime: {
+                  hour: '',
+                  min: '',
+                  timePeriod: ''
+                }
+              });
+            }
+          }} checked={startTimePeriod === 'PM'}></input>
       </div>
     </div>
   );
