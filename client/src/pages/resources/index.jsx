@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { RESOURCE_PROP_TYPES } from 'data/resources';
 
@@ -106,8 +106,8 @@ export default function ResourcesPage({ data: resources }) {
     [],
   );
 
-  const [values, setValues] = useState({
-    categories: [],
+  const [filters, setFilters] = useState({
+    categories: router.query.categories ? router.query.categories.split(',') : [],
     daysOfWeek: [],
     startTime: {
       hour: '',
@@ -131,16 +131,17 @@ export default function ResourcesPage({ data: resources }) {
     },
   });
 
+  useEffect(() => {
+    const joined = filters.categories.join(',');
+    setQueryParams({ categories: joined.length ? joined : undefined });
+  }, [filters.categories, setQueryParams]);
+
   return (
     <div className={styles.base}>
       <div className={styles.left}>
         <SidebarFilter
-          // TODO: adjust to new format
-          values={router.query.categories ? router.query.categories.split(',') : []}
-          onChange={(cats) => {
-            const joined = cats.join(',');
-            setQueryParams({ categories: joined.length ? joined : undefined });
-          }}
+          values={filters}
+          onChange={setFilters}
         />
       </div>
 
