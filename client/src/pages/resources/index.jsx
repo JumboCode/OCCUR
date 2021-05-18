@@ -108,7 +108,7 @@ export default function ResourcesPage({ blocked, data: resources }) {
     ),
     [],
   );
-
+// sends request to create a resource based on resource passed from form
   const addResource = (resource) => {
     api.post('resources', undefined, resource)
       .then((responsePost) => {
@@ -118,21 +118,7 @@ export default function ResourcesPage({ blocked, data: resources }) {
         // console.log(error);
       });
   };
-  // const deleteResource = (resource) => {
-  //   const id = (currUser.id.split('|'))[1];
-  //   api.delete(`admins/${id}`)
-  //     .then(() => {
-  //       // console.log(responseDelete);
-  //       api.get('admins').then((responseGet) => {
-  //         setAdmins(responseGet);
-  //       }).catch((error) => {
-  //         console.error(error);
-  //       });
-  //     })
-  //     .catch((error) => {
-  //       console.error(error);
-  //     });
-  // };
+
   return (
     
     <div className={styles.base}>
@@ -160,7 +146,9 @@ export default function ResourcesPage({ blocked, data: resources }) {
           />
         </div>
         <div className={cx('results-summary', { empty: !visibleResources.length })}>
-         {blocked ? <div/> :
+         {
+          //  If user is logged in as an admin, show the add resource button
+         !blocked &&
           <div className={cx('buttonContainer')}>
             <button className={cx('addResource')} type="button" onClick={() => setopenAddResourceModal(true)}>
               <Circleplus className={cx('circleIcon')} />
@@ -189,9 +177,13 @@ export default function ResourcesPage({ blocked, data: resources }) {
             Clear filters
           </button>
         </div>
-        { visibleResources.map((r) => (
-          <ResourceCard key={r.id} {...r} />
-        )) }
+        { 
+        // Fill in each resource card
+        visibleResources.map((r) => {
+          r.blocked = blocked;
+          return <ResourceCard key={r.id} {...r}  />
+        })
+         }
       </div>
     </div>
   );

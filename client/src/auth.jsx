@@ -126,7 +126,6 @@ AuthProvider.propTypes = { children: PropTypes.node.isRequired };
 /* Use isAdmin in a getServerSideProps function to limit it to authenticated admin users. */
 export function isAdmin(ctx) {
   if ('cookie' in ctx.req.headers){
-    console.log(ctx.req.headers);
     const cookies = cookie.parse(ctx.req.headers.cookie);
     const token = cookies.access_token;
     let expired;

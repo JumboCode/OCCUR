@@ -1,8 +1,20 @@
 @import 'styles/colors';
+.outerDiv {
+    display: flex;
+}
 
-/*.resourceForm h1 {
-  color: black;
-}*/
+.innerDiv{
+    margin-right: 10%;
+}
+
+.fieldTitle {
+    font-size: 12pt;
+    font-weight: 600;
+    margin-top: 10px;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
+}
 
 #radioButton label {
     width: 15px;
@@ -17,13 +29,18 @@ span.required {
     justify-content: center;
 }
 
-.resourceForm button {
-    background-color: $orange;
-    border: none;
-    border-radius: 8px;
-    padding: 10px 24px;
-    font-size: 16px;
-    color: white;
+// .resourceForm button {
+//     background-color: $orange;
+//     border: none;
+//     border-radius: 8px;
+//     padding: 10px 24px;
+//     font-size: 16px;
+//     color: white;
+// }
+
+.resourceInput{
+    margin-bottom: 10px;
+    width: 80%;
 }
 
 .daysWrapper {
@@ -63,17 +80,23 @@ span.required {
 
 .cancelButton {
     background-color: rgb(58, 56, 56, 0.5);
-    border-radius: 2px;
+    border-radius: 3px;
     border:none ;
     font-weight: bold;
     color: white;
+    width: 20%;
+    padding-top: 3pt;
+    padding-bottom: 3pt;
 }
 .saveButton {
     background-color: #DC9766;
-    border-radius: 2px;
+    border-radius: 3px;
     border:none;
     font-weight: bold;
     color: white;
+    width: 20%;
+    padding-top: 3pt;
+    padding-bottom: 3pt;
 }
 
 .cancelsavebutton {
@@ -84,4 +107,5 @@ span.required {
     & > :not(:last-child) {
         margin-right: 10px;
     }
+    
 }

@@ -12,7 +12,7 @@ const cx = classNames.bind(styles);
 export default function AddResourceModal({ open, close, submit }) {
   const { register, handleSubmit, watch } = useForm();
   const onSubmit = (data) => {
-    // console.log(data);
+    console.log(data);
     submit(data);
     close(false);
   };
@@ -22,25 +22,25 @@ export default function AddResourceModal({ open, close, submit }) {
 
   return (
     <Modal className={styles.resourceForm} open={open} onClose={() => close(false)}>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} >
         <Close onClick={() => close(false)} className={cx('closeButton')} type="button" />
           <h1>Add a Resource</h1>
 
-          <h2>Resource Name <span className={styles.required}>*</span></h2>
-          <input {...register("resourceName", {required: true}) } placeholder="Enter resource name" />
+          <h2 className={styles.fieldTitle}>Resource Name <span className={styles.required}>*</span></h2>
+          <input className={styles.resourceInput} {...register("resourceName", {required: true}) } placeholder="Enter resource name" />
           
-          <h2>Resource Organization <span className={styles.required}>*</span></h2>
-          <input {...register("resourceOrg", {required: true}) } placeholder="Enter resource organization" />
+          <h2 className={styles.fieldTitle}>Resource Organization <span className={styles.required}>*</span></h2>
+          <input className={styles.resourceInput} {...register("resourceOrg", {required: true}) } placeholder="Enter resource organization" />
 
-          <h2>Category <span className={styles.required}>*</span></h2>
-          <select {...register("resourceCategory", { required: true }) } defaultValue="choose">
+          <h2 className={styles.fieldTitle}>Category <span className={styles.required}>*</span></h2>
+          <select className={styles.resourceInput} {...register("resourceCategory", { required: true }) } defaultValue="choose">
             <option disabled value="choose">Choose a category</option>
             { RESOURCE_CATEGORIES.map((cat) => (
               <option value={cat.id} key={cat.id}>{cat.label}</option>
             )) }
           </select>
           
-          <h2>Date and Time <span className={styles.required}>*</span></h2>
+          <h2 className={styles.fieldTitle}>Date and Time <span className={styles.required}>*</span></h2>
           <div id="radioButton">
             <label>
               <input {...register("recurring", { required: true })} value="one-time" type="radio" />
@@ -54,7 +54,7 @@ export default function AddResourceModal({ open, close, submit }) {
 
           {isRecurring === 'recurring' && (
             <>
-              <h3>Day(s) of the Week <span className={styles.required}>*</span></h3>
+              <h2 className={styles.fieldTitle}> Day(s) of the Week <span className={styles.required}>*</span></h2>
 
               <div className={styles.daysWrapper}>
                 { DAYS_OF_WEEK.map((day) => (
@@ -67,53 +67,28 @@ export default function AddResourceModal({ open, close, submit }) {
             </>
           )}
 
-          <h3>Start Date <span className={styles.required}>*</span></h3>
-          <select {...register("startDate") }>
-            <option value="sMonth">MM</option>
-            <option value="sDay">dd</option>
-            <option value="sYear">yyyy</option>
-          </select>
+          <h2 className={styles.fieldTitle}>Start Date <span className={styles.required}>*</span></h2>
+          <input type="date" {...register("startDate") }>
+          </input>
 
-          <h3>End Date <span className={styles.required}>*</span></h3>
-          <select {...register("endDate") }>
-            <option value="eMonth">MM</option>
-            <option value="eDay">dd</option>
-            <option value="eYear">yyyy</option>
-          </select>
+          <h2 className={styles.fieldTitle}>End Date <span className={styles.required}>*</span></h2>
+          <input type="date" {...register("endDate") }>
+          </input>
 
-          <h3>Start Time <span className={styles.required}>*</span></h3>
-          <select {...register("resourceTime") }>
-            <option value="hour">--</option>
-            <option value="hour">12</option>
-          </select>
+          <h2 className={styles.fieldTitle}>Start Time <span className={styles.required}>*</span></h2>
+          <input type="time" {...register("startTime") }>
+            {/* <option value="hour">--</option>
+            <option value="hour">12</option> */}
+          </input>
 
-          <select {...register("resourceTime") }>
-            <option value="minute">--</option>
-            <option value="minute">00</option>
-          </select>
 
-          <select {...register("resourceTime") }>
-            <option value="AM">AM</option>
-            <option value="PM">PM</option>
-          </select>
+          <h2 className={styles.fieldTitle}>End Time <span className={styles.required}>*</span></h2>
+          <input type="time" {...register("endTime") }>
+            {/* <option value="minute">--</option>
+            <option value="minute">00</option> */}
+          </input>
 
-          <h3>End Time <span className={styles.required}>*</span></h3>
-          <select {...register("resourceTime") }>
-            <option value="hour">--</option>
-            <option value="hour">12</option>
-          </select>
-
-          <select {...register("resourceTime") }>
-            <option value="minute">--</option>
-            <option value="minute">00</option>
-          </select>
-
-          <select {...register("resourceTime") }>
-            <option value="AM">AM</option>
-            <option value="PM">PM</option>
-          </select>
-
-          <h2>Resouce Location <span className={styles.required}>*</span></h2>
+          <h2 className={styles.fieldTitle}>Resource Location <span className={styles.required}>*</span></h2>
           <label>
             <input {...register("virtual", { required: true })} value= 'virtual' type="radio" />
             Virtual
@@ -125,22 +100,40 @@ export default function AddResourceModal({ open, close, submit }) {
 
           {isVirtual === 'virtual' && (
             <>
-              <h3>Virtual Meeting Link <span className={styles.required}>*</span></h3>
+              <h2 className={styles.fieldTitle}>Virtual Meeting Link <span className={styles.required}>*</span></h2>
           
-              <input {...register("resourceVirtual") } placeholder="Enter meeting link" />
-              <h3>Meeting Password (optional)</h3>
-              <input {...register("resourceVirtual") } placeholder="Enter meeting password" />
+              <input className={styles.resourceInput} {...register("resourceVirtual") } placeholder="Enter meeting link" />
+              <h2 className={styles.fieldTitle}>Meeting Password (optional)</h2>
+              <input className={styles.resourceInput} {...register("resourceVirtual") } placeholder="Enter meeting password" />
             </>
           )}
+          {isVirtual === 'address' && (
+            <>
+              <h2 className={styles.fieldTitle}>Street Address<span className={styles.required}>*</span></h2>
+              <input className={styles.resourceInput} {...register("street_address", {required: true}) } placeholder="Enter address" />
+              <div className={styles.outerDiv}>
+                <div className={styles.innerDiv}>
+                  <h2 className={styles.fieldTitle}>City<span className={styles.required}>*</span></h2>
+                  <input {...register("city", {required: true}) } placeholder="Enter city" />
+                </div>
+                <div className={styles.innerDiv}>
+                  <h2 className={styles.fieldTitle}>State<span className={styles.required}>*</span></h2>
+                  <input {...register("state", {required: true}) } placeholder="Enter state" />
+                </div>
+              </div> 
+              <h2 className={styles.fieldTitle}>Zip Code<span className={styles.required}>*</span></h2>
+              <input {...register("zip_code", {required: true}) } placeholder="Enter zip code" />
+            </>
+          )}
+          <h2 className={styles.fieldTitle}>Resource Photo</h2>
+          <input type="file" name="Upload resource photo"></input>
+          <label></label>
 
-          <h2>Resource Photo</h2>
-          <input type="file"></input>
-
-          <h2>Resource Description</h2>
-          <textarea {...register("resourceDescription", {required: true}) } placeholder="Enter resource description" />
+          <h2 className={styles.fieldTitle}>Resource Description</h2>
+          <textarea className= {styles.resourceInput} {...register("resourceDescription", {required: true}) } placeholder="Enter resource description" />
           
-          <h2>External Link</h2>
-          <input {...register("resourceLink") } placeholder="Enter link" />
+          <h2 className={styles.fieldTitle}>External Link</h2>
+          <input className={styles.resourceInput} {...register("resourceLink") } placeholder="Enter link" />
 
           <div className={styles.cancelsavebutton}>
             <button onClick={() => close(false)} className={cx('cancelButton')}>Cancel</button>

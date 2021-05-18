@@ -12,13 +12,13 @@ export const RESOURCE_CATEGORIES = [
 ];
 
 export const DAYS_OF_WEEK = [
-  { id: 'SUN', label: 'Sunday' },
-  { id: 'MON', label: 'Monday' },
-  { id: 'TUE', label: 'Tuesday' },
-  { id: 'WED', label: 'Wednesday' },
-  { id: 'THU', label: 'Thursday' },
-  { id: 'FRI', label: 'Friday' },
-  { id: 'SAT', label: 'Saturday' },
+  { id: 'SUN', label: 'Sunday', shortLabel: "Su" },
+  { id: 'MON', label: 'Monday', shortLabel: "M" },
+  { id: 'TUE', label: 'Tuesday', shortLabel: "TU" },
+  { id: 'WED', label: 'Wednesday', shortLabel: "W" },
+  { id: 'THU', label: 'Thursday', shortLabel: "Th" },
+  { id: 'FRI', label: 'Friday', shortLabel: "F" },
+  { id: 'SAT', label: 'Saturday', shortLabel: "Sa" },
 ];
 
 
