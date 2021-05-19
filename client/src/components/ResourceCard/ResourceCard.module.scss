@@ -13,12 +13,18 @@
 }
 
 .leftside {
-  background-color: #C4C4C4;
-  background-size: cover;
-  background-position: center;
-  color: #fff;
   border-radius: 6px;
-  flex: 0 1 240px;
+  position: relative;
+  flex-shrink: 1;
+  display: flex;
+  align-items: stretch;
+
+  img {
+    top: 0;
+    max-width: 10em;
+    object-fit: contain;
+    object-position: center center;
+  }
 }
 
 .rightside {
