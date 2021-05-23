@@ -1,7 +1,14 @@
 import { DAYS_OF_WEEK } from 'data/resources';
 
 export default function getICSEvent({
-  name, startTime, endTime, startDate, endDate, isRecurring, recurrenceDays,
+  name,
+  startTime,
+  endTime,
+  startDate,
+  endDate,
+  isRecurring,
+  recurrenceDays,
+  location: resourceLocation,
 }) {
   /* eslint-disable no-param-reassign */
   let dateTimeInfo = '';
@@ -33,26 +40,52 @@ DTEND;VALUE=DATE:${y}${m}${(parseInt(d, 10) + 1).toString().padStart(2, '0')}
     }
   // Recurring events
   } else {
+    if (!recurrenceDays.length) throw new Error('A repeating event must specify recurrence days');
+
     // No start date or end date provided: start the first day that it would happen past today
-    if (!startDate && !endDate) {
-      const dayIds = DAYS_OF_WEEK.map((day) => day.id);
+    const dayIds = DAYS_OF_WEEK.map((day) => day.id);
+    if (!startDate) {
       const potentialStartDates = recurrenceDays.map((dow) => {
         const now = new Date();
         now.setDate(now.getDate() + ((dayIds.indexOf(dow) + (7 - now.getDay())) % 7));
         return now;
       });
-      startDate = new Date(Math.min(...potentialStartDates)).toISOString().split('T')[0];
+      [startDate] = new Date(Math.min(...potentialStartDates)).toISOString().split('T');
     }
 
     // TODO: generate DTSTART/DTEND using the startDate for two cases (defined time or "all day")
     //       Case 1: should have DTSTART and DTEND on the same day at the start/end time
-    //       Case 2: needs exploration; can we do DTSTART;VALUE=DATE:20210516 and leave it there?
+    if (startTime) {
+      dateTimeInfo = `
+DTSTART;TZID=America/Los_Angeles:${startDate.split('-').join('')}T${startTime.split(':').join('')}
+DTEND;TZID=America/Los_Angeles:${startDate.split('-').join('')}T${endTime.split(':').join('')}
+`;
+    //       Case 2: can we do DTSTART;VALUE=DATE:20210516 and leave it there?
+    } else {
+      dateTimeInfo = `
+DTSTART;VALUE=DATE:${startDate.split('-').join('')}
+`;
+    }
+    const dayCode = recurrenceDays
+      .sort((a, b) => dayIds.indexOf(a) - dayIds.indexOf(b))
+      .map((d) => d.slice(0, 2))
+      .join(',');
+    dateTimeInfo += `RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=${dayCode};`;
+    // If there's an end date, add UNTIL to the repeat
     if (endDate) {
-      // TODO: add "until" to the end of our RRULE here
+      const [y, m, d] = endDate.split('-');
+      dateTimeInfo += `UNTIL=${y}${m}${(parseInt(d, 10) + 1).toString().padStart(2, '0')}T000000Z`;
     }
   }
 
   // TODO: maybe add location info and more?
+  let formattedLocation = '';
+  if (resourceLocation?.location_title) formattedLocation += `${resourceLocation?.location_title}\n`;
+  if (resourceLocation?.street_address) formattedLocation += `${resourceLocation?.street_address}\n`;
+  formattedLocation += [resourceLocation?.city, resourceLocation?.state, resourceLocation?.zip_code].filter((n) => n).join(', ');
+
+  let locationField = '';
+  if (formattedLocation.length) locationField = `LOCATION:${formattedLocation.replace(/([,\\;])/g, '\\$1').replace(/\n/g, '\\n')}`;
 
   return `
 BEGIN:VCALENDAR
@@ -62,10 +95,9 @@ CALSCALE:GREGORIAN
 BEGIN:VEVENT
 SUMMARY:${name}
 ${dateTimeInfo}
+${locationField}
 END:VEVENT
 
 END:VCALENDAR
   `;
 }
-
-if (typeof window !== 'undefined') window.getICSEvent = getICSEvent;
