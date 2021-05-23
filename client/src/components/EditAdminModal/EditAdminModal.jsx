@@ -8,7 +8,7 @@ import classNames from 'classnames/bind';
 
 const cx = classNames.bind(styles);
 
-export default function EditAdminModal({ open, close, user, submit }) {
+export default function EditAdminModal({ open, close, user, submit, errorMessage, setErrorMessage }) {
   const { register, handleSubmit, setValue } = useForm();
 
   useEffect(() => {
@@ -22,21 +22,31 @@ export default function EditAdminModal({ open, close, user, submit }) {
   }, [user, setValue]);
 
   const onSubmit = (data) => {
-    submit(user, data);
-    close(false);
+    submit(user, data).then((result) => {
+      console.log(result);
+      if (result) {
+        close(false);
+        setErrorMessage(null);
+      }
+    });
   };
 
   return (
     <Modal open={open} onClose={() => close(false)}>
       <form className={cx('editAdminForm')} onSubmit={handleSubmit(onSubmit)}>
-        <Close onClick={() => close(false)} className={cx('closeButton')} type="button" />
+        <Close onClick={() => { close(false); setErrorMessage(null); }} className={cx('closeButton')} type="button" />
         <h4>Edit Admin</h4>
-        Admin Name
-        <input name="name" {...register('name')} />
-        Admin Email
-        <input name="email" {...register('email')} />
-        <button onClick={handleSubmit(onSubmit)} className={cx('saveButton')} type="button">Save</button>
-        <button onClick={() => close(false)} className={cx('cancelButton')} type="button">Cancel</button>
+        <div className={cx('error', { hidden: !errorMessage })}>
+          {errorMessage}
+        </div>
+        <div className={cx('input-group')}>
+          Admin Name
+          <input name="name" {...register('name')} />
+          Admin Email
+          <input name="email" {...register('email')} />
+          <button onClick={handleSubmit(onSubmit)} className={cx('saveButton')} type="button">Save</button>
+          <button onClick={() => { close(false); setErrorMessage(null); }} className={cx('cancelButton')} type="button">Cancel</button>
+        </div>
       </form>
     </Modal>
   );
@@ -51,8 +61,12 @@ EditAdminModal.propTypes = {
     user_id: PropTypes.string.isRequired,
   }),
   submit: PropTypes.func.isRequired,
+  errorMessage: PropTypes.string,
+  setErrorMessage: PropTypes.func
 };
 
 EditAdminModal.defaultProps = {
   user: null,
+  errorMessage: null,
+  setErrorMessage: null
 };
