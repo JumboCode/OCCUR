@@ -14,6 +14,7 @@ import SidebarFilter from 'components/SidebarFilter/SidebarFilter';
 import Map from 'components/Map/lazy';
 
 import Exclamation from '../../../public/icons/exclamation.svg';
+import Arrow from '../../../public/icons/arrow.svg';
 
 import classNames from 'classnames/bind';
 import styles from './ResourceSearch.module.scss';
@@ -146,7 +147,10 @@ export default function ResourcesPage({ data: resources }) {
         </div>
 
         <div className={cx('dropDownFilter')}>
-            <button className={cx('dropDownFilterButton')} onClick={()=>{ alert('dropdown')}}>Filters</button>
+            <button className={cx('dropDownFilterButton')} onClick={()=>{ alert('dropdown')}}>
+              Filters
+              <Arrow className={cx('arrow')}/>
+            </button>
             <div className={cx('dropDownFilterCategories')}>
               <SidebarFilter
                 values={router.query.categories ? router.query.categories.split(',') : []}
