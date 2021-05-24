@@ -48,6 +48,8 @@ const parseValidDate = (dateStr) => [
 // parses the time according to TIME_FORMAT
 const parseValidTime = (timeStr) => [timeStr.substring(0, 2), timeStr.substring(3, 5)];
 
+const getInvalidStyle = (i, targetFmt) => i.length > 0 && i.length < targetFmt.length ? styles.invalid : '';
+
 export default function SidebarFilter({ values, onChange }) {
   const [endDate, setEndDate] = useState('');
   const [startDate, setStartDate] = useState('');
@@ -125,7 +127,7 @@ export default function SidebarFilter({ values, onChange }) {
           id="date-range-begin"
           type="text"
           placeholder={DATE_FORMAT}
-          className={startDate.length > 0 && startDate.length < DATE_FORMAT.length ? styles.invalid : ''}
+          className={getInvalidStyle(startDate, DATE_FORMAT)}
           onChange={(e) => {
             const newValue = formatDateInput(e);
             setStartDate(newValue);
@@ -136,9 +138,6 @@ export default function SidebarFilter({ values, onChange }) {
                 startDate: { month, day, year },
               });
             } else {
-              if (newValue.length !== 0) {
-                // set edges to red for error
-              }
               onChange({
                 ...values,
                 startDate: {
@@ -156,18 +155,17 @@ export default function SidebarFilter({ values, onChange }) {
           id="date-range-end"
           type="text"
           placeholder={DATE_FORMAT}
+          className={getInvalidStyle(endDate, DATE_FORMAT)}
           onChange={(e) => {
-            setEndDate(formatDateInput(e));
-            if (endDate.length === DATE_FORMAT.length) {
-              const [month, day, year] = parseValidDate(endDate);
+            const newValue = formatDateInput(e);
+            setEndDate(newValue);
+            if (newValue.length === DATE_FORMAT.length) {
+              const [month, day, year] = parseValidDate(newValue);
               onChange({
                 ...values,
                 endDate: { month, day, year },
               });
             } else {
-              if (endDate.length !== 0) {
-                // set edges to red for error
-              }
               onChange({
                 ...values,
                 endDate: {
@@ -188,10 +186,12 @@ export default function SidebarFilter({ values, onChange }) {
           id="time-range-start"
           type="text"
           placeholder={TIME_FORMAT}
+          className={getInvalidStyle(startTime, TIME_FORMAT)}
           onChange={(e) => {
-            setStartTime(formatTimeInput(e));
-            if (startTime.length === TIME_FORMAT.length) {
-              const [hour, min] = parseValidTime(startTime);
+            const newValue = formatTimeInput(e);
+            setStartTime(newValue);
+            if (newValue.length === TIME_FORMAT.length) {
+              const [hour, min] = parseValidTime(newValue);
               onChange({
                 ...values,
                 startTime: {
@@ -201,9 +201,6 @@ export default function SidebarFilter({ values, onChange }) {
                 },
               });
             } else {
-              if (startTime.length !== 0) {
-                // set edges to red for error
-              }
               onChange({
                 ...values,
                 startTime: {
@@ -223,7 +220,8 @@ export default function SidebarFilter({ values, onChange }) {
           name="start-period"
           value="AM"
           onChange={(e) => {
-            setStartTimePeriod(e.target.value);
+            const newValue = e.target.value;
+            setStartTimePeriod(newValue);
             if (startTime.length === TIME_FORMAT.length) {
               const [hour, min] = parseValidTime(startTime);
               onChange({
@@ -231,13 +229,10 @@ export default function SidebarFilter({ values, onChange }) {
                 startTime: {
                   hour,
                   min,
-                  timePeriod: startTimePeriod,
+                  timePeriod: newValue,
                 },
               });
             } else {
-              if (startTime.length !== 0) {
-                // set edges to red for error
-              }
               onChange({
                 ...values,
                 startTime: {
@@ -257,7 +252,8 @@ export default function SidebarFilter({ values, onChange }) {
           name="start-period"
           value="PM"
           onChange={(e) => {
-            setStartTimePeriod(e.target.value);
+            const newValue = e.target.value;
+            setStartTimePeriod(newValue);
             if (startTime.length === TIME_FORMAT.length) {
               const [hour, min] = parseValidTime(startTime);
               onChange({
@@ -265,13 +261,10 @@ export default function SidebarFilter({ values, onChange }) {
                 startTime: {
                   hour,
                   min,
-                  timePeriod: startTimePeriod,
+                  timePeriod: newValue,
                 },
               });
             } else {
-              if (startTime.length !== 0) {
-                // set edges to red for error
-              }
               onChange({
                 ...values,
                 startTime: {
@@ -289,10 +282,12 @@ export default function SidebarFilter({ values, onChange }) {
           id="time-range-end"
           type="text"
           placeholder={TIME_FORMAT}
+          className={getInvalidStyle(endTime, TIME_FORMAT)}
           onChange={(e) => {
-            setEndTime(formatTimeInput(e));
-            if (endTime.length === TIME_FORMAT.length) {
-              const [hour, min] = parseValidTime(endTime);
+            const newValue = formatTimeInput(e);
+            setEndTime(newValue);
+            if (newValue.length === TIME_FORMAT.length) {
+              const [hour, min] = parseValidTime(newValue);
               onChange({
                 ...values,
                 endTime: {
@@ -302,9 +297,6 @@ export default function SidebarFilter({ values, onChange }) {
                 },
               });
             } else {
-              if (endTime.length !== 0) {
-                // set edges to red for error
-              }
               onChange({
                 ...values,
                 endTime: {
@@ -324,7 +316,8 @@ export default function SidebarFilter({ values, onChange }) {
           name="end-period"
           value="AM"
           onChange={(e) => {
-            setEndTimePeriod(e.target.value);
+            const newValue = e.target.value;
+            setEndTimePeriod(newValue);
             if (endTime.length === TIME_FORMAT.length) {
               const [hour, min] = parseValidTime(endTime);
               onChange({
@@ -336,9 +329,6 @@ export default function SidebarFilter({ values, onChange }) {
                 },
               });
             } else {
-              if (endTime.length !== 0) {
-                // set edges to red for error
-              }
               onChange({
                 ...values,
                 endTime: {
@@ -358,7 +348,8 @@ export default function SidebarFilter({ values, onChange }) {
           name="end-period"
           value="PM"
           onChange={(e) => {
-            setEndTimePeriod(e.target.value);
+            const newValue = e.target.value;
+            setEndTimePeriod(newValue);
             if (endTime.length === TIME_FORMAT.length) {
               const [hour, min] = parseValidTime(endTime);
               onChange({
@@ -366,13 +357,10 @@ export default function SidebarFilter({ values, onChange }) {
                 endTime: {
                   hour,
                   min,
-                  timePeriod: endTimePeriod,
+                  timePeriod: newValue,
                 },
               });
             } else {
-              if (endTime.length !== 0) {
-                // set edges to red for error
-              }
               onChange({
                 ...values,
                 endTime: {

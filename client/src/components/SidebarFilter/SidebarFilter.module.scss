@@ -65,5 +65,7 @@
 }
 
 .invalid {
-  outline-color: red;
+  outline: 0 none;
+  box-shadow: none;
+  border-color: red;
 }
