@@ -181,7 +181,7 @@ export default function ResourcePage({
       </div>
       {resourceLocation?.latitude && resourceLocation?.longitude && (
         <div className={styles.map}>
-          <Map resources={[{ id, name, resourceLocation }]} />
+          <Map resources={[{ id, name, location: resourceLocation }]} />
         </div>
       )}
     </div>
