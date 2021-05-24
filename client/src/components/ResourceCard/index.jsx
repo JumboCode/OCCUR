@@ -32,68 +32,72 @@ export default function ResourceCard({
 }) {
   const defaultImage = `/images/category-defaults/${category || 'OTHER'}.jpeg`;
   return (
-    <div className={styles.base}>
-      <div className={styles.leftside}>
-        <img alt="Resource flyer" src={flyer || defaultImage} />
-      </div>
-
-      <div className={styles.rightside}>
-        <div className={styles.content}>
-          <h3>{name}</h3>
-          {organization && <p className={styles.subtitle}>{organization}</p>}
-          { (startDate || endDate) && (
-            <p className={styles['icon-line']}>
-              <CalendarIcon />
-              <DateRange from={startDate} to={endDate} />
-            </p>
-          )}
-          {
-            (startTime || endTime) && (
-              <p className={styles['icon-line']}>
-                <ClockIcon />
-                <TimeRange from={startTime} to={endTime} />
-              </p>
-            )
-          }
-          {
-            resourceLocation && (
-              <p className={styles['icon-line']}>
-                <PinIcon />
-                {[resourceLocation?.street_address, resourceLocation?.city]
-                  .filter((n) => n).join(', ')}
-              </p>
-            )
-          }
+    <Link href="/resources/[id]" as={`/resources/${id}-${slugify(name, 5)}`}>
+      <div className={styles.base}>
+        <div className={styles.leftside}>
+          <img alt="Resource flyer" src={flyer || defaultImage} />
         </div>
 
-        <Link href="/resources/[id]" as={`/resources/${id}-${slugify(name, 5)}`}>
-          <a className={styles.cta}>
-            View more
-            <ViewIcon />
-          </a>
-        </Link>
+        <div className={styles.rightside}>
+          {/* <Link href="/resources/[id]" as={`/resources/${id}-${slugify(name, 5)}`}> */}
+            <div className={styles.content}>
+              <h3>{name}</h3>
+              {organization && <p className={styles.subtitle}>{organization}</p>}
+              { (startDate || endDate) && (
+                <p className={styles['icon-line']}>
+                  <CalendarIcon />
+                  <DateRange from={startDate} to={endDate} />
+                </p>
+              )}
+              {
+                (startTime || endTime) && (
+                  <p className={styles['icon-line']}>
+                    <ClockIcon />
+                    <TimeRange from={startTime} to={endTime} />
+                  </p>
+                )
+              }
+              {
+                resourceLocation && (
+                  <p className={styles['icon-line']}>
+                    <PinIcon />
+                    {[resourceLocation?.street_address, resourceLocation?.city]
+                      .filter((n) => n).join(', ')}
+                  </p>
+                )
+              }
+            </div>
+          {/* </Link> */}
 
-        <div className={styles.buttons}>
-          <CalendarEventDownload
-            name={name}
-            startTime={startTime}
-            endTime={endTime}
-            startDate={startDate}
-            endDate={endDate}
-            isRecurring={isRecurring}
-            recurrenceDays={recurrenceDays}
-            location={resourceLocation}
-          >
-            <Calendar2Icon />
-            Add to Calendar
-          </CalendarEventDownload>
-          <button type="button">
-            <ShareIcon />
-            Share
-          </button>
+          <Link href="/resources/[id]" as={`/resources/${id}-${slugify(name, 5)}`}>
+            <a className={styles.cta}>
+              View more
+              <ViewIcon />
+            </a>
+          </Link>
+
+          <div className={styles.buttons}>
+            <CalendarEventDownload
+              name={name}
+              startTime={startTime}
+              endTime={endTime}
+              startDate={startDate}
+              endDate={endDate}
+              isRecurring={isRecurring}
+              recurrenceDays={recurrenceDays}
+              location={resourceLocation}
+            >
+              <Calendar2Icon />
+              Add to Calendar
+            </CalendarEventDownload>
+            <button type="button">
+              <ShareIcon />
+              Share
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
 
