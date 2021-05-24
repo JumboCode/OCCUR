@@ -92,7 +92,8 @@ p.subtitle {
   bottom: 30px;
   right: 30px;
 
-  button {
+  button, a {
+    color: inherit;
     display: inline-flex;
     flex-direction: column;
     align-items: center;

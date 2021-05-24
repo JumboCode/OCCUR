@@ -24,6 +24,7 @@ export const DAYS_OF_WEEK = [
 
 export const datePropType = (props, propName, componentName) => {
   if (!props[propName]) return undefined;
+  // YYYY-MM-DD
   if (!/\d{4}-\d{2}-\d{2}/.test(props[propName])) {
     return new Error(`Invalid prop \`${propName}\` supplied to \`${componentName}\`. Expected string of form YYYY-MM-DD.`);
   }
@@ -32,6 +33,7 @@ export const datePropType = (props, propName, componentName) => {
 
 export const timePropType = (props, propName, componentName) => {
   if (!props[propName]) return undefined;
+  // HH:MM:SS
   if (!/\d{2}:\d{2}:\d{2}/.test(props[propName])) {
     return new Error(`Invalid prop \`${propName}\` supplied to \`${componentName}\`. Expected string of form HH:MM:SS.`);
   }
