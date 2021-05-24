@@ -4,6 +4,7 @@ import styles from './ResourceCard.module.scss';
 
 import Link from 'next/link';
 import { DateRange, TimeRange } from 'components/DateRange';
+import CalendarEventDownload from 'components/CalendarEventDownload';
 
 import ClockIcon from '../../../public/clock.svg';
 import PinIcon from '../../../public/pin.svg';
@@ -16,7 +17,18 @@ import { slugify } from 'utils';
 
 
 export default function ResourceCard({
-  id, name, organization, category, startDate, endDate, location, flyer, startTime, endTime,
+  id,
+  name,
+  organization,
+  category,
+  startDate,
+  endDate,
+  location: resourceLocation,
+  flyer,
+  startTime,
+  endTime,
+  isRecurring,
+  recurrenceDays,
 }) {
   const defaultImage = `/images/category-defaults/${category || 'OTHER'}.jpeg`;
   return (
@@ -44,10 +56,11 @@ export default function ResourceCard({
             )
           }
           {
-            location && (
+            resourceLocation && (
               <p className={styles['icon-line']}>
                 <PinIcon />
-                {[location?.street_address, location?.city].filter((n) => n).join(', ')}
+                {[resourceLocation?.street_address, resourceLocation?.city]
+                  .filter((n) => n).join(', ')}
               </p>
             )
           }
@@ -61,10 +74,19 @@ export default function ResourceCard({
         </Link>
 
         <div className={styles.buttons}>
-          <button type="button">
+          <CalendarEventDownload
+            name={name}
+            startTime={startTime}
+            endTime={endTime}
+            startDate={startDate}
+            endDate={endDate}
+            isRecurring={isRecurring}
+            recurrenceDays={recurrenceDays}
+            location={resourceLocation}
+          >
             <Calendar2Icon />
             Add to Calendar
-          </button>
+          </CalendarEventDownload>
           <button type="button">
             <ShareIcon />
             Share
