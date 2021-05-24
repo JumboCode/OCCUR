@@ -87,8 +87,7 @@ DTSTART;VALUE=DATE:${startDate.split('-').join('')}
   let locationField = '';
   if (formattedLocation.length) locationField = `LOCATION:${formattedLocation.replace(/([,\\;])/g, '\\$1').replace(/\n/g, '\\n')}`;
 
-  return `
-BEGIN:VCALENDAR
+  return `BEGIN:VCALENDAR
 VERSION:2.0
 CALSCALE:GREGORIAN
 
@@ -99,5 +98,5 @@ ${locationField}
 END:VEVENT
 
 END:VCALENDAR
-  `;
+`;
 }
