@@ -33,7 +33,7 @@ export default function ResourcePage({
     endTime,
     isRecurring,
     recurrenceDays,
-    location,
+
     description,
 
     link,
@@ -91,11 +91,11 @@ export default function ResourcePage({
                   </p>
                 )}
                 {
-                  location && (
+                  resourceLocation && (
                     <p>
                       <b>Location:</b>
                       &nbsp;
-                      {[location?.street_address, location?.city].filter((n) => n).join(', ')}
+                      {[resourceLocation?.street_address, resourceLocation?.city].filter((n) => n).join(', ')}
                     </p>
                   )
                 }
@@ -141,13 +141,12 @@ export default function ResourcePage({
             </div>
           </div>
           {
-            resourceLocation?.street_address || meetingLink || phone || email && (
+            !!(resourceLocation?.street_address || meetingLink || phone || email) && (
               <div className={styles.contact}>
                 <h3>Address and Contact Information</h3>
                 {resourceLocation?.street_address && (
                   <p className={styles.address}>
-                    {/* TODO: replace location name */}
-                    Location Name
+                    {resourceLocation.location_title}
                     <br />
                     {resourceLocation.street_address}
                     <br />
@@ -182,7 +181,7 @@ export default function ResourcePage({
       </div>
       {resourceLocation?.latitude && resourceLocation?.longitude && (
         <div className={styles.map}>
-          <Map resources={[{ id, name, location }]} />
+          <Map resources={[{ id, name, resourceLocation }]} />
         </div>
       )}
     </div>

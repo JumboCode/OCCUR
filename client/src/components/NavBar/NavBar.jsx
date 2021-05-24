@@ -14,7 +14,9 @@ export default function NavBar() {
       <SearchBar live />
       <Link href="/"><a>Home</a></Link>
       <Link href="/resources"><a>Resources</a></Link>
-      <a>Wifi Hotspot</a>
+      <Link href={{ pathname: '/resources', query: { categories: 'WIFI' } }}>
+        <a>Wifi Hotspot</a>
+      </Link>
       {
         isAuthenticated
           ? (
