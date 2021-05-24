@@ -7,6 +7,7 @@ import api, { HTTPError } from 'api';
 import { formatPhoneNumber, slugify } from 'utils';
 
 import Map from 'components/Map/lazy';
+import CalendarEventDownload from 'components/CalendarEventDownload';
 import NotFound from 'pages/404';
 import Error from 'next/error';
 import { DateRange, TimeRange } from 'components/DateRange';
@@ -30,6 +31,8 @@ export default function ResourcePage({
     endDate,
     startTime,
     endTime,
+    isRecurring,
+    recurrenceDays,
     location,
     description,
 
@@ -118,10 +121,20 @@ export default function ResourcePage({
             </div>
           )}
           <div className={styles.buttongroup}>
-            <div className={styles.rightbutton}>
+            <CalendarEventDownload
+              className={styles.rightbutton}
+              name={name}
+              startTime={startTime}
+              endTime={endTime}
+              startDate={startDate}
+              endDate={endDate}
+              isRecurring={isRecurring}
+              recurrenceDays={recurrenceDays}
+              location={resourceLocation}
+            >
               <Calendar2Icon />
               Add to Calendar
-            </div>
+            </CalendarEventDownload>
             <div className={styles.rightbutton}>
               <ShareIcon />
               Share
