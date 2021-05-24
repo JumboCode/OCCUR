@@ -30,7 +30,6 @@ export default function ResourcePage({
     endDate,
     startTime,
     endTime,
-    location,
     description,
 
     link,
@@ -88,11 +87,11 @@ export default function ResourcePage({
                   </p>
                 )}
                 {
-                  location && (
+                  resourceLocation && (
                     <p>
                       <b>Location:</b>
                       &nbsp;
-                      {[location?.street_address, location?.city].filter((n) => n).join(', ')}
+                      {[resourceLocation?.street_address, resourceLocation?.city].filter((n) => n).join(', ')}
                     </p>
                   )
                 }
@@ -168,7 +167,7 @@ export default function ResourcePage({
       </div>
       {resourceLocation?.latitude && resourceLocation?.longitude && (
         <div className={styles.map}>
-          <Map resources={[{ id, name, location }]} />
+          <Map resources={[{ id, name, resourceLocation }]} />
         </div>
       )}
     </div>
