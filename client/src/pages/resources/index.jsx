@@ -144,6 +144,20 @@ export default function ResourcesPage({ data: resources }) {
             Clear filters
           </button>
         </div>
+
+        <div className={cx('dropDownFilter')}>
+            <button className={cx('dropDownFilterButton')} onClick={()=>{ alert('dropdown')}}>Filters</button>
+            <div className={cx('dropDownFilterCategories')}>
+              <SidebarFilter
+                values={router.query.categories ? router.query.categories.split(',') : []}
+                onChange={(cats) => {
+                  const joined = cats.join(',');
+                  setQueryParams({ categories: joined.length ? joined : undefined });
+                }}
+              />
+            </div>
+        </div>
+
         {visibleResources?.length > 0
           ? visibleResources.map((r) => <ResourceCard key={r.id} {...r} />)
           : (
