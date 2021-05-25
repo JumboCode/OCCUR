@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { RESOURCE_PROP_TYPES } from 'data/resources';
 
@@ -18,6 +18,7 @@ import Arrow from '../../../public/icons/arrow.svg';
 
 import classNames from 'classnames/bind';
 import styles from './ResourceSearch.module.scss';
+import { transform } from 'lodash';
 const cx = classNames.bind(styles);
 
 
@@ -70,6 +71,7 @@ export default function ResourcesPage({ data: resources }) {
   const filteredResources = filterResources(resources, router.query);
   filteredResourcesRef.current = filteredResources;
   const visibleResources = geoFilterResources(filteredResources, router.query);
+  const [dropDownToggle, setDropDownToggle] = useState(false);
 
   const setQueryParams = useCallback((params) => {
     const oldQuery = omit(routerRef.current.query, Object.keys(params));
@@ -147,19 +149,22 @@ export default function ResourcesPage({ data: resources }) {
         </div>
 
         <div className={cx('dropDownFilter')}>
-            <button className={cx('dropDownFilterButton')} onClick={()=>{ alert('dropdown')}}>
+            <button className={cx('dropDownFilterButton')} onClick={()=>{setDropDownToggle(!dropDownToggle)}}>
               Filters
-              <Arrow className={cx('arrow')}/>
+            <Arrow className={ dropDownToggle? cx('arrow-hidden'): cx('arrow-show')}/>
             </button>
-            <div className={cx('dropDownFilterCategories')}>
-              <SidebarFilter
-                values={router.query.categories ? router.query.categories.split(',') : []}
-                onChange={(cats) => {
-                  const joined = cats.join(',');
-                  setQueryParams({ categories: joined.length ? joined : undefined });
-                }}
-              />
-            </div>
+            {!dropDownToggle ? ( 
+              <div className={cx('dropDownFilterCategories')}>
+                <SidebarFilter
+                  values={router.query.categories ? router.query.categories.split(',') : []}
+                  onChange={(cats) => {
+                    const joined = cats.join(',');
+                    setQueryParams({ categories: joined.length ? joined : undefined });
+                  }}
+                />
+              </div>
+            ) : null}
+            
         </div>
 
         {visibleResources?.length > 0
