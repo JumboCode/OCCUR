@@ -61,6 +61,7 @@
       border: none;
       border-radius: 4px;
       padding: 6px 0px 6px 0px;
+      cursor: pointer;
     }
 
     .dropDownFilterCategories {
@@ -70,9 +71,17 @@
       border-radius: 4px;
     }
 
-    .arrow{
+    .arrow-hidden{
       width: 15px;
       margin-left: 5px;
+      transform: rotateX(180deg);
+      transition: transform 0.25s;
+    }
+
+    .arrow-show{
+      width: 15px;
+      margin-left: 5px;
+      transition: transform 0.25s;
     }
   }
 }
