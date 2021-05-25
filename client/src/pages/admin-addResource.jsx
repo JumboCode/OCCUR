@@ -9,10 +9,13 @@ import Close from '../../public/icons/close.svg';
 
 const cx = classNames.bind(styles);
 
-export default function AddResourceModal({ open, close, submit }) {
+export default function AddResourceModal({ open, close, errorMessage, submit }) {
   const { register, handleSubmit, watch } = useForm();
-  const onSubmit = (data) => {
-    console.log("GOT INTO ONSUBMIT")
+  async function onSubmit  (data)  {
+    const recurringDayList = [];
+    if(data.recurrenceDays){
+      recurringDayList = data.recurrenceDays;
+    }
     var newResource = {
       "name": data.name,
       "organization": data.organization,
@@ -22,7 +25,7 @@ export default function AddResourceModal({ open, close, submit }) {
       "startTime": data.startTime.concat(':00'),
       "endTime": data.endTime.concat(':00'),
       "isRecurring": data.isRecurring,
-      "recurrenceDays": data.recurrenceDays,
+      "recurrenceDays": recurringDayList,
       "flyer": data.flyer,
       "flyerId": data.flyerId,
       "link": data.link,
@@ -44,8 +47,12 @@ export default function AddResourceModal({ open, close, submit }) {
     console.log(JSON.stringify(newResource));
     // const newResourceJson = JSON.stringify(newResource);
     // console.log(newResourceJson);
-    submit(newResource);
-    close(false);
+    submit(newResource).then((result) => {
+      console.log(result);
+      if (result){
+        close(false);
+      }
+    });
   };
 
   const isRecurring = watch('isRecurring', false);
@@ -55,7 +62,9 @@ export default function AddResourceModal({ open, close, submit }) {
       <form onSubmit={handleSubmit(onSubmit)} >
         <Close onClick={() => close(false)} className={cx('closeButton')} type="button" />
           <h1>Add a Resource</h1>
-
+          <div className={cx('error', { hidden: !errorMessage })}>
+          {errorMessage}
+          </div>
           <h2 className={styles.fieldTitle}>Resource Name <span className={styles.required}>*</span></h2>
           <input className={styles.resourceInput} {...register("name", {required: true}) } placeholder="Enter resource name" />
           
@@ -166,5 +175,6 @@ export default function AddResourceModal({ open, close, submit }) {
 AddResourceModal.propTypes = {
   open: PropTypes.bool.isRequired,
   close: PropTypes.func.isRequired,
+  errorMessage: PropTypes.string,
   submit: PropTypes.func.isRequired,
 };

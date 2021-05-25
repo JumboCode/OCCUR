@@ -76,6 +76,7 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
   filteredResourcesRef.current = filteredResources;
   const visibleResources = geoFilterResources(filteredResources, router.query);
   const [openAddResourceModal, setopenAddResourceModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   // const [filteredResources, setFilteredResources] = useState(filterResources(resources, router.query));
   // const filteredResources = filterResources(resources, router.query);
@@ -124,19 +125,21 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
     [],
   );
 // sends request to create a resource based on resource passed from form
-  const addResource = (resource) => {
-    api.post('resources', undefined, resource)
-      .then((postResponse) => {
-          console.log("response: ", postResponse.data);
-          refreshData();
-      })
-      .catch((errors) => {
-        console.log(errors.body);
-        if(errors.body.startDate){
-          console.log("StartDate error: ", errors.body.startDate)
-        }
-      });
-  };
+  const addResource = async (resource) => {
+    try{
+      await api.post('resources', undefined, resource)
+      setErrorMessage(null);
+      refreshData();
+      return true;
+
+    }catch(errors){
+      if(errors.body.startDate){
+          console.log("StartDate error: ", errors.body.startDate);
+          setErrorMessage(errors.body.startDate[0]);
+      }
+      return false;
+    }
+  }
 
   return (
 
@@ -144,6 +147,7 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
       <AddResourceModal
         open={openAddResourceModal}
         close={setopenAddResourceModal}
+        errorMessage={errorMessage}
         submit={addResource}
       />
       <div className={styles.left}>

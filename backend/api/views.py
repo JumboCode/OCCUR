@@ -58,7 +58,7 @@ class ResourceListCreate(ListCreateAPIView):
         errorCatalog = defaultdict(list)
 
         if data['startDate'] and data['endDate'] and data['startDate'] > data['endDate']:
-            errorCatalog['startDate'].append('Start date must occur after end date.')
+            errorCatalog['startDate'].append('Start date must occur before end date.')
 
         nowStr = datetime.now().strftime('%Y-%m-%d')
         if data['startDate'] and data['startDate'] < nowStr:
