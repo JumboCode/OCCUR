@@ -151,9 +151,9 @@ export default function ResourcesPage({ data: resources }) {
         <div className={cx('dropDownFilter')}>
             <button className={cx('dropDownFilterButton')} onClick={()=>{setDropDownToggle(!dropDownToggle)}}>
               Filters
-            <Arrow className={ dropDownToggle? cx('arrow-hidden'): cx('arrow-show')}/>
+            <Arrow className={ dropDownToggle? cx('arrow-show'): cx('arrow-hidden')}/>
             </button>
-            {!dropDownToggle ? ( 
+            {dropDownToggle ? ( 
               <div className={cx('dropDownFilterCategories')}>
                 <SidebarFilter
                   values={router.query.categories ? router.query.categories.split(',') : []}
