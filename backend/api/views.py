@@ -339,6 +339,9 @@ class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
         if response.status_code == 204:
             from django.core.cache import cache
             cache.delete('resource_data_{}'.format(resource_id))
+            response['success'] = True
+        else:
+            response['success'] = False
         return response
 
     def update(self, request, *args, **kwargs):

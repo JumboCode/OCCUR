@@ -22,26 +22,19 @@ import { slugify } from 'utils';
 
 export default function ResourceCard({
   id, name, organization, category, startDate, endDate, location, flyer, startTime, endTime,
-blocked, }) {
+blocked, onResourceDeleted }) {
   const api = useApi();
 
   const defaultImage = `/images/category-defaults/${category || 'OTHER'}.jpeg`;
   const [openDeleteResourceModal, setopenDeleteResourceModal] = useState(false);
-  const [resourceIDToDelete, setResourceIDToDelete] = useState(null);
 
-  
-  const handleDeleteClick = (resourceID) => {
-    setopenDeleteResourceModal(true);
-    console.log("got to handleDeleteClick")
-    console.log(openDeleteResourceModal)
+  const handleDeleteClick = () => { setopenDeleteResourceModal(true); };
 
-    setResourceIDToDelete(resourceID);
-  };
-
-  const deleteResource = (idToDelete) => {
-    api.delete(`resources/${idToDelete}`)
+  const deleteResource = () => {
+    api.delete(`resources/${id}`)
       .then((response) =>{
-        console.log(response)
+        onResourceDeleted();
+        console.log(response);
       })
       .catch((error) => {
         console.error(error);
@@ -53,7 +46,7 @@ blocked, }) {
       <DeleteResourceModal
         open={openDeleteResourceModal}
         close={setopenDeleteResourceModal}
-        resourceID={resourceIDToDelete}
+        resourceID={id}
         submit={deleteResource}
       />
       <div className={styles.leftside}>
@@ -95,8 +88,8 @@ blocked, }) {
           </a>
         </Link>
 
-        { 
-        blocked ? 
+        {
+        blocked ?
         <div className={styles.buttons}>
           <button type="button">
             <Calendar2Icon />
@@ -105,18 +98,18 @@ blocked, }) {
           <button type="button">
             <ShareIcon />
             Share
-          </button>          
+          </button>
         </div>
         :
         <div className={styles.buttons}>
-          <button type="button" onClick={() => handleDeleteClick(id)}>
+          <button type="button" onClick={handleDeleteClick}>
             <TrashIcon />
             Delete
           </button>
           <button type="button" >
             <PenIcon />
             Edit
-          </button>          
+          </button>
         </div>
         }
       </div>

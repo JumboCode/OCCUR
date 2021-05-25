@@ -1,8 +1,9 @@
-import React, { useCallback, useRef,  useState } from 'react';
+import React, { useCallback, useRef,  useState , useEffect, setState} from 'react';
 import PropTypes from 'prop-types';
 import { RESOURCE_PROP_TYPES } from 'data/resources';
 
 import { useRouter } from 'next/router';
+import {useApi} from 'api';
 import api from 'api';
 import fuzzysort from 'fuzzysort';
 
@@ -61,10 +62,13 @@ const geoFilterResources = (
 });
 
 
-export default function ResourcesPage({ blocked, data: resources }) {
+export default function ResourcesPage({ blocked, data: passedResources }) {
+  const [resources, setResources] = useState(passedResources);
   const routerRef = useRef();
   const router = useRouter();
   const mapRef = useRef();
+  const api = useApi();
+
   routerRef.current = router;
 
   const filteredResourcesRef = useRef();
@@ -72,6 +76,17 @@ export default function ResourcesPage({ blocked, data: resources }) {
   filteredResourcesRef.current = filteredResources;
   const visibleResources = geoFilterResources(filteredResources, router.query);
   const [openAddResourceModal, setopenAddResourceModal] = useState(false);
+
+  // const [filteredResources, setFilteredResources] = useState(filterResources(resources, router.query));
+  // const filteredResources = filterResources(resources, router.query);
+  // filteredResourcesRef.current = filteredResources;
+  // const [visibleResources, setVisible] = geoFilterResources(filteredResources, router.query);
+  // const [openAddResourceModal, setopenAddResourceModal] = useState(false);
+  // const [resourceDeleted, setResourceDeleted] = useState(false);
+
+  const refreshData = () => {
+    api.get('resources').then(setResources);
+  }
 
   const setQueryParams = useCallback((params) => {
     const oldQuery = omit(routerRef.current.query, Object.keys(params));
@@ -111,16 +126,20 @@ export default function ResourcesPage({ blocked, data: resources }) {
 // sends request to create a resource based on resource passed from form
   const addResource = (resource) => {
     api.post('resources', undefined, resource)
-      .then((responsePost) => {
-        console.log(responsePost);
+      .then((postResponse) => {
+          console.log("response: ", postResponse.data);
+          refreshData();
       })
-      .catch((error) => {
-        // console.log(error);
+      .catch((errors) => {
+        console.log(errors.body);
+        if(errors.body.startDate){
+          console.log("StartDate error: ", errors.body.startDate)
+        }
       });
   };
 
   return (
-    
+
     <div className={styles.base}>
       <AddResourceModal
         open={openAddResourceModal}
@@ -177,11 +196,17 @@ export default function ResourcesPage({ blocked, data: resources }) {
             Clear filters
           </button>
         </div>
-        { 
+        {
         // Fill in each resource card
         visibleResources.map((r) => {
           r.blocked = blocked;
-          return <ResourceCard key={r.id} {...r}  />
+          return (
+            <ResourceCard
+              key={r.id}
+              {...r}
+              onResourceDeleted={refreshData}
+            />
+          )
         })
          }
       </div>
@@ -196,6 +221,6 @@ ResourcesPage.propTypes = {
 export async function getServerSideProps(ctx) {
   const blocked = !isAdmin(ctx);
   return {
-    props: {blocked, data: await api.get('/resources')},
+    props: {blocked, data: await api.get('resources')},
   };
 }
