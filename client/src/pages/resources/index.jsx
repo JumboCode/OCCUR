@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { RESOURCE_PROP_TYPES } from 'data/resources';
 
@@ -12,6 +12,8 @@ import omit from 'lodash/omit';
 import ResourceCard from 'components/ResourceCard';
 import SidebarFilter from 'components/SidebarFilter/SidebarFilter';
 import Map from 'components/Map/lazy';
+
+import Exclamation from '../../../public/icons/exclamation.svg';
 
 import classNames from 'classnames/bind';
 import styles from './ResourceSearch.module.scss';
@@ -68,31 +70,6 @@ export default function ResourcesPage({ data: resources }) {
   filteredResourcesRef.current = filteredResources;
   const visibleResources = geoFilterResources(filteredResources, router.query);
 
-// export default function ResourcesPage({ data }) {
-  const [values, setValues] = useState({
-    categories: [],
-    daysOfWeek: [],
-    startTime: {
-      hour: '',
-      min: '',
-      timePeriod: '',
-    },
-    endTime: {
-      hour: '',
-      min: '',
-      timePeriod: '',
-    },
-    startDate: {
-      month: '',
-      date: '',
-      year: '',
-    },
-    endDate: {
-      month: '',
-      date: '',
-      year: '',
-    },
-  });
   const setQueryParams = useCallback((params) => {
     const oldQuery = omit(routerRef.current.query, Object.keys(params));
     routerRef.current.replace({
@@ -129,15 +106,42 @@ export default function ResourcesPage({ data: resources }) {
     [],
   );
 
+  const [filters, setFilters] = useState({
+    categories: router.query.categories ? router.query.categories.split(',') : [],
+    daysOfWeek: [],
+    startTime: {
+      hour: '',
+      min: '',
+      timePeriod: '',
+    },
+    endTime: {
+      hour: '',
+      min: '',
+      timePeriod: '',
+    },
+    startDate: {
+      month: '',
+      day: '',
+      year: '',
+    },
+    endDate: {
+      month: '',
+      day: '',
+      year: '',
+    },
+  });
+
+  useEffect(() => {
+    const joined = filters.categories.join(',');
+    setQueryParams({ categories: joined.length ? joined : undefined });
+  }, [filters.categories, setQueryParams]);
+
   return (
     <div className={styles.base}>
       <div className={styles.left}>
         <SidebarFilter
-          values={router.query.categories ? router.query.categories.split(',') : []}
-          onChange={(cats) => {
-            const joined = cats.join(',');
-            setQueryParams({ categories: joined.length ? joined : undefined });
-          }}
+          values={filters}
+          onChange={setFilters}
         />
       </div>
 
@@ -167,9 +171,15 @@ export default function ResourcesPage({ data: resources }) {
             Clear filters
           </button>
         </div>
-        { visibleResources.map((r) => (
-          <ResourceCard key={r.id} {...r} />
-        )) }
+        {visibleResources?.length > 0
+          ? visibleResources.map((r) => <ResourceCard key={r.id} {...r} />)
+          : (
+            <div className={styles.noResults}>
+              <Exclamation className={styles.exclamation} />
+              <h4>No results found.</h4>
+              <div>We cannot find any matching resources.</div>
+            </div>
+          )}
       </div>
     </div>
   );

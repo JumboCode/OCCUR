@@ -1,22 +1,11 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styles from './SidebarFilter.module.scss';
-import { RESOURCE_CATEGORIES } from 'data/resources';
-
-console.log(RESOURCE_CATEGORIES);
-
-const DAYS_OF_WEEK = [
-  { id: 'MON', label: 'Monday' },
-  { id: 'TUES', label: 'Tuesday' },
-  { id: 'WED', label: 'Wednesday' },
-  { id: 'THURS', label: 'Thursday' },
-  { id: 'FRI', label: 'Friday' },
-  { id: 'SAT', label: 'Saturday' },
-  { id: 'SUN', label: 'Sunday' },
-];
+import { RESOURCE_CATEGORIES, DAYS_OF_WEEK } from 'data/resources';
 
 const DATE_FORMAT = 'mm/dd/yyyy';
+const TIME_FORMAT = 'hh:mm';
 
 // taken from Luke's codepen.io: https://codesandbox.io/s/lively-cache-67v89?file=/src/App.js
 // slightly modified to simply return the nicely formatted date
@@ -36,7 +25,39 @@ const formatDateInput = (e) => {
   return out;
 };
 
+// does pretty much the same thing as formatDateInput, but for time
+const formatTimeInput = (e) => {
+  // only taking numeric characters from input
+  const val = [...e.target.value]
+    .filter((c) => c.charCodeAt(0) >= 48 && c.charCodeAt(0) <= 57)
+    .join('');
+  // automatically format with colon
+  let out = val.slice(0, 2);
+  if (val.length > 2) {
+    out += `:${val.slice(2, 4)}`;
+  }
+
+  return out;
+};
+
+// parses the date according to DATE_FORMAT
+const parseValidDate = (dateStr) => [
+  dateStr.substring(0, 2), dateStr.substring(3, 5), dateStr.substring(6, 11),
+];
+
+// parses the time according to TIME_FORMAT
+const parseValidTime = (timeStr) => [timeStr.substring(0, 2), timeStr.substring(3, 5)];
+
+const getInvalidStyle = (i, targetFmt) => i.length > 0 && i.length < targetFmt.length ? styles.invalid : styles.validInput;
+
 export default function SidebarFilter({ values, onChange }) {
+  const [endDate, setEndDate] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [startTime, setStartTime] = useState('');
+  const [startTimePeriod, setStartTimePeriod] = useState('AM');
+  const [endTime, setEndTime] = useState('');
+  const [endTimePeriod, setEndTimePeriod] = useState('AM');
+
   return (
     <div className={styles.base}>
       <div className={styles.group}>
@@ -101,10 +122,270 @@ export default function SidebarFilter({ values, onChange }) {
       </div>
       <div className={styles.group}>
         <h4>Date</h4>
-        <label for="date-range-begin">From</label>
-        <input id="date-range-begin" type="text" placeholder={DATE_FORMAT}></input>
-        <label for="date-range-end">To</label>
-        <input id="date-range-end" type="text" placeholder={DATE_FORMAT}></input>
+        <label htmlFor="date-range-begin">From</label>
+        <input
+          id="date-range-begin"
+          type="text"
+          placeholder={DATE_FORMAT}
+          className={getInvalidStyle(startDate, DATE_FORMAT)}
+          onChange={(e) => {
+            const newValue = formatDateInput(e);
+            setStartDate(newValue);
+            if (newValue === DATE_FORMAT.length) {
+              const [month, day, year] = parseValidDate(newValue);
+              onChange({
+                ...values,
+                startDate: { month, day, year },
+              });
+            } else {
+              onChange({
+                ...values,
+                startDate: {
+                  month: '',
+                  day: '',
+                  year: '',
+                },
+              });
+            }
+          }}
+          value={startDate}
+        />
+        <label htmlFor="date-range-end">To</label>
+        <input
+          id="date-range-end"
+          type="text"
+          placeholder={DATE_FORMAT}
+          className={getInvalidStyle(endDate, DATE_FORMAT)}
+          onChange={(e) => {
+            const newValue = formatDateInput(e);
+            setEndDate(newValue);
+            if (newValue.length === DATE_FORMAT.length) {
+              const [month, day, year] = parseValidDate(newValue);
+              onChange({
+                ...values,
+                endDate: { month, day, year },
+              });
+            } else {
+              onChange({
+                ...values,
+                endDate: {
+                  month: '',
+                  day: '',
+                  year: '',
+                },
+              });
+            }
+          }}
+          value={endDate}
+        />
+      </div>
+      <div className={styles.group}>
+        <h4>Time</h4>
+        <label htmlFor="time-range-start">From</label>
+        <input
+          id="time-range-start"
+          type="text"
+          placeholder={TIME_FORMAT}
+          className={getInvalidStyle(startTime, TIME_FORMAT)}
+          onChange={(e) => {
+            const newValue = formatTimeInput(e);
+            setStartTime(newValue);
+            if (newValue.length === TIME_FORMAT.length) {
+              const [hour, min] = parseValidTime(newValue);
+              onChange({
+                ...values,
+                startTime: {
+                  hour,
+                  min,
+                  timePeriod: startTimePeriod,
+                },
+              });
+            } else {
+              onChange({
+                ...values,
+                startTime: {
+                  hour: '',
+                  min: '',
+                  timePeriod: '',
+                },
+              });
+            }
+          }}
+          value={startTime}
+        />
+        <div className={styles.radioButtons}>
+          <div className={styles.amRadioInput}>
+            <label htmlFor="time-range-start-AM">AM</label>
+            <input
+              id="time-range-start-AM"
+              type="radio"
+              name="start-period"
+              value="AM"
+              onChange={(e) => {
+                const newValue = e.target.value;
+                setStartTimePeriod(newValue);
+                if (startTime.length === TIME_FORMAT.length) {
+                  const [hour, min] = parseValidTime(startTime);
+                  onChange({
+                    ...values,
+                    startTime: {
+                      hour,
+                      min,
+                      timePeriod: newValue,
+                    },
+                  });
+                } else {
+                  onChange({
+                    ...values,
+                    startTime: {
+                      hour: '',
+                      min: '',
+                      timePeriod: '',
+                    },
+                  });
+                }
+              }}
+              checked={startTimePeriod === 'AM'}
+            />
+          </div>
+
+          <div className={styles.pmRadioInput}>
+            <label htmlFor="time-range-start-PM">PM</label>
+            <input
+              id="time-range-start-PM"
+              type="radio"
+              name="start-period"
+              value="PM"
+              onChange={(e) => {
+                const newValue = e.target.value;
+                setStartTimePeriod(newValue);
+                if (startTime.length === TIME_FORMAT.length) {
+                  const [hour, min] = parseValidTime(startTime);
+                  onChange({
+                    ...values,
+                    startTime: {
+                      hour,
+                      min,
+                      timePeriod: newValue,
+                    },
+                  });
+                } else {
+                  onChange({
+                    ...values,
+                    startTime: {
+                      hour: '',
+                      min: '',
+                      timePeriod: '',
+                    },
+                  });
+                }
+              }}
+              checked={startTimePeriod === 'PM'}
+            />
+          </div>
+        </div>
+        <label htmlFor="time-range-end">To</label>
+        <input
+          id="time-range-end"
+          type="text"
+          placeholder={TIME_FORMAT}
+          className={getInvalidStyle(endTime, TIME_FORMAT)}
+          onChange={(e) => {
+            const newValue = formatTimeInput(e);
+            setEndTime(newValue);
+            if (newValue.length === TIME_FORMAT.length) {
+              const [hour, min] = parseValidTime(newValue);
+              onChange({
+                ...values,
+                endTime: {
+                  hour,
+                  min,
+                  timePeriod: endTimePeriod,
+                },
+              });
+            } else {
+              onChange({
+                ...values,
+                endTime: {
+                  hour: '',
+                  min: '',
+                  timePeriod: '',
+                },
+              });
+            }
+          }}
+          value={endTime}
+        />
+        <div className={styles.radioButtons}>
+          <div className={styles.amRadioInput}>
+            <label htmlFor="time-range-end-AM">AM</label>
+            <input
+              id="time-range-end-AM"
+              type="radio"
+              name="end-period"
+              value="AM"
+              onChange={(e) => {
+                const newValue = e.target.value;
+                setEndTimePeriod(newValue);
+                if (endTime.length === TIME_FORMAT.length) {
+                  const [hour, min] = parseValidTime(endTime);
+                  onChange({
+                    ...values,
+                    endTime: {
+                      hour,
+                      min,
+                      timePeriod: endTimePeriod,
+                    },
+                  });
+                } else {
+                  onChange({
+                    ...values,
+                    endTime: {
+                      hour: '',
+                      min: '',
+                      timePeriod: '',
+                    },
+                  });
+                }
+              }}
+              checked={endTimePeriod === 'AM'}
+            />
+          </div>
+          <div className={styles.pmRadioInput}>
+            <label htmlFor="time-range-end-PM">PM</label>
+            <input
+              id="time-range-end-PM"
+              type="radio"
+              name="end-period"
+              value="PM"
+              onChange={(e) => {
+                const newValue = e.target.value;
+                setEndTimePeriod(newValue);
+                if (endTime.length === TIME_FORMAT.length) {
+                  const [hour, min] = parseValidTime(endTime);
+                  onChange({
+                    ...values,
+                    endTime: {
+                      hour,
+                      min,
+                      timePeriod: newValue,
+                    },
+                  });
+                } else {
+                  onChange({
+                    ...values,
+                    endTime: {
+                      hour: '',
+                      min: '',
+                      timePeriod: '',
+                    },
+                  });
+                }
+              }}
+              checked={endTimePeriod === 'PM'}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -129,14 +410,14 @@ SidebarFilter.propTypes = {
     }),
     startDate: PropTypes.shape({
       month: PropTypes.string.isRequired,
-      date: PropTypes.string.isRequired,
+      day: PropTypes.string.isRequired,
       year: PropTypes.string.isRequired,
     }),
     endDate: PropTypes.shape({
       month: PropTypes.string.isRequired,
-      date: PropTypes.string.isRequired,
+      day: PropTypes.string.isRequired,
       year: PropTypes.string.isRequired,
     }),
-  }),
+  }).isRequired,
   onChange: PropTypes.func.isRequired,
 };

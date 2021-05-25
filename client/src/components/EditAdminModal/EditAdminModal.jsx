@@ -19,7 +19,7 @@ export default function EditAdminModal({ open, close, user, submit }) {
       setValue('name', user.name);
       setValue('email', user.email);
     }
-  }, [user]);
+  }, [user, setValue]);
 
   const onSubmit = (data) => {
     submit(user, data);

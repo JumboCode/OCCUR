@@ -336,9 +336,13 @@ class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
         if flyer_id:
             cloudinary_delete(flyer_id)
         response = super().delete(request, *args, **kwargs)
+        response.data = {}
         if response.status_code == 204:
             from django.core.cache import cache
             cache.delete('resource_data_{}'.format(resource_id))
+            response.data['success'] = True
+        else:
+            response.data['success'] = False
         return response
 
     def update(self, request, *args, **kwargs):
