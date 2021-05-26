@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { DateRange, TimeRange } from 'components/DateRange';
 import { useApi } from 'api';
 import DeleteResourceModal from 'components/DeleteResourceModal'
+import EditResourceModal from 'components/EditResourceModal'
 import ClockIcon from '../../../public/clock.svg';
 import PinIcon from '../../../public/pin.svg';
 import CalendarIcon from '../../../public/calendar.svg';
@@ -22,13 +23,16 @@ import { slugify } from 'utils';
 
 export default function ResourceCard({
   id, name, organization, category, startDate, endDate, location, flyer, startTime, endTime,
-blocked, onResourceDeleted }) {
+blocked, onResourceDeleted, onResourceEdited }) {
   const api = useApi();
 
   const defaultImage = `/images/category-defaults/${category || 'OTHER'}.jpeg`;
   const [openDeleteResourceModal, setopenDeleteResourceModal] = useState(false);
+  const [openEditResourceModal, setopenEditResourceModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const handleDeleteClick = () => { setopenDeleteResourceModal(true); };
+  const handleEditClick = () => { setopenEditResourceModal(true); };
 
   const deleteResource = () => {
     api.delete(`resources/${id}`)
@@ -41,6 +45,22 @@ blocked, onResourceDeleted }) {
       });
   };
 
+  const editResource = async (resource) => {
+    try{
+      await api.put(`resources/${id}`, undefined, resource)
+      setErrorMessage(null);
+      onResourceEdited();
+      return true;
+
+    }catch(errors){
+      if(errors.body.startDate){
+          console.log("StartDate error: ", errors.body.startDate);
+          setErrorMessage(errors.body.startDate[0]);
+      }
+      return false;
+    }
+  }
+
   return (
     <div className={styles.base}>
       <DeleteResourceModal
@@ -48,6 +68,12 @@ blocked, onResourceDeleted }) {
         close={setopenDeleteResourceModal}
         resourceID={id}
         submit={deleteResource}
+      />
+      <EditResourceModal
+        open={openEditResourceModal}
+        close={setopenEditResourceModal}
+        resourceID={id}
+        submit={editResource}
       />
       <div className={styles.leftside}>
         <img alt="Resource flyer" src={flyer || defaultImage} />
@@ -106,7 +132,7 @@ blocked, onResourceDeleted }) {
             <TrashIcon />
             Delete
           </button>
-          <button type="button" >
+          <button type="button" onClick={handleEditClick}>
             <PenIcon />
             Edit
           </button>
