@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { RESOURCE_PROP_TYPES } from 'data/resources';
 
 import { useRouter } from 'next/router';
-import {useApi} from 'api';
+import {HTTPError, useApi} from 'api';
 import api from 'api';
 import fuzzysort from 'fuzzysort';
 
@@ -133,9 +133,23 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
       return true;
 
     }catch(errors){
-      if(errors.body.startDate){
-          console.log("StartDate error: ", errors.body.startDate);
-          setErrorMessage(errors.body.startDate[0]);
+      console.log("status code: ", errors.status);
+      if(errors.status == 400 && errors.body){
+        console.log("errors: ", errors.body);
+        console.log("errors type: ", typeof(errors.body));
+
+          // var errorsList = [[errors.body.startDate, 
+          //                   errors.body.meetingLink,
+          //                   ...errors.body.flyer,
+          //                   ...errors.body.phone,
+          //                   ...errors.body.flyer]]
+          
+          // if(errors.body.location){errorsList.concat(errors.body.location.zip_code)}
+          // if(errors.body.location){errorsList.concat(errors.body.location.zip_code)}
+          // if(errors.body.location){errorsList.concat(errors.body.location.zip_code)}
+          // if(errors.body.location){errorsList.concat(errors.body.location.zip_code)}
+          // if(errors.body.location){errorsList.concat(errors.body.location.zip_code)}
+        setErrorMessage(JSON.stringify(errors.body));
       }
       return false;
     }

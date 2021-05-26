@@ -12,7 +12,7 @@ const cx = classNames.bind(styles);
 export default function AddResourceModal({ open, close, errorMessage, submit }) {
   const { register, handleSubmit, watch } = useForm();
   async function onSubmit  (data)  {
-    const recurringDayList = [];
+    var recurringDayList = [];
     if(data.recurrenceDays){
       recurringDayList = data.recurrenceDays;
     }
@@ -62,9 +62,6 @@ export default function AddResourceModal({ open, close, errorMessage, submit }) 
       <form onSubmit={handleSubmit(onSubmit)} >
         <Close onClick={() => close(false)} className={cx('closeButton')} type="button" />
           <h1>Add a Resource</h1>
-          <div className={cx('error', { hidden: !errorMessage })}>
-          {errorMessage}
-          </div>
           <h2 className={styles.fieldTitle}>Resource Name <span className={styles.required}>*</span></h2>
           <input className={styles.resourceInput} {...register("name", {required: true}) } placeholder="Enter resource name" />
           
@@ -162,7 +159,9 @@ export default function AddResourceModal({ open, close, errorMessage, submit }) 
           
           <h2 className={styles.fieldTitle}>Email address</h2>
           <input className={styles.resourceInput} {...register("email") } placeholder="Enter contact email address" />
-
+          <div className={cx('error', { hidden: !errorMessage })}>
+          {errorMessage}
+          </div>
           <div className={styles.cancelsavebutton}>
             <button onClick={() => close(false)} className={cx('cancelButton')}>Cancel</button>
             <button onClick={handleSubmit(onSubmit)} className={cx('saveButton')} type="submit">Save</button>

@@ -53,9 +53,10 @@ blocked, onResourceDeleted, onResourceEdited }) {
       return true;
 
     }catch(errors){
-      if(errors.body.startDate){
-          console.log("StartDate error: ", errors.body.startDate);
-          setErrorMessage(errors.body.startDate[0]);
+      if(errors.status == 400 && errors.body){
+        console.log("errors: ", errors.body);
+        console.log("errors type: ", typeof(errors.body));
+        setErrorMessage(JSON.stringify(errors.body));
       }
       return false;
     }
