@@ -336,15 +336,19 @@ class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
         if flyer_id:
             cloudinary_delete(flyer_id)
         response = super().delete(request, *args, **kwargs)
+        response.data = {}
         if response.status_code == 204:
             from django.core.cache import cache
             cache.delete('resource_data_{}'.format(resource_id))
-            response['success'] = True
+            response.status_code = 200
+            response.data['success'] = True
         else:
-            response['success'] = False
+            response.status_code = 500
+            response.data['success'] = False
         return response
 
     def update(self, request, *args, **kwargs):
+        # vErrors = self.inputValidator(request.data)
         #---- retrieve geoCoordinates
         if 'location' in request.data and request.data['location']:
             address = request.data['location']
@@ -356,7 +360,8 @@ class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
             request.data['location'] = {}
 
         response = super().update(request, *args, **kwargs)
-
+        # if response.status_code == 400:
+        #     return Response(vErrors, status=status.HTTP_400_BAD_REQUEST)
         if response.status_code == 200:
             from django.core.cache import cache
             Resource = response.data

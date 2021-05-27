@@ -1,7 +1,6 @@
 {
   "extends": ["airbnb", "airbnb/hooks"],
   "env": { "browser": true },
-  "parser": "babel-eslint",
 
   "rules": {
     "no-param-reassign": ["error", { "props": false }],
@@ -19,7 +18,15 @@
     "react/jsx-props-no-spreading": "off",
     "no-multiple-empty-lines": ["error", { "max": 2, "maxBOF": 0, "maxEOF": 0 }]
   },
+  // Support modern JS syntax
+  "parser": "@babel/eslint-parser",
+  // Recognize relative imports from the 'src' directory
   "settings": {
-    "import/resolver": { "node": { "moduleDirectory": ["node_modules", "src/"] } }
+    "import/resolver": {
+      "node": {
+        "paths": ["src"],
+        "extensions": [".js", ".jsx", ".mjs", ".cjs"]
+      }
+    }
   }
 }

@@ -14,6 +14,8 @@ import ResourceCard from 'components/ResourceCard';
 import SidebarFilter from 'components/SidebarFilter/SidebarFilter';
 import Map from 'components/Map/lazy';
 
+import Exclamation from '../../../public/icons/exclamation.svg';
+
 import classNames from 'classnames/bind';
 import styles from './ResourceSearch.module.scss';
 import Circleplus from '../../../public/icons/circle_plus.svg';
@@ -214,20 +216,27 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
             Clear filters
           </button>
         </div>
-        {
+        {visibleResources?.length > 0 ? 
         // Fill in each resource card
-        visibleResources.map((r) => {
-          r.blocked = blocked;
-          return (
-            <ResourceCard
-              key={r.id}
-              r={r}
-              onResourceDeleted={refreshData}
-              onResourceEdited={refreshData}
-            />
+          visibleResources.map((r) => {
+            r.blocked = blocked;
+            return (
+              <ResourceCard
+                key={r.id}
+                r={r}
+                onResourceDeleted={refreshData}
+                onResourceEdited={refreshData}
+              />)
+          })
+          : (
+            <div className={styles.noResults}>
+              <Exclamation className={styles.exclamation} />
+              <h4>No results found.</h4>
+              <div>We cannot find any matching resources.</div>
+            </div>
           )
-        })
          }
+
       </div>
     </div>
   );

@@ -7,6 +7,7 @@ import api, { HTTPError } from 'api';
 import { formatPhoneNumber, slugify } from 'utils';
 
 import Map from 'components/Map/lazy';
+import CalendarEventDownload from 'components/CalendarEventDownload';
 import NotFound from 'pages/404';
 import Error from 'next/error';
 import { DateRange, TimeRange } from 'components/DateRange';
@@ -30,7 +31,9 @@ export default function ResourcePage({
     endDate,
     startTime,
     endTime,
-    location,
+    isRecurring,
+    recurrenceDays,
+
     description,
 
     link,
@@ -88,11 +91,11 @@ export default function ResourcePage({
                   </p>
                 )}
                 {
-                  location && (
+                  resourceLocation && (
                     <p>
                       <b>Location:</b>
                       &nbsp;
-                      {[location?.street_address, location?.city].filter((n) => n).join(', ')}
+                      {[resourceLocation?.street_address, resourceLocation?.city].filter((n) => n).join(', ')}
                     </p>
                   )
                 }
@@ -118,23 +121,32 @@ export default function ResourcePage({
             </div>
           )}
           <div className={styles.buttongroup}>
-            <div className={styles.rightbutton}>
+            <CalendarEventDownload
+              className={styles.rightbutton}
+              name={name}
+              startTime={startTime}
+              endTime={endTime}
+              startDate={startDate}
+              endDate={endDate}
+              isRecurring={isRecurring}
+              recurrenceDays={recurrenceDays}
+              location={resourceLocation}
+            >
               <Calendar2Icon />
               Add to Calendar
-            </div>
+            </CalendarEventDownload>
             <div className={styles.rightbutton}>
               <ShareIcon />
               Share
             </div>
           </div>
           {
-            resourceLocation?.street_address || meetingLink || phone || email && (
+            !!(resourceLocation?.street_address || meetingLink || phone || email) && (
               <div className={styles.contact}>
                 <h3>Address and Contact Information</h3>
                 {resourceLocation?.street_address && (
                   <p className={styles.address}>
-                    {/* TODO: replace location name */}
-                    Location Name
+                    {resourceLocation.location_title}
                     <br />
                     {resourceLocation.street_address}
                     <br />
@@ -169,7 +181,7 @@ export default function ResourcePage({
       </div>
       {resourceLocation?.latitude && resourceLocation?.longitude && (
         <div className={styles.map}>
-          <Map resources={[{ id, name, location }]} />
+          <Map resources={[{ id, name, location: resourceLocation }]} />
         </div>
       )}
     </div>

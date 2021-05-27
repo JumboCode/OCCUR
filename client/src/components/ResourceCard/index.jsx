@@ -8,6 +8,8 @@ import { DateRange, TimeRange } from 'components/DateRange';
 import { useApi } from 'api';
 import DeleteResourceModal from 'components/DeleteResourceModal'
 import EditResourceModal from 'components/EditResourceModal'
+import CalendarEventDownload from 'components/CalendarEventDownload';
+
 import ClockIcon from '../../../public/clock.svg';
 import PinIcon from '../../../public/pin.svg';
 import CalendarIcon from '../../../public/calendar.svg';
@@ -62,7 +64,7 @@ export default function ResourceCard({
   }
 
   return (
-    
+    // <Link href="/resources/[id]" as={`/resources/${r.id}-${slugify(r.name, 5)}`}>
     <div className={styles.base}>
       <DeleteResourceModal
         open={openDeleteResourceModal}
@@ -118,10 +120,20 @@ export default function ResourceCard({
         {
         r.blocked ?
         <div className={styles.buttons}>
-          <button type="button">
+            <CalendarEventDownload
+              name={r.name}
+              startTime={r.startTime}
+              endTime={r.endTime}
+              startDate={r.startDate}
+              endDate={r.endDate}
+              isRecurring={r.isRecurring}
+              recurrenceDays={r.recurrenceDays}
+              location={r.location}
+            >
             <Calendar2Icon />
             Add to Calendar
-          </button>
+          </CalendarEventDownload>
+
           <button type="button">
             <ShareIcon />
             Share
@@ -141,6 +153,7 @@ export default function ResourceCard({
         }
       </div>
     </div>
+    //</Link>
   );
 }
 
