@@ -221,7 +221,7 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
           return (
             <ResourceCard
               key={r.id}
-              {...r}
+              r={r}
               onResourceDeleted={refreshData}
               onResourceEdited={refreshData}
             />

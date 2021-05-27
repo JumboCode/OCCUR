@@ -22,11 +22,10 @@ import { slugify } from 'utils';
 
 
 export default function ResourceCard({
-  id, name, organization, category, startDate, endDate, location, flyer, startTime, endTime,
-blocked, onResourceDeleted, onResourceEdited }) {
+   r, onResourceDeleted, onResourceEdited }) {
   const api = useApi();
 
-  const defaultImage = `/images/category-defaults/${category || 'OTHER'}.jpeg`;
+  const defaultImage = `/images/category-defaults/${r.category || 'OTHER'}.jpeg`;
   const [openDeleteResourceModal, setopenDeleteResourceModal] = useState(false);
   const [openEditResourceModal, setopenEditResourceModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -35,7 +34,7 @@ blocked, onResourceDeleted, onResourceEdited }) {
   const handleEditClick = () => { setopenEditResourceModal(true); };
 
   const deleteResource = () => {
-    api.delete(`resources/${id}`)
+    api.delete(`resources/${r.id}`)
       .then((response) =>{
         onResourceDeleted();
         console.log(response);
@@ -47,7 +46,7 @@ blocked, onResourceDeleted, onResourceEdited }) {
 
   const editResource = async (resource) => {
     try{
-      await api.put(`resources/${id}`, undefined, resource)
+      await api.put(`resources/${r.id}`, undefined, resource)
       setErrorMessage(null);
       onResourceEdited();
       return true;
@@ -63,52 +62,53 @@ blocked, onResourceDeleted, onResourceEdited }) {
   }
 
   return (
+    
     <div className={styles.base}>
       <DeleteResourceModal
         open={openDeleteResourceModal}
         close={setopenDeleteResourceModal}
-        resourceID={id}
+        resourceID={r.id}
         submit={deleteResource}
       />
       <EditResourceModal
         open={openEditResourceModal}
         close={setopenEditResourceModal}
-        resourceID={id}
+        errorMessage={errorMessage}
+        resource={r}
         submit={editResource}
       />
       <div className={styles.leftside}>
-        <img alt="Resource flyer" src={flyer || defaultImage} />
+        <img alt="Resource flyer" src={r.flyer || defaultImage} />
       </div>
-
       <div className={styles.rightside}>
         <div className={styles.content}>
-          <h3>{name}</h3>
-          {organization && <p className={styles.subtitle}>{organization}</p>}
-          { (startDate || endDate) && (
+          <h3>{r.name}</h3>
+          {r.organization && <p className={styles.subtitle}>{r.organization}</p>}
+          { (r.startDate || r.endDate) && (
             <p className={styles['icon-line']}>
               <CalendarIcon />
-              <DateRange from={startDate} to={endDate} />
+              <DateRange from={r.startDate} to={r.endDate} />
             </p>
           )}
           {
-            (startTime || endTime) && (
+            (r.startTime || r.endTime) && (
               <p className={styles['icon-line']}>
                 <ClockIcon />
-                <TimeRange from={startTime} to={endTime} />
+                <TimeRange from={r.startTime} to={r.endTime} />
               </p>
             )
           }
           {
-            location && (
+            r.location && (
               <p className={styles['icon-line']}>
                 <PinIcon />
-                {[location?.street_address, location?.city].filter((n) => n).join(', ')}
+                {[r.location?.street_address, r.location?.city].filter((n) => n).join(', ')}
               </p>
             )
           }
         </div>
 
-        <Link href="/resources/[id]" as={`/resources/${id}-${slugify(name, 5)}`}>
+        <Link href="/resources/[id]" as={`/resources/${r.id}-${slugify(r.name, 5)}`}>
           <a className={styles.cta}>
             View more
             <ViewIcon />
@@ -116,7 +116,7 @@ blocked, onResourceDeleted, onResourceEdited }) {
         </Link>
 
         {
-        blocked ?
+        r.blocked ?
         <div className={styles.buttons}>
           <button type="button">
             <Calendar2Icon />

@@ -9,8 +9,11 @@ import Close from '../../../public/icons/close.svg';
 
 const cx = classNames.bind(styles);
 
-export default function EditResourceModal({ open, close, errorMessage, submit }) {
-  const { register, handleSubmit, watch } = useForm();
+export default function EditResourceModal({ open, close, errorMessage, resource, submit }) {
+  const { register, handleSubmit, watch } = useForm({
+    defaultValues: resource
+  });
+  
   async function onSubmit  (data)  {
     var recurringDayList = [];
     if(data.recurrenceDays){
