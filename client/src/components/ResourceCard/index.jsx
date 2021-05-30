@@ -6,9 +6,11 @@ import styles from './ResourceCard.module.scss';
 import Link from 'next/link';
 import { DateRange, TimeRange } from 'components/DateRange';
 import { useApi } from 'api';
-import DeleteResourceModal from 'components/DeleteResourceModal'
-import EditResourceModal from 'components/EditResourceModal'
 import CalendarEventDownload from 'components/CalendarEventDownload';
+
+import EditResourceModal from 'components/EditResourceModal';
+import DeleteResourceModal from 'components/DeleteResourceModal';
+
 
 import ClockIcon from '../../../public/clock.svg';
 import PinIcon from '../../../public/pin.svg';
@@ -64,7 +66,6 @@ export default function ResourceCard({
   }
 
   return (
-    // <Link href="/resources/[id]" as={`/resources/${r.id}-${slugify(r.name, 5)}`}>
     <div className={styles.base}>
       <DeleteResourceModal
         open={openDeleteResourceModal}
@@ -153,7 +154,6 @@ export default function ResourceCard({
         }
       </div>
     </div>
-    //</Link>
   );
 }
 

@@ -11,10 +11,20 @@ const cx = classNames.bind(styles);
 
 export default function AddResourceModal({ open, close, errorMessage, submit }) {
   const { register, handleSubmit, watch } = useForm();
+  var b64flyer;
   async function onSubmit  (data)  {
     var recurringDayList = [];
+    var startTime = "";
+    var endTime = "";
+    console.log(data.flyer)
     if(data.recurrenceDays){
       recurringDayList = data.recurrenceDays;
+    }    
+    if(data.startTime){
+      startTime = data.startTime.concat(':00');
+    }    
+    if(data.endTime){
+      endTime = data.endTime.concat(':00');
     }
     var newResource = {
       "name": data.name,
@@ -22,11 +32,11 @@ export default function AddResourceModal({ open, close, errorMessage, submit }) 
       "category": data.category,
       "startDate": data.startDate,
       "endDate": data.endDate,
-      "startTime": data.startTime.concat(':00'),
-      "endTime": data.endTime.concat(':00'),
+      "startTime": startTime,
+      "endTime": endTime,
       "isRecurring": data.isRecurring,
       "recurrenceDays": recurringDayList,
-      "flyer": data.flyer,
+      "flyer": b64flyer,
       "flyerId": data.flyerId,
       "link": data.link,
       "meetingLink": data.meetingLink,
@@ -47,12 +57,23 @@ export default function AddResourceModal({ open, close, errorMessage, submit }) 
     console.log(JSON.stringify(newResource));
     // const newResourceJson = JSON.stringify(newResource);
     // console.log(newResourceJson);
-    submit(newResource).then((result) => {
+   await submit(newResource).then((result) => {
       console.log(result);
       if (result){
         close(false);
       }
     });
+  };
+
+  const handleFlyerSelected = (e) => {
+    console.log("heres the flyer", e.target.files[0])
+    let flyer = e.target.files[0];
+    let reader = new FileReader();
+    reader.readAsDataURL(flyer);
+    reader.onloadend = () => {
+      console.log(reader.result)
+      b64flyer = reader.result;
+    }  
   };
 
   const isRecurring = watch('isRecurring', false);
@@ -76,20 +97,20 @@ export default function AddResourceModal({ open, close, errorMessage, submit }) 
             )) }
           </select>
           
-          <h2 className={styles.fieldTitle}>Date and Time <span className={styles.required}>*</span></h2>
+          <h2 className={styles.fieldTitle}>Date and Time </h2>
           <div id="radioButton">
             <label>
-              <input {...register("isRecurring", { required: true })} value="false" type="radio" />
+              <input {...register("isRecurring")} value="false" type="radio" />
               One-time event
             </label>
             <label>
-              <input {...register("isRecurring", { required: true })} value="true" type="radio" />
+              <input {...register("isRecurring")} value="true" type="radio" />
               Recurring event
             </label>
           </div>
           {isRecurring === "true" && (
             <>
-              <h2 className={styles.fieldTitle}> Day(s) of the Week <span className={styles.required}>*</span></h2>
+              <h2 className={styles.fieldTitle}> Day(s) of the Week </h2>
 
               <div className={styles.daysWrapper}>
                 { DAYS_OF_WEEK.map((day) => (
@@ -102,22 +123,22 @@ export default function AddResourceModal({ open, close, errorMessage, submit }) 
             </>
           )}
 
-          <h2 className={styles.fieldTitle}>Start Date <span className={styles.required}>*</span></h2>
+          <h2 className={styles.fieldTitle}>Start Date </h2>
           <input type="date" {...register("startDate") }>
           </input>
 
-          <h2 className={styles.fieldTitle}>End Date <span className={styles.required}>*</span></h2>
+          <h2 className={styles.fieldTitle}>End Date </h2>
           <input type="date" {...register("endDate") }>
           </input>
 
-          <h2 className={styles.fieldTitle}>Start Time <span className={styles.required}>*</span></h2>
+          <h2 className={styles.fieldTitle}>Start Time </h2>
           <input type="time" {...register("startTime") }>
             {/* <option value="hour">--</option>
             <option value="hour">12</option> */}
           </input>
 
 
-          <h2 className={styles.fieldTitle}>End Time <span className={styles.required}>*</span></h2>
+          <h2 className={styles.fieldTitle}>End Time </h2>
           <input type="time" {...register("endTime") }>
             {/* <option value="minute">--</option>
             <option value="minute">00</option> */}
@@ -145,7 +166,8 @@ export default function AddResourceModal({ open, close, errorMessage, submit }) 
             <input {...register("zip_code")} placeholder="Enter zip code" />
           </>
           <h2 className={styles.fieldTitle}>Resource Photo</h2>
-          <input type="file" name="Upload resource photo"></input>
+          <input type="file" {...register("flyer") } placeholder="Upload resource photo" 
+          name="resource photo" onChange={handleFlyerSelected}></input>
           <label></label>
 
           <h2 className={styles.fieldTitle}>Resource Description<span className={styles.required}>*</span></h2>

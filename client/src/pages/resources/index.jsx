@@ -129,7 +129,8 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
 // sends request to create a resource based on resource passed from form
   const addResource = async (resource) => {
     try{
-      await api.post('resources', undefined, resource)
+      await api.post('resources', undefined, resource);
+      console.log(resources);
       setErrorMessage(null);
       refreshData();
       return true;
