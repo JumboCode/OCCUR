@@ -32,6 +32,38 @@
     margin-bottom: .75em;
     font-weight: 600;
   }
+  .addResource {
+    float: right;
+    background-color: #DC9766;
+    padding: 10px 24px 10px 24px;
+    border: #DC9766;
+    border-radius: 15px;
+    
+
+    .circleIcon {
+      vertical-align: middle;
+      height: 30px;
+      width: 30px;
+    }
+
+    .resourceList {
+      clear: both;
+    }
+
+    .addResourceButton
+    {
+      background-color: #DC9766;
+      border: #DC9766;
+      font-weight: bold;
+      vertical-align: middle;
+      display: inline-block;
+    }
+    .addResourceButton:focus
+    {
+      outline: none;
+    }
+  }
+
 
   .noResults {
     display: contents;
