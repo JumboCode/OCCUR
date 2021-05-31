@@ -356,14 +356,36 @@ class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
         fillRequestBlanks(request.data, defaultOptionalVals)
 
         # Check whether image is base64
-        dataURLPattern = r"data:.+;base64,"
-        correctDataURLStart = 'data:image'
-        isbase64 = re.match(dataURLPattern, request.data['flyer']) and correctDataURLStart == request.data['flyer'][:len(correctDataURLStart)]
+        if request.data['flyer']:
+            dataURLPattern = r"data:.+;base64,"
+            correctDataURLStart = 'data:image'
+            isbase64 = re.match(dataURLPattern, request.data['flyer']) and correctDataURLStart == request.data['flyer'][:len(correctDataURLStart)]
 
-        if not isbase64:
-            image_data = request.data.pop('flyer')
-            vErrors = inputValidator(request.data)
-            request.data['flyer'] = image_data
+            if not isbase64:
+                image_data = request.data.pop('flyer')
+                vErrors = inputValidator(request.data)
+                request.data['flyer'] = image_data
+            else:
+                vErrors = inputValidator(request.data)
+
+            if isbase64 != None and isbase64:
+                # delete old image and add new one
+                if request.data['flyerId']:
+                    cloudinary_delete(request.data['flyerId'])
+                
+                image = request.data['flyer']
+                
+                if image != None:
+                    image = cloudinary_url(image)
+                    request.data['flyer'] = image["url"]
+                    request.data['flyerId'] = image["public_id"]
+
+            # Delete image
+            if not request.data['flyer'] and flyerId:
+                cloudinary_delete(request.data['flyerId'])
+                request.data['flyerId'] = ''
+                request.data['flyer'] = ''
+
         else:
             vErrors = inputValidator(request.data)
 
@@ -377,25 +399,7 @@ class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
         else:
             request.data['location'] = {}
         
-        if isbase64 != None and isbase64:
-            # delete old image and add new one
-            if request.data['flyerId']:
-                cloudinary_delete(request.data['flyerId'])
-            
-            image = request.data['flyer']
-            # print(image)
-            print(vErrors)
-            
-            if image != None:
-                image = cloudinary_url(image)
-                request.data['flyer'] = image["url"]
-                request.data['flyerId'] = image["public_id"]
-
-        # Delete image
-        if not request.data['flyer'] and flyerId:
-            cloudinary_delete(request.data['flyerId'])
-            request.data['flyerId'] = ''
-            request.data['flyer'] = ''
+        
 
         response = super().update(request, *args, **kwargs)
 
