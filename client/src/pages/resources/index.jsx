@@ -15,9 +15,11 @@ import SidebarFilter from 'components/SidebarFilter/SidebarFilter';
 import Map from 'components/Map/lazy';
 
 import Exclamation from '../../../public/icons/exclamation.svg';
+import Arrow from '../../../public/icons/arrow.svg';
 
 import classNames from 'classnames/bind';
 import styles from './ResourceSearch.module.scss';
+import { transform } from 'lodash';
 import Circleplus from '../../../public/icons/circle_plus.svg';
 import { isAdmin } from 'auth';
 import AddResourceModal from 'pages/admin-addResource'
@@ -77,6 +79,7 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
   const filteredResources = filterResources(resources, router.query);
   filteredResourcesRef.current = filteredResources;
   const visibleResources = geoFilterResources(filteredResources, router.query);
+  const [dropDownToggle, setDropDownToggle] = useState(false);
   const [openAddResourceModal, setopenAddResourceModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
 
@@ -217,6 +220,28 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
             Clear filters
           </button>
         </div>
+
+        <div className={cx('dropDownFilter')}>
+            <button className={cx('dropDownFilterButton')} onClick={()=>{setDropDownToggle(!dropDownToggle)}}>
+              Filters
+            <Arrow className={ dropDownToggle? cx('arrow-show'): cx('arrow-hidden')}/>
+            </button>
+            {dropDownToggle ? ( 
+              <div className={cx('dropDownFilterCategories')}>
+                <SidebarFilter
+                  values={router.query.categories ? router.query.categories.split(',') : []}
+                  onChange={(cats) => {
+                    const joined = cats.join(',');
+                    setQueryParams({ categories: joined.length ? joined : undefined });
+                  }}
+                />
+              </div>
+            ) : null}
+            
+        </div>
+
+        {/* {visibleResources?.length > 0
+          ? visibleResources.map((r) => <ResourceCard key={r.id} {...r} />) */}
         {visibleResources?.length > 0 ? 
         // Fill in each resource card
           visibleResources.map((r) => {

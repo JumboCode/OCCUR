@@ -113,7 +113,7 @@ export default function ResourceCard({
 
         <Link href="/resources/[id]" as={`/resources/${r.id}-${slugify(r.name, 5)}`}>
           <a className={styles.cta}>
-            View more
+            <span className={styles.viewMsg}>View more</span>
             <ViewIcon />
           </a>
         </Link>
