@@ -67,8 +67,8 @@ export default function ResourceCard({
 
   return (
     <div className={styles.base}>
-        <Link href="/resources/[id]" as={`/resources/${r.id}-${slugify(r.name, 5)}`}>
-        <div className={styles.resourceCard}>
+        {/* <Link href="/resources/[id]" as={`/resources/${r.id}-${slugify(r.name, 5)}`}> */}
+        {/* <div className={styles.resourceCard}> */}
           <DeleteResourceModal
             open={openDeleteResourceModal}
             close={setopenDeleteResourceModal}
@@ -115,7 +115,7 @@ export default function ResourceCard({
 
             <Link href="/resources/[id]" as={`/resources/${r.id}-${slugify(r.name, 5)}`}>
               <a className={styles.cta}>
-                View more
+                <span className={styles.viewMsg}>View more</span>
                 <ViewIcon />
               </a>
             </Link>
@@ -155,8 +155,8 @@ export default function ResourceCard({
             </div>
             }
           </div>
-        </div>
-      </Link>
+        {/* </div>
+      </Link> */}
     </div>
   );
 }

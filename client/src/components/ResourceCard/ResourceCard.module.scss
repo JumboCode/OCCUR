@@ -13,11 +13,11 @@
     margin-top: 40px;
   }
 }
-.resourceCard {
-  display: flex;
-  align-items: stretch;
-  max-width: 100%;
-  position: relative;
+// .resourceCard {
+//   display: flex;
+//   align-items: stretch;
+//   max-width: 100%;
+//   position: relative;
 
   .leftside {
     border-radius: 6px;
@@ -95,14 +95,15 @@
     }
   }
 
-  @media (max-width: 950px) {
+  @media (max-width: 1000px) {
     .buttons{
       display: none;
     }
 
-    .cta {
+    .viewMsg {
       display: none;
     }
+
   }
 
   .buttons {
@@ -132,4 +133,4 @@
       }
     }
   }
-}
+// }
