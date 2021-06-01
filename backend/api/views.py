@@ -349,7 +349,7 @@ class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
         return response
 
     def update(self, request, *args, **kwargs):
-
+        resource = get_object_or_404(Resource, pk=kwargs['id'])
         # All unrequired fields are populated with None values if empty
         defaultOptionalVals = { 'flyer': None, 'meetingLink': None, 'location': {}, 'flyerId': None, 'startDate': None, 'endDate': None, 'link': None, 'startTime': None, 'endTime': None, 'phone': None, 'email': None, 'isRecurring': None, 'recurrenceDays': [] }
 
@@ -377,12 +377,12 @@ class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
                 
                 if image != None:
                     image = cloudinary_url(image)
-                    request.data['flyer'] = image["url"]
+                    request.data['flyer'] = image["secure_url"]
                     request.data['flyerId'] = image["public_id"]
 
         # Delete image
-        if not request.data['flyer'] and request.data['flyerId']:
-            cloudinary_delete(request.data['flyerId'])
+        if not request.data['flyer'] and resource['flyerId']:
+            cloudinary_delete(resource['flyerId'])
             request.data['flyerId'] = ''
             request.data['flyer'] = ''
 
