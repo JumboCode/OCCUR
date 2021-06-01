@@ -380,11 +380,11 @@ class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
                     request.data['flyer'] = image["url"]
                     request.data['flyerId'] = image["public_id"]
 
-            # Delete image
-            if not request.data['flyer'] and flyerId:
-                cloudinary_delete(request.data['flyerId'])
-                request.data['flyerId'] = ''
-                request.data['flyer'] = ''
+        # Delete image
+        if not request.data['flyer'] and request.data['flyerId']:
+            cloudinary_delete(request.data['flyerId'])
+            request.data['flyerId'] = ''
+            request.data['flyer'] = ''
 
         else:
             vErrors = inputValidator(request.data)
