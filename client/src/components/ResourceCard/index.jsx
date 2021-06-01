@@ -67,96 +67,92 @@ export default function ResourceCard({
 
   return (
     <div className={styles.base}>
-        {/* <Link href="/resources/[id]" as={`/resources/${r.id}-${slugify(r.name, 5)}`}> */}
-        {/* <div className={styles.resourceCard}> */}
-          <DeleteResourceModal
-            open={openDeleteResourceModal}
-            close={setopenDeleteResourceModal}
-            resourceID={r.id}
-            submit={deleteResource}
-          />
-          <EditResourceModal
-            open={openEditResourceModal}
-            close={setopenEditResourceModal}
-            errorMessage={errorMessage}
-            resource={r}
-            submit={editResource}
-          />
-          <div className={styles.leftside}>
-            <img alt="Resource flyer" src={r.flyer || defaultImage} />
-          </div>
-          <div className={styles.rightside}>
-            <div className={styles.content}>
-              <h3>{r.name}</h3>
-              {r.organization && <p className={styles.subtitle}>{r.organization}</p>}
-              { (r.startDate || r.endDate) && (
-                <p className={styles['icon-line']}>
-                  <CalendarIcon />
-                  <DateRange from={r.startDate} to={r.endDate} />
-                </p>
-              )}
-              {
-                (r.startTime || r.endTime) && (
-                  <p className={styles['icon-line']}>
-                    <ClockIcon />
-                    <TimeRange from={r.startTime} to={r.endTime} />
-                  </p>
-                )
-              }
-              {
-                r.location && (
-                  <p className={styles['icon-line']}>
-                    <PinIcon />
-                    {[r.location?.street_address, r.location?.city].filter((n) => n).join(', ')}
-                  </p>
-                )
-              }
-            </div>
+      <DeleteResourceModal
+        open={openDeleteResourceModal}
+        close={setopenDeleteResourceModal}
+        resourceID={r.id}
+        submit={deleteResource}
+      />
+      <EditResourceModal
+        open={openEditResourceModal}
+        close={setopenEditResourceModal}
+        errorMessage={errorMessage}
+        resource={r}
+        submit={editResource}
+      />
+      <div className={styles.leftside}>
+        <img alt="Resource flyer" src={r.flyer || defaultImage} />
+      </div>
+      <div className={styles.rightside}>
+        <div className={styles.content}>
+          <h3>{r.name}</h3>
+          {r.organization && <p className={styles.subtitle}>{r.organization}</p>}
+          { (r.startDate || r.endDate) && (
+            <p className={styles['icon-line']}>
+              <CalendarIcon />
+              <DateRange from={r.startDate} to={r.endDate} />
+            </p>
+          )}
+          {
+            (r.startTime || r.endTime) && (
+              <p className={styles['icon-line']}>
+                <ClockIcon />
+                <TimeRange from={r.startTime} to={r.endTime} />
+              </p>
+            )
+          }
+          {
+            r.location && (
+              <p className={styles['icon-line']}>
+                <PinIcon />
+                {[r.location?.street_address, r.location?.city].filter((n) => n).join(', ')}
+              </p>
+            )
+          }
+        </div>
 
-            <Link href="/resources/[id]" as={`/resources/${r.id}-${slugify(r.name, 5)}`}>
-              <a className={styles.cta}>
-                <span className={styles.viewMsg}>View more</span>
-                <ViewIcon />
-              </a>
-            </Link>
+        <Link href="/resources/[id]" as={`/resources/${r.id}-${slugify(r.name, 5)}`}>
+          <a className={styles.cta}>
+            <span className={styles.viewMsg}>View more</span>
+            <ViewIcon />
+          </a>
+        </Link>
 
-            {
-            r.blocked ?
-            <div className={styles.buttons}>
-                <CalendarEventDownload
-                  name={r.name}
-                  startTime={r.startTime}
-                  endTime={r.endTime}
-                  startDate={r.startDate}
-                  endDate={r.endDate}
-                  isRecurring={r.isRecurring}
-                  recurrenceDays={r.recurrenceDays}
-                  location={r.location}
-                >
-                <Calendar2Icon />
-                Add to Calendar
-              </CalendarEventDownload>
+        {
+        r.blocked ?
+        <div className={styles.buttons}>
+            <CalendarEventDownload
+              name={r.name}
+              startTime={r.startTime}
+              endTime={r.endTime}
+              startDate={r.startDate}
+              endDate={r.endDate}
+              isRecurring={r.isRecurring}
+              recurrenceDays={r.recurrenceDays}
+              location={r.location}
+            >
+            <Calendar2Icon />
+            Add to Calendar
+          </CalendarEventDownload>
 
-              <button type="button">
-                <ShareIcon />
-                Share
-              </button>
-            </div>
-            :
-            <div className={styles.buttons}>
-              <button type="button" onClick={handleDeleteClick}>
-                <TrashIcon />
-                Delete
-              </button>
-              <button type="button" onClick={handleEditClick}>
-                <PenIcon />
-                Edit
-              </button>
-            </div>
-            }
-          </div>
-        {/* </div>
-      </Link> */}
+          <button type="button">
+            <ShareIcon />
+            Share
+          </button>
+        </div>
+        :
+        <div className={styles.buttons}>
+          <button type="button" onClick={handleDeleteClick}>
+            <TrashIcon />
+            Delete
+          </button>
+          <button type="button" onClick={handleEditClick}>
+            <PenIcon />
+            Edit
+          </button>
+        </div>
+        }
+      </div>
     </div>
   );
 }
