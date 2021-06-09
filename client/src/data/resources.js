@@ -42,35 +42,36 @@ export const timePropType = (props, propName, componentName) => {
 
 
 export const RESOURCE_PROP_TYPES = {
-  id: PropTypes.number.isRequired,
+  r: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+    organization: PropTypes.string,
+    category: PropTypes.oneOf(RESOURCE_CATEGORIES.map(((cat) => cat.id))),
 
-  name: PropTypes.string.isRequired,
-  organization: PropTypes.string,
-  category: PropTypes.oneOf(RESOURCE_CATEGORIES.map(((cat) => cat.id))),
+    startDate: datePropType,
+    endDate: datePropType,
+    startTime: timePropType,
+    endTime: timePropType,
 
-  startDate: datePropType,
-  endDate: datePropType,
-  startTime: timePropType,
-  endTime: timePropType,
+    isRecurring: PropTypes.bool,
+    recurrenceDays: PropTypes.arrayOf(PropTypes.oneOf(DAYS_OF_WEEK.map((day) => day.id))),
 
-  isRecurring: PropTypes.bool,
-  recurrenceDays: PropTypes.arrayOf(PropTypes.oneOf(DAYS_OF_WEEK.map((day) => day.id))),
+    flyer: PropTypes.string,
 
-  flyer: PropTypes.string,
+    link: PropTypes.string,
+    meetingLink: PropTypes.string,
+    phone: PropTypes.string,
+    email: PropTypes.string,
+    description: PropTypes.string,
 
-  link: PropTypes.string,
-  meetingLink: PropTypes.string,
-  phone: PropTypes.string,
-  email: PropTypes.string,
-  description: PropTypes.string,
-
-  location: PropTypes.shape({
-    street_address: PropTypes.string,
-    city: PropTypes.string,
-    state: PropTypes.string,
-    zip_code: PropTypes.string,
-    latitude: PropTypes.number,
-    longitude: PropTypes.number,
+    location: PropTypes.shape({
+      street_address: PropTypes.string,
+      city: PropTypes.string,
+      state: PropTypes.string,
+      zip_code: PropTypes.string,
+      latitude: PropTypes.number,
+      longitude: PropTypes.number,
+    })
   }),
 };
 

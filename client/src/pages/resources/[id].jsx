@@ -26,7 +26,7 @@ export default function ResourcePage({
     name,
     organization,
     flyer,
-
+    category,
     startDate,
     endDate,
     startTime,
@@ -45,6 +45,7 @@ export default function ResourcePage({
   },
 }) {
   const router = useRouter();
+  const defaultImage = `/images/category-defaults/${category || 'OTHER'}.jpeg`;
 
   if (errorCode === 404) return <NotFound />;
   if (errorCode !== null) return <Error statusCode={errorCode} />;
@@ -63,7 +64,7 @@ export default function ResourcePage({
       <div className={styles.columns}>
         <div className={styles.main}>
           <div className={styles.mainColumns}>
-            <div className={styles.logo} style={flyer && { backgroundImage: `url(${flyer})` }} />
+            <div className={styles.logo} style={flyer && { backgroundImage: `url(${flyer})`} || {backgroundImage : `url(${defaultImage})`}} />
             <div>
               <div className={styles.basic}>
                 <h1>{name}</h1>

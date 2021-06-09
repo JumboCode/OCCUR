@@ -1,4 +1,4 @@
-import React, { useCallback, useRef,  useState } from 'react';
+import React, { useCallback, useRef,  useState, useEffect} from 'react';
 
 import { RESOURCE_PROP_TYPES, RESOURCE_DEFAULT_PROPS } from 'data/resources';
 import styles from './ResourceCard.module.scss';
@@ -10,7 +10,6 @@ import CalendarEventDownload from 'components/CalendarEventDownload';
 
 import EditResourceModal from 'components/EditResourceModal';
 import DeleteResourceModal from 'components/DeleteResourceModal';
-
 
 import ClockIcon from '../../../public/clock.svg';
 import PinIcon from '../../../public/pin.svg';
@@ -28,15 +27,15 @@ import { slugify } from 'utils';
 export default function ResourceCard({
    r, onResourceDeleted, onResourceEdited }) {
   const api = useApi();
-
   const defaultImage = `/images/category-defaults/${r.category || 'OTHER'}.jpeg`;
   const [openDeleteResourceModal, setopenDeleteResourceModal] = useState(false);
   const [openEditResourceModal, setopenEditResourceModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
+  // const [image, setImage] = useState(defaultImage);
 
   const handleDeleteClick = () => { setopenDeleteResourceModal(true); };
   const handleEditClick = () => { setopenEditResourceModal(true); };
-
+  
   const deleteResource = () => {
     api.delete(`resources/${r.id}`)
       .then((response) =>{
@@ -82,6 +81,8 @@ export default function ResourceCard({
       />
       <div className={styles.leftside}>
         <img alt="Resource flyer" src={r.flyer || defaultImage} />
+        {/* <img alt="Resource flyer" style={r.flyer && { backgroundImage: `url(${r.flyer})`} || {backgroundImage : `url(${defaultImage})`}} /> */}
+
       </div>
       <div className={styles.rightside}>
         <div className={styles.content}>
