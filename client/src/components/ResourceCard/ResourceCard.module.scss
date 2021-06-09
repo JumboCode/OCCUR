@@ -29,7 +29,7 @@
     img {
       top: 0;
       max-width: 10em;
-      object-fit: contain;
+      object-fit: cover;
       object-position: center center;
     }
   }
@@ -40,10 +40,16 @@
     width: 100%;
     flex: 1 2 auto;
 
+    img {
+      top: 0;
+      max-width: 10em;
+      object-fit: cover;
+      object-position: center center;
+    }
     h3 {
-      margin: 0;
-      margin-bottom: .25em;
-      width: 70%;
+        margin: 0;
+        margin-bottom: .25em;
+        width: 70%;
     }
   }
 
