@@ -104,10 +104,10 @@ class ResourceListCreate(ListCreateAPIView):
     search_fields = ('name', 'organization',)
     
     # All unrequired fields are populated with None values if empty
-    defaultOptionalVals = { 'flyer': None, 'meetingLink': None, 'location': {}, 'flyerId': None, 'startDate': None, 'endDate': None, 'link': None, 'startTime': None, 'endTime': None, 'phone': None, 'email': None, 'isRecurring': None, 'recurrenceDays': [] }
-
     # creates new resource
     def create(self, request, *args, **kwargs):
+        # All unrequired fields are populated with None values if empty
+        defaultOptionalVals = { 'flyer': None, 'meetingLink': None, 'location': {}, 'flyerId': None, 'startDate': None, 'endDate': None, 'link': None, 'startTime': None, 'endTime': None, 'phone': None, 'email': None, 'isRecurring': None, 'recurrenceDays': [] }
         fillRequestBlanks(request.data, defaultOptionalVals)
         vErrors = inputValidator(request.data)
 
@@ -125,7 +125,7 @@ class ResourceListCreate(ListCreateAPIView):
         # go on to be added to DB, don't add img to cloudinary
         if image != None and len(vErrors) == 0:
             image = cloudinary_url(image)
-            request.data['flyer'] = image["url"]
+            request.data['flyer'] = image["secure_url"]
             request.data['flyerId'] = image["public_id"]
 
         serializer = ResourceSerializer(data=request.data)
@@ -347,15 +347,15 @@ class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
             response.status_code = 500
             response.data['success'] = False
         return response
-
+    
     def update(self, request, *args, **kwargs):
-        resource = get_object_or_404(Resource, pk=kwargs['id'])
         # All unrequired fields are populated with None values if empty
         defaultOptionalVals = { 'flyer': None, 'meetingLink': None, 'location': {}, 'flyerId': None, 'startDate': None, 'endDate': None, 'link': None, 'startTime': None, 'endTime': None, 'phone': None, 'email': None, 'isRecurring': None, 'recurrenceDays': [] }
 
         fillRequestBlanks(request.data, defaultOptionalVals)
 
-        # Check whether image is base64
+        isbase64 = None
+        # Image Handling
         if request.data['flyer']:
             dataURLPattern = r"data:.+;base64,"
             correctDataURLStart = 'data:image'
@@ -367,27 +367,21 @@ class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
                 request.data['flyer'] = image_data
             else:
                 vErrors = inputValidator(request.data)
-
-            if isbase64 != None and isbase64:
-                # delete old image and add new one
-                if request.data['flyerId']:
-                    cloudinary_delete(request.data['flyerId'])
-                
-                image = request.data['flyer']
-                
-                if image != None:
-                    image = cloudinary_url(image)
-                    request.data['flyer'] = image["secure_url"]
-                    request.data['flyerId'] = image["public_id"]
-
-        # Delete image
-        if not request.data['flyer'] and resource['flyerId']:
-            cloudinary_delete(resource['flyerId'])
-            request.data['flyerId'] = ''
-            request.data['flyer'] = ''
-
         else:
             vErrors = inputValidator(request.data)
+        
+        # Handle new resource images
+        if isbase64 != None and isbase64:
+            # delete old image and add new one
+            if request.data['flyerId']:
+                cloudinary_delete(request.data['flyerId'])
+            
+            image = request.data['flyer']
+            
+            if image != None:
+                image = cloudinary_url(image)
+                request.data['flyer'] = image["secure_url"]
+                request.data['flyerId'] = image["public_id"]
 
         #---- retrieve geoCoordinates
         if 'location' in request.data and request.data['location']:
@@ -398,8 +392,6 @@ class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
                 request.data['location']['longitude'] = geoCoordinates['lng']
         else:
             request.data['location'] = {}
-        
-        
 
         response = super().update(request, *args, **kwargs)
 
@@ -470,7 +462,6 @@ class LocationRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
                 'longitude': Location['longitude'],
             })
         return response
-
 #
 # LocationList
 # Purpose: View for retrieving list of all locations
