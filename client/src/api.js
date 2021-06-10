@@ -71,6 +71,7 @@ export function useApi() {
 export default {
   // Only get request runs unauthenticated
   get: (path, params) => makeRequest('get', path, params),
+  post: (path, params) => makeRequest('post', path, params),
   // useApi and getApi return an authenticated suite of functions
   useApi, // get authenticated methods for use inside a React component
   getApi, // get authenticated methods for use in the server-side case

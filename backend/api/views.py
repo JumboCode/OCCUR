@@ -361,9 +361,7 @@ class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
             correctDataURLStart = 'data:image'
             isbase64 = re.match(dataURLPattern, request.data['flyer']) and correctDataURLStart == request.data['flyer'][:len(correctDataURLStart)]
             
-            vErrors = inputValidator(request.data)
-        else:
-            vErrors = inputValidator(request.data)
+        vErrors = inputValidator(request.data)
         
         # Handle new resource images
         if isbase64 != None and isbase64:
@@ -397,7 +395,7 @@ class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
 
         if response.status_code == 400:
             return Response(vErrors, status=status.HTTP_400_BAD_REQUEST)
-
+    
         if response.status_code == 200:
             from django.core.cache import cache
             Resource = response.data
