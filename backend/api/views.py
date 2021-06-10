@@ -360,13 +360,8 @@ class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
             dataURLPattern = r"data:.+;base64,"
             correctDataURLStart = 'data:image'
             isbase64 = re.match(dataURLPattern, request.data['flyer']) and correctDataURLStart == request.data['flyer'][:len(correctDataURLStart)]
-
-            if not isbase64:
-                image_data = request.data.pop('flyer')
-                vErrors = inputValidator(request.data)
-                request.data['flyer'] = image_data
-            else:
-                vErrors = inputValidator(request.data)
+            
+            vErrors = inputValidator(request.data)
         else:
             vErrors = inputValidator(request.data)
         
