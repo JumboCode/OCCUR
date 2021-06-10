@@ -372,16 +372,21 @@ class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
         
         # Handle new resource images
         if isbase64 != None and isbase64:
-            # delete old image and add new one
+            # delete old flyer image if it exists
             if request.data['flyerId']:
                 cloudinary_delete(request.data['flyerId'])
-            
+
+            # add new flyer image to resource
             image = request.data['flyer']
-            
             if image != None:
                 image = cloudinary_url(image)
                 request.data['flyer'] = image["secure_url"]
                 request.data['flyerId'] = image["public_id"]
+
+        # Delete existing image if flyer value in non
+        if request.data['flyer'] == None and request.data['flyerId']:
+            cloudinary_delete(request.data['flyerId'])
+            request.data['flyerId'] = None
 
         #---- retrieve geoCoordinates
         if 'location' in request.data and request.data['location']:
