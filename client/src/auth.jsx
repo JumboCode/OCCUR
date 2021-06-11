@@ -48,7 +48,7 @@ export function AuthProvider({ children }) {
         setIdToken(JSON.parse(Cookies.get('id_token') ?? null));
       }
     }
-  });
+  }, [accessToken]);
 
   // On the client: dynamic import auth0-js and create a webAuth object
   const [webAuth, setWebAuth] = useState(null);
@@ -125,12 +125,16 @@ AuthProvider.propTypes = { children: PropTypes.node.isRequired };
 
 /* Use isAdmin in a getServerSideProps function to limit it to authenticated admin users. */
 export function isAdmin(ctx) {
-  const cookies = cookie.parse(ctx.req.headers.cookie);
-  const token = cookies.access_token;
-  let expired;
-  if (token) {
-    const { exp } = jwtDecode(token);
-    expired = exp * 1000 < Date.now();
+  if ('cookie' in ctx.req.headers){
+    const cookies = cookie.parse(ctx.req.headers.cookie);
+    const token = cookies.access_token;
+    let expired;
+    if (token) {
+      const { exp } = jwtDecode(token);
+      expired = exp * 1000 < Date.now();
+    }
+    return !(!token || expired);
+  } else{
+    return false;
   }
-  return !(!token || expired);
 }

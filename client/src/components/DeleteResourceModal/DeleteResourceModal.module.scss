@@ -1,0 +1,50 @@
+@import '../../styles/colors';
+
+
+.deleteResourceForm {
+    background: white;
+    margin: auto;
+    padding: 3em;
+
+    .closeButton {
+        height: 25px;
+        width: 25px;
+        float: right;
+    }
+    
+    .cancelButton {
+        background-color: rgb(58, 56, 56, 0.5);
+        border-radius: 2px;
+        border:none ;
+        font-weight: bold;
+        color: white;
+    }
+    .saveButton {
+        background-color: #DC9766;
+        border-radius: 2px;
+        border:none;
+        font-weight: bold;
+        color: white;
+    }
+    .buttonContainer {
+        display: inline;
+    }
+
+    input {
+        width: 100%;
+        margin-bottom: 10px;
+        padding: 4px;
+    }
+    
+    h4 {
+        text-align: center;
+    }
+    
+    button {
+        float: right;
+        padding: 8px 30px;
+        margin: 5px;
+    }
+}
+
+

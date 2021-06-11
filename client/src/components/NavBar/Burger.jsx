@@ -4,18 +4,18 @@ import styles from './Burger.module.scss';
 
 
 const Burger = () => {
-  const [open, setOpen] = useState(false);
+  // const [open, setOpen] = useState(false);
   // eslint-disable-next-line no-trailing-spaces
   
   return (
-    <React.Fragment open={open} onClick={() => setOpen(!open)}>
+    // <React.Fragment open={open} onClick={() => setOpen(!open)}>
       <div className={styles.styledburger}>
-        <div />
-        <div />
-        <div />
+        <div className={styles.top} />
+        <div className={styles.middle} />
+        <div className={styles.bottom} />
       </div>
       
-    </React.Fragment>
+    // </React.Fragment>
   );
 };
 

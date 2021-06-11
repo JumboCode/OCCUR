@@ -6,21 +6,36 @@
     right: 20px;
     z-index: 20;
     display: none;
-    padding-left: 200px;
-    @media (max-width: 900px) {
+    // padding-left: 200px;
+    @media (max-width: 550px) {
         display: flex;
         justify-content: space-around;
         flex-flow: column nowrap;
+    }
 
+    .top {
+        height: 0.3rem;
+    }
+
+    .middle {
+        width: 80%;
+    }
+
+    .bottom {
+        width: 50%;
+        border-radius: 2px;
+        height: 0.28rem;
     }
 
     div{
         width: 2rem;
-        height: 0.25rem;
+        height: 0.3rem;
         background-color: orange;
         border-radius: 10px;
-
-       
 }
 
+}
+
+.styledburger:hover{
+    cursor: pointer;
 }

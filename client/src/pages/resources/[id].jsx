@@ -6,6 +6,8 @@ import { RESOURCE_PROP_TYPES } from 'data/resources';
 import api, { HTTPError } from 'api';
 import { formatPhoneNumber, slugify } from 'utils';
 
+import Map from 'components/Map/lazy';
+import CalendarEventDownload from 'components/CalendarEventDownload';
 import NotFound from 'pages/404';
 import Error from 'next/error';
 import { DateRange, TimeRange } from 'components/DateRange';
@@ -20,6 +22,7 @@ import styles from './ResourceDetail.module.scss';
 export default function ResourcePage({
   errorCode,
   data: {
+    id,
     name,
     organization,
     flyer,
@@ -28,7 +31,9 @@ export default function ResourcePage({
     endDate,
     startTime,
     endTime,
-    location,
+    isRecurring,
+    recurrenceDays,
+
     description,
 
     link,
@@ -86,11 +91,11 @@ export default function ResourcePage({
                   </p>
                 )}
                 {
-                  location && (
+                  resourceLocation && (
                     <p>
                       <b>Location:</b>
                       &nbsp;
-                      {[location?.street_address, location?.city].filter((n) => n).join(', ')}
+                      {[resourceLocation?.street_address, resourceLocation?.city].filter((n) => n).join(', ')}
                     </p>
                   )
                 }
@@ -116,51 +121,69 @@ export default function ResourcePage({
             </div>
           )}
           <div className={styles.buttongroup}>
-            <div className={styles.rightbutton}>
+            <CalendarEventDownload
+              className={styles.rightbutton}
+              name={name}
+              startTime={startTime}
+              endTime={endTime}
+              startDate={startDate}
+              endDate={endDate}
+              isRecurring={isRecurring}
+              recurrenceDays={recurrenceDays}
+              location={resourceLocation}
+            >
               <Calendar2Icon />
               Add to Calendar
-            </div>
+            </CalendarEventDownload>
             <div className={styles.rightbutton}>
               <ShareIcon />
               Share
             </div>
           </div>
-          <div className={styles.contact}>
-            <h3>Address and Contact Information</h3>
-            {resourceLocation.street_address && (
-              <p className={styles.address}>
-                {/* TODO: replace location name */}
-                Location Name
-                <br />
-                {resourceLocation.street_address}
-                <br />
-                {resourceLocation.city}
-                {', '}
-                {resourceLocation.state}
-                {' '}
-                {resourceLocation.zip_code}
-              </p>
-            )}
-            <p className={styles.contactDetails}>
-              {meetingLink && (
-                <>
-                  <a href={meetingLink}>{meetingLink}</a>
-                  <br />
-                </>
-              )}
-              {phone && (
-                <>
-                  <a href={`tel:${phone}`}>{formatPhoneNumber(phone)}</a>
-                  <br />
-                </>
-              )}
-              {email && (
-                <a href={`mailto:${email}`}>{email}</a>
-              )}
-            </p>
-          </div>
+          {
+            !!(resourceLocation?.street_address || meetingLink || phone || email) && (
+              <div className={styles.contact}>
+                <h3>Address and Contact Information</h3>
+                {resourceLocation?.street_address && (
+                  <p className={styles.address}>
+                    {resourceLocation.location_title}
+                    <br />
+                    {resourceLocation.street_address}
+                    <br />
+                    {resourceLocation.city}
+                    {', '}
+                    {resourceLocation.state}
+                    {' '}
+                    {resourceLocation.zip_code}
+                  </p>
+                )}
+                <p className={styles.contactDetails}>
+                  {meetingLink && (
+                    <>
+                      <a href={meetingLink}>{meetingLink}</a>
+                      <br />
+                    </>
+                  )}
+                  {phone && (
+                    <>
+                      <a href={`tel:${phone}`}>{formatPhoneNumber(phone)}</a>
+                      <br />
+                    </>
+                  )}
+                  {email && (
+                    <a href={`mailto:${email}`}>{email}</a>
+                  )}
+                </p>
+              </div>
+            )
+          }
         </div>
       </div>
+      {resourceLocation?.latitude && resourceLocation?.longitude && (
+        <div className={styles.map}>
+          <Map resources={[{ id, name, location: resourceLocation }]} />
+        </div>
+      )}
     </div>
   );
 }
@@ -178,7 +201,7 @@ export async function getServerSideProps(ctx) {
   // Look for resource by ID and handle errors
   let data;
   try {
-    data = await api.get(`/${id}/resource`);
+    data = await api.get(`resources/${id}`);
   } catch (e) {
     let status = 500; // handle errors as 500 by default
     if (e instanceof HTTPError && e.status === 404) status = 404; // but 404 if resource not found

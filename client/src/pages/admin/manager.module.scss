@@ -1,0 +1,150 @@
+@import '../../styles/colors';
+
+.modalWindow {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.2);
+  
+  .closeButton {
+    height: 25px;
+    width: 25px;
+    float: right;
+  }
+
+  form {
+    background: white;
+    margin: auto;
+    width: 40%;
+    padding: 3em;
+  }
+
+  input {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 4px;
+  }
+
+  h4 {
+    text-align: center;
+  }
+
+  button {
+    float: right;
+    padding: 8px 30px;
+    margin: 5px;
+  }
+  .cancelButton {
+    background-color: rgb(58, 56, 56, 0.5);
+    border-radius: 2px;
+    border:none ;
+    font-weight: bold;
+    color: white;
+  }
+
+  .saveButton {
+    background-color: #DC9766;
+    border-radius: 2px;
+    border:none;
+    font-weight: bold;
+    color: white;
+  }
+}
+
+.mainAdminContainer {
+  height: 100%;
+  margin: 2em 4em 2em 4em;
+
+  .buttonContainer {
+    display: inline-block;
+    width: 100%;
+  }
+
+  .addAdmin {
+    float: right;
+    background-color: #DC9766;
+    padding: 10px 24px 10px 24px;
+    border: #DC9766;
+    border-radius: 15px;
+    
+
+    .circleIcon {
+      vertical-align: middle;
+      height: 30px;
+      width: 30px;
+    }
+
+    .adminList {
+      clear: both;
+    }
+
+    .addAdminButton
+    {
+      background-color: #DC9766;
+      border: #DC9766;
+      font-weight: bold;
+      vertical-align: middle;
+      display: inline-block;
+    }
+    .addAdminButton:focus
+    {
+      outline: none;
+    }
+  }
+
+  .adminListTitle {
+    margin-left: 8px;
+    margin-right: 8px;
+  }
+
+  input {
+    width: 40%;
+    border: none;
+    font-size: 75%;
+    padding-left: 10px;
+  }
+
+  input:focus {
+    outline: none;
+  }
+
+  .adminUser {
+    margin: 8px;
+    border: 1px solid rgb(58, 56, 56, 0.5);
+    box-sizing: border-box;
+    border-radius: 3px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+
+  .verticalBreak {
+    display: inline;
+    border: 1px solid rgb(58, 56, 56, 0.3);
+    transform: rotate(90deg);
+    background-color: rgb(58, 56, 56, 0.3);
+  }
+
+  svg {
+    padding: 2px;
+    height: 28px;
+    width: 28px;
+    vertical-align: top;
+    fill: #DC9766;
+  }
+
+  .penIcon, .trashIcon {
+    float: right;
+  }
+
+  @media only screen and (max-width: 550px) {
+    .verticalBreak, .adminEmail {
+      display: none;
+    }
+
+    input {
+      width: 60%;
+    }
+
+  }
+
+}

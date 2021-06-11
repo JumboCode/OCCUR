@@ -4,6 +4,7 @@ import SearchBar from '../SearchBar/SearchBar.jsx';
 import Link from 'next/link';
 import { useAuth } from 'auth';
 import Burger from './Burger';
+import ModalNavMenu from 'components/ModalNavMenu'
 import { nominalTypeHack } from 'prop-types';
 
 
@@ -14,30 +15,34 @@ export default function NavBar() {
   return (
     <nav className={styles.base}>
       <Link href="/"><a className={styles.logo}><img alt="OCCUR logo" src="/logo.png" /></a></Link>
-       
-      <SearchBar />
-      <Burger />
 
-      <div className ={styles.hello}>
-        <Link href="/"><a>Home</a></Link>
-        <Link href="/resources"><a>Resources</a></Link>
+      <div className={styles.innernav}>
+      <SearchBar live />
+      <Burger classname={styles.burger} type="button" onClick={() => setMenuOpen(!menuOpen)} />
+      </div>
+      
+      <ModalNavMenu className={styles.ModalNavMenu} open={menuOpen} close={setMenuOpen} isAuthenticated={isAuthenticated}/>
+
+      <Link href="/"><a>Home</a></Link>
+      <Link href="/resources"><a>Resources</a></Link>
+      <Link href={{ pathname: '/resources', query: { categories: 'WIFI' } }}>
         <a>Wifi Hotspot</a>
-        {
+      </Link>
+      {
         isAuthenticated
           ? (
             <>
               {/* Links that only display for authenticated users */}
-              <a>Admin Manager</a>
+              <Link href="/admin/manager"><a>Admin Manager</a></Link>
             </>
           )
           : (
             <>
               {/* Links that only display for unauthenticated users */}
-              <a>Contact</a>
+              <a href="https://occurnow.org/contact">Contact</a>
             </>
           )
       }
-     </div>
     </nav>
   );
 }

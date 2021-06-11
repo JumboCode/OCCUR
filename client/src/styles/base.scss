@@ -10,7 +10,13 @@ body {
 }
 
 :root {
-  font-size: calc(8px + 1.5vmin);;
+  font-size: 18px;
+  font-size: calc(8px + 1.5vmin);
+  font-size: clamp(
+    16px,
+    calc(8px + 1.5vmin),
+    22px
+  );
   font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
