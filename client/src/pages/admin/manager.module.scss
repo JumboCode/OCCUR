@@ -53,7 +53,7 @@
 
 .mainAdminContainer {
   height: 100%;
-  margin: 2em 8em 2em 8em;
+  margin: 2em 4em 2em 4em;
 
   .buttonContainer {
     display: inline-block;
@@ -98,10 +98,10 @@
   }
 
   input {
-    width: 45%;
+    width: 40%;
     border: none;
     font-size: 75%;
-    padding-left: 15px;
+    padding-left: 10px;
   }
 
   input:focus {
@@ -121,7 +121,7 @@
     display: inline;
     border: 1px solid rgb(58, 56, 56, 0.3);
     transform: rotate(90deg);
-    background-color: rgb(58, 56, 56, 0.5);
+    background-color: rgb(58, 56, 56, 0.3);
   }
 
   svg {
@@ -130,6 +130,21 @@
     width: 28px;
     vertical-align: top;
     fill: #DC9766;
+  }
+
+  .penIcon, .trashIcon {
+    float: right;
+  }
+
+  @media only screen and (max-width: 550px) {
+    .verticalBreak, .adminEmail {
+      display: none;
+    }
+
+    input {
+      width: 60%;
+    }
+
   }
 
 }

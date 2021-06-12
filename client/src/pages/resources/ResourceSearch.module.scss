@@ -5,8 +5,12 @@
   @include page-padding;
   min-height: calc(100vh - 60px);
 
+  .dropDownFilter {
+    display: none;
+  }
+
   .left {
-    margin-right: 3em;
+    margin-right: 1.5em;
   }
 
   .right {
@@ -28,6 +32,38 @@
     margin-bottom: .75em;
     font-weight: 600;
   }
+  .addResource {
+    float: right;
+    background-color: #DC9766;
+    padding: 10px 24px 10px 24px;
+    border: #DC9766;
+    border-radius: 15px;
+    
+
+    .circleIcon {
+      vertical-align: middle;
+      height: 30px;
+      width: 30px;
+    }
+
+    .resourceList {
+      clear: both;
+    }
+
+    .addResourceButton
+    {
+      background-color: #DC9766;
+      border: #DC9766;
+      font-weight: bold;
+      vertical-align: middle;
+      display: inline-block;
+    }
+    .addResourceButton:focus
+    {
+      outline: none;
+    }
+  }
+
 
   .noResults {
     display: contents;
@@ -37,5 +73,47 @@
 
   .exclamation {
     height: 60px;
+  }
+}
+
+@media screen and (max-width: 1300px) {
+  .base {
+    padding: 0.5rem 0.5rem 3rem 0.5rem;
+
+    .left{
+      display: none;
+    }
+
+    .dropDownFilter {
+      display: contents;
+    }
+
+    .dropDownFilterButton {
+      background-color: #77AAF2;
+      border: none;
+      border-radius: 4px;
+      padding: 6px 0px 6px 0px;
+      cursor: pointer;
+    }
+
+    .dropDownFilterCategories {
+      margin-bottom: 2em;
+      padding: 1em 1em 1em 1em;
+      box-shadow: inset 0px 0px 2px rgb(0 0 0 / 0.32), 2px 4px 4px rgb(0 0 0 / 0.22);
+      border-radius: 4px;
+    }
+
+    .arrow-hidden{
+      width: 15px;
+      margin-left: 5px;
+      transform: rotateX(180deg);
+      transition: transform 0.25s;
+    }
+
+    .arrow-show{
+      width: 15px;
+      margin-left: 5px;
+      transition: transform 0.25s;
+    }
   }
 }

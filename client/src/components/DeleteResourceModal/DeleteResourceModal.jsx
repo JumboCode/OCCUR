@@ -3,27 +3,23 @@ import { useForm } from 'react-hook-form';
 import PropTypes from 'prop-types';
 import Modal from 'components/Modal';
 import Close from '../../../public/icons/close.svg';
-import styles from './DeleteAdminModal.module.scss';
+import styles from './DeleteResourceModal.module.scss';
 import classNames from 'classnames/bind';
 
 const cx = classNames.bind(styles);
 
-export default function DeleteAdminModal({ open, close, user, submit }) {
+export default function DeleteResourceModal({ open, close, resourceID, submit }) {
   const { handleSubmit } = useForm();
   const onSubmit = () => {
-    submit(user);
+    submit(resourceID);
     close(false);
   };
-  return user && (
+  return resourceID && (
     <Modal open={open} onClose={() => close(false)}>
-      <form className={cx('deleteAdminForm')} onSubmit={handleSubmit(onSubmit)}>
+      <form className={cx('deleteResourceForm')} onSubmit={handleSubmit(onSubmit)}>
         <Close onClick={() => close(false)} className={cx('closeButton')} type="button" />
-        <h4>Delete Admin</h4>
-        <div>
-          Are you sure that you would like to delete
-          {user.name}
-          ?
-        </div>
+        <h4>Delete Resource</h4>
+        <div>Are you sure that you would like to delete this resource?</div>
         <div className={cx('buttonContainer')}>
           <button onClick={handleSubmit(onSubmit)} className={cx('saveButton')} type="button">Yes</button>
           <button onClick={() => close(false)} className={cx('cancelButton')} type="button">Cancel</button>
@@ -33,17 +29,13 @@ export default function DeleteAdminModal({ open, close, user, submit }) {
   );
 }
 
-DeleteAdminModal.propTypes = {
+DeleteResourceModal.propTypes = {
   open: PropTypes.bool.isRequired,
   close: PropTypes.func.isRequired,
-  user: PropTypes.shape({
-    email: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    user_id: PropTypes.string.isRequired,
-  }),
+  resourceID: PropTypes.number,
   submit: PropTypes.func.isRequired,
 };
 
-DeleteAdminModal.defaultProps = {
-  user: null,
+DeleteResourceModal.defaultProps = {
+  resourceID: null,
 };
