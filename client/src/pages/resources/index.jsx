@@ -1,10 +1,9 @@
-import React, { useCallback, useRef,  useState , useEffect, setState} from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { RESOURCE_PROP_TYPES } from 'data/resources';
 
 import { useRouter } from 'next/router';
-import {HTTPError, useApi} from 'api';
-import api from 'api';
+import unauthenticatedApi, { useApi } from 'api';
 import fuzzysort from 'fuzzysort';
 
 import throttle from 'lodash/throttle';
@@ -19,10 +18,9 @@ import Arrow from '../../../public/icons/arrow.svg';
 
 import classNames from 'classnames/bind';
 import styles from './ResourceSearch.module.scss';
-import { transform } from 'lodash';
 import Circleplus from '../../../public/icons/circle_plus.svg';
 import { isAdmin } from 'auth';
-import AddResourceModal from 'pages/admin-addResource'
+import AddResourceModal from 'components/AddResourceModal';
 
 const cx = classNames.bind(styles);
 
@@ -83,16 +81,9 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
   const [openAddResourceModal, setopenAddResourceModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
 
-  // const [filteredResources, setFilteredResources] = useState(filterResources(resources, router.query));
-  // const filteredResources = filterResources(resources, router.query);
-  // filteredResourcesRef.current = filteredResources;
-  // const [visibleResources, setVisible] = geoFilterResources(filteredResources, router.query);
-  // const [openAddResourceModal, setopenAddResourceModal] = useState(false);
-  // const [resourceDeleted, setResourceDeleted] = useState(false);
-
   const refreshData = () => {
     api.get('resources').then(setResources);
-  }
+  };
 
   const setQueryParams = useCallback((params) => {
     const oldQuery = omit(routerRef.current.query, Object.keys(params));
@@ -129,37 +120,24 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
     ),
     [],
   );
-// sends request to create a resource based on resource passed from form
+  // sends request to create a resource based on resource passed from form
   const addResource = async (resource) => {
-    try{
+    try {
       await api.post('resources', undefined, resource);
       console.log(resources);
       setErrorMessage(null);
       refreshData();
       return true;
-
-    }catch(errors){
-      console.log("status code: ", errors.status);
-      if(errors.status == 400 && errors.body){
-        console.log("errors: ", errors.body);
-        console.log("errors type: ", typeof(errors.body));
-
-          // var errorsList = [[errors.body.startDate, 
-          //                   errors.body.meetingLink,
-          //                   ...errors.body.flyer,
-          //                   ...errors.body.phone,
-          //                   ...errors.body.flyer]]
-          
-          // if(errors.body.location){errorsList.concat(errors.body.location.zip_code)}
-          // if(errors.body.location){errorsList.concat(errors.body.location.zip_code)}
-          // if(errors.body.location){errorsList.concat(errors.body.location.zip_code)}
-          // if(errors.body.location){errorsList.concat(errors.body.location.zip_code)}
-          // if(errors.body.location){errorsList.concat(errors.body.location.zip_code)}
+    } catch (errors) {
+      console.log('status code: ', errors.status);
+      if (errors.status === 400 && errors.body) {
+        console.log('errors: ', errors.body);
+        console.log('errors type: ', typeof errors.body);
         setErrorMessage(JSON.stringify(errors.body));
       }
       return false;
     }
-  }
+  };
 
   return (
 
@@ -189,19 +167,20 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
           />
         </div>
         <div className={cx('results-summary', { empty: !visibleResources.length })}>
-         {
-          //  If user is logged in as an admin, show the add resource button
-         !blocked &&
-          <div className={cx('buttonContainer')}>
-            <button className={cx('addResource')} type="button" onClick={() => setopenAddResourceModal(true)}>
-              <Circleplus className={cx('circleIcon')} />
-              <div
-                className={cx('addResourceButton')}
-              >
-                Add Resource
-              </div>
-            </button>
-          </div>
+          {
+          // If user is logged in as an admin, show the add resource button
+          !blocked && (
+            <div className={cx('buttonContainer')}>
+              <button className={cx('addResource')} type="button" onClick={() => setopenAddResourceModal(true)}>
+                <Circleplus className={cx('circleIcon')} />
+                <div
+                  className={cx('addResourceButton')}
+                >
+                  Add Resource
+                </div>
+              </button>
+            </div>
+          )
           }
           <div className={cx('message')}>
             {visibleResources.length ? visibleResources.length : 'No'}
@@ -222,37 +201,38 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
         </div>
 
         <div className={cx('dropDownFilter')}>
-            <button className={cx('dropDownFilterButton')} onClick={()=>{setDropDownToggle(!dropDownToggle)}}>
-              Filters
-            <Arrow className={ dropDownToggle? cx('arrow-show'): cx('arrow-hidden')}/>
-            </button>
-            {dropDownToggle ? ( 
-              <div className={cx('dropDownFilterCategories')}>
-                <SidebarFilter
-                  values={router.query.categories ? router.query.categories.split(',') : []}
-                  onChange={(cats) => {
-                    const joined = cats.join(',');
-                    setQueryParams({ categories: joined.length ? joined : undefined });
-                  }}
-                />
-              </div>
-            ) : null}
-            
+          <button type="button" className={cx('dropDownFilterButton')} onClick={() => { setDropDownToggle(!dropDownToggle); }}>
+            Filters
+            <Arrow className={cx({ 'arrow-show': dropDownToggle, 'arrow-hidden': !dropDownToggle })} />
+          </button>
+          {dropDownToggle ? (
+            <div className={cx('dropDownFilterCategories')}>
+              <SidebarFilter
+                values={router.query.categories ? router.query.categories.split(',') : []}
+                onChange={(cats) => {
+                  const joined = cats.join(',');
+                  setQueryParams({ categories: joined.length ? joined : undefined });
+                }}
+              />
+            </div>
+          ) : null}
+
         </div>
 
         {/* {visibleResources?.length > 0
           ? visibleResources.map((r) => <ResourceCard key={r.id} {...r} />) */}
-        {visibleResources?.length > 0 ? 
-        // Fill in each resource card
-          visibleResources.map((r) => {
-            r.blocked = blocked;
+        {visibleResources?.length > 0
+          // Fill in each resource card
+          ? visibleResources.map((r) => {
+            const r2 = ({ ...r, blocked });
             return (
               <ResourceCard
-                key={r.id}
-                r={r}
+                key={r2.id}
+                r={r2}
                 onResourceDeleted={refreshData}
                 onResourceEdited={refreshData}
-              />)
+              />
+            );
           })
           : (
             <div className={styles.noResults}>
@@ -260,8 +240,7 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
               <h4>No results found.</h4>
               <div>We cannot find any matching resources.</div>
             </div>
-          )
-         }
+          )}
 
       </div>
     </div>
@@ -275,6 +254,6 @@ ResourcesPage.propTypes = {
 export async function getServerSideProps(ctx) {
   const blocked = !isAdmin(ctx);
   return {
-    props: {blocked, data: await api.get('resources')},
+    props: { blocked, data: await unauthenticatedApi.get('resources') },
   };
 }

@@ -8,7 +8,14 @@ import classNames from 'classnames/bind';
 
 const cx = classNames.bind(styles);
 
-export default function EditAdminModal({ open, close, user, submit, errorMessage, setErrorMessage }) {
+export default function EditAdminModal({
+  open,
+  close,
+  user,
+  submit,
+  errorMessage,
+  setErrorMessage,
+}) {
   const { register, handleSubmit, setValue } = useForm();
 
   useEffect(() => {
@@ -62,11 +69,11 @@ EditAdminModal.propTypes = {
   }),
   submit: PropTypes.func.isRequired,
   errorMessage: PropTypes.string,
-  setErrorMessage: PropTypes.func
+  setErrorMessage: PropTypes.func,
 };
 
 EditAdminModal.defaultProps = {
   user: null,
   errorMessage: null,
-  setErrorMessage: null
+  setErrorMessage: null,
 };

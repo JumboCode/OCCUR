@@ -13,9 +13,9 @@ export default function AddAdminModal({ open, close, submit, errorMessage, setEr
   const onSubmit = (data) => {
     submit(data).then((result) => {
       console.log(result);
-      if (result){
+      if (result) {
         close(false);
-        setErrorMessage(null)
+        setErrorMessage(null);
       }
     });
   };
@@ -23,7 +23,7 @@ export default function AddAdminModal({ open, close, submit, errorMessage, setEr
   return (
     <Modal open={open} onClose={() => close(false)}>
       <form className={cx('addAdminForm')} onSubmit={handleSubmit(onSubmit)}>
-        <Close onClick={() => {close(false); setErrorMessage(null);}} className={cx('closeButton')} type="button" />
+        <Close onClick={() => { close(false); setErrorMessage(null); }} className={cx('closeButton')} type="button" />
         <h4>Add Admin</h4>
         <div className={cx('error', { hidden: !errorMessage })}>
           {errorMessage}
@@ -35,7 +35,7 @@ export default function AddAdminModal({ open, close, submit, errorMessage, setEr
           <input name="email" {...register('email')} placeholder="Admin Email" />
         </div>
         <button onClick={handleSubmit(onSubmit)} className={cx('saveButton')} type="button">Save</button>
-        <button onClick={() => {close(false); setErrorMessage(null);}} className={cx('cancelButton')} type="button">Cancel</button>
+        <button onClick={() => { close(false); setErrorMessage(null); }} className={cx('cancelButton')} type="button">Cancel</button>
       </form>
     </Modal>
   );

@@ -4,7 +4,7 @@ import { isAdmin } from 'auth';
 import { useApi } from 'api';
 import NotFound from 'pages/404';
 import styles from './manager.module.scss';
-import AddAdminModal from 'components/AddAdminModel';
+import AddAdminModal from 'components/AddAdminModal';
 import EditAdminModal from 'components/EditAdminModal';
 import DeleteAdminModal from 'components/DeleteAdminModal';
 import classNames from 'classnames/bind';
@@ -38,7 +38,7 @@ export default function AdminManager({ blocked }) {
   const addUser = async (data) => {
     try {
       const responsePost = await api.post('admins', undefined, data);
-      if (responsePost.statusCode == 400) {
+      if (responsePost.statusCode === 400) {
         setErrorrMessage('* Invalid email address or admin name');
         return false;
       }
@@ -50,7 +50,7 @@ export default function AdminManager({ blocked }) {
     }
   };
 
-  const editUser =  async (currUser, data) => {
+  const editUser = async (currUser, data) => {
     const id = (currUser.user_id.split('|'))[1];
     try {
       const responsePut = await api.put(`admins/${id}`, undefined, data);
@@ -60,19 +60,17 @@ export default function AdminManager({ blocked }) {
         return false;
       }
       setErrorrMessage(null);
-        return true;
-      } catch (err) {
-        setErrorrMessage('* Invalid email address or admin name');
-        return false;
-      }
+      return true;
+    } catch (err) {
+      setErrorrMessage('* Invalid email address or admin name');
+      return false;
+    }
   };
 
   const deleteUser = (currUser) => {
     const id = (currUser.user_id.split('|'))[1];
     api.delete(`admins/${id}`)
-      .then(() => {
-        return true;
-      })
+      .then(() => true)
       .catch((error) => {
         console.error(error);
         return false;
@@ -88,7 +86,7 @@ export default function AdminManager({ blocked }) {
         console.error(error);
       });
     }
-  }, [api.authenticated, admins]);
+  }, [api.authenticated, admins]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const adminList = () => {
     if (!adminsLoaded) {

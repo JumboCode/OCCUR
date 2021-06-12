@@ -1,25 +1,21 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { RESOURCE_CATEGORIES, DAYS_OF_WEEK, RESOURCE_PROP_TYPES } from 'data/resources';
+import { RESOURCE_CATEGORIES, DAYS_OF_WEEK } from 'data/resources';
 import Modal from 'components/Modal';
-import styles from './EditResourceModal.module.scss';
+import styles from './AddResourceModal.module.scss';
 import classNames from 'classnames/bind';
 import PropTypes from 'prop-types';
 import Close from '../../../public/icons/close.svg';
 
 const cx = classNames.bind(styles);
 
-export default function EditResourceModal({ open, close, errorMessage, resource, submit }) {
-  const fillResource = resource;
-  fillResource.flyer = '';
-  const { register, handleSubmit, watch } = useForm({
-    defaultValues: fillResource,
-  });
+export default function AddResourceModal({ open, close, errorMessage, submit }) {
+  const { register, handleSubmit, watch } = useForm();
   let b64flyer;
   async function onSubmit(data) {
     let recurringDayList = [];
-    let startTime = null;
-    let endTime = null;
+    let startTime = '';
+    let endTime = '';
     console.log(data.flyer);
     if (data.recurrenceDays) {
       recurringDayList = data.recurrenceDays;
@@ -86,7 +82,7 @@ export default function EditResourceModal({ open, close, errorMessage, resource,
     <Modal className={styles.resourceForm} open={open} onClose={() => close(false)}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Close onClick={() => close(false)} className={cx('closeButton')} type="button" />
-        <h1>Edit this Resource</h1>
+        <h1>Add a Resource</h1>
         <h2 className={styles.fieldTitle}>
           Resource Name
           <span className={styles.required}>*</span>
@@ -128,7 +124,7 @@ export default function EditResourceModal({ open, close, errorMessage, resource,
           <div className={styles.daysWrapper}>
             { DAYS_OF_WEEK.map((day) => (
               <label key={day.id} className={styles.dayOfWeek}>
-                <input type="checkbox" {...register('recurrenceDays')} value={day.id} />
+                <input {...register('recurrenceDays')} type="checkbox" value={day.id} />
                 <div>{day.shortLabel}</div>
               </label>
             )) }
@@ -205,13 +201,12 @@ export default function EditResourceModal({ open, close, errorMessage, resource,
   );
 }
 
-EditResourceModal.propTypes = {
+AddResourceModal.propTypes = {
   open: PropTypes.bool.isRequired,
   close: PropTypes.func.isRequired,
   errorMessage: PropTypes.string,
   submit: PropTypes.func.isRequired,
-  resource: PropTypes.shape(RESOURCE_PROP_TYPES).isRequired,
 };
-EditResourceModal.defaultProps = {
+AddResourceModal.defaultProps = {
   errorMessage: null,
 };

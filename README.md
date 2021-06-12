@@ -65,7 +65,7 @@ To deactivate the environment:
 - `git status` --> Check if you have made any changes, deleted files or added files
 - `git add -u` to add untracked files or git add <filename> to add specific files. Files are added to staging.
 - `git commit -m` "Commit message" --> please write descriptive commit messages based on your changes
-- `git push origin <name>` --> do not haphazardly push to master 
+- `git push origin <name>` --> do not haphazardly push to master
 
 ### Updating a branch
 - `git checkout <branch you want to update>`
@@ -74,7 +74,7 @@ To deactivate the environment:
 ### Git history
 - `git log`
 
-## Pull requests 
+## Pull requests
 - Go to the GitHub page
 - If you don't see your recently updated branch, go to the branches tab and find your branch.
 - Click on compare and make pull request
@@ -83,8 +83,3 @@ To deactivate the environment:
 - Enter information about what you did and what your reviewer can do to test it
 - Create Pull Request
 - Select code reviewers!
- 
- 
- 
- 
-
