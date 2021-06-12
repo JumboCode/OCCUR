@@ -17,6 +17,7 @@ module.exports = {
     'react/static-property-placement': 'off',
     'react/state-in-constructor': 'off',
     'jsx-a11y/anchor-is-valid': 'off',
+    'jsx-a11y/label-has-associated-control': ['error', { assert: 'either' }],
     'react/no-danger': 'off',
     'react/jsx-fragments': 'off',
     'react/jsx-props-no-spreading': 'off',
