@@ -48,15 +48,24 @@ const parseValidDate = (dateStr) => [
 // parses the time according to TIME_FORMAT
 const parseValidTime = (timeStr) => [timeStr.substring(0, 2), timeStr.substring(3, 5)];
 
-const getInvalidStyle = (i, targetFmt) => i.length > 0 && i.length < targetFmt.length ? styles.invalid : '';
+const getInvalidStyle = (i, targetFmt) =>
+  (i.length > 0 && i.length < targetFmt.length ? styles.invalid : styles.validInput);
 
 export default function SidebarFilter({ values, onChange }) {
-  const [endDate, setEndDate] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [startTime, setStartTime] = useState('');
-  const [startTimePeriod, setStartTimePeriod] = useState('AM');
-  const [endTime, setEndTime] = useState('');
-  const [endTimePeriod, setEndTimePeriod] = useState('AM');
+  const startTimeFromUrl = [values.startTime.hour, values.startTime.min].filter((n) => n?.length).join(':');
+  const endTimeFromUrl = [values.endTime.hour, values.endTime.min].filter((n) => n?.length).join(':');
+  const startDateFromUrl = [values.startDate.month, values.startDate.day, values.startDate.year]
+    .filter((n) => n?.length).join('/');
+  const endDateFromUrl = [values.endDate.month, values.endDate.day, values.endDate.year]
+    .filter((n) => n?.length).join('/');
+
+  const [startTimeDisp, setStartTimeDisp] = useState(startTimeFromUrl);
+  const [endTimeDisp, setEndTimeDisp] = useState(endTimeFromUrl);
+  const [startDateDisp, setStartDateDisp] = useState(startDateFromUrl);
+  const [endDateDisp, setEndDateDisp] = useState(endDateFromUrl);
+
+  const [startTimePeriod, setStartTimePeriod] = useState(values.startTime.timePeriod);
+  const [endTimePeriod, setEndTimePeriod] = useState(values.endTime.timePeriod);
 
   return (
     <div className={styles.base}>
@@ -127,10 +136,10 @@ export default function SidebarFilter({ values, onChange }) {
           id="date-range-begin"
           type="text"
           placeholder={DATE_FORMAT}
-          className={getInvalidStyle(startDate, DATE_FORMAT)}
+          className={getInvalidStyle(startDateDisp, DATE_FORMAT)}
           onChange={(e) => {
             const newValue = formatDateInput(e);
-            setStartDate(newValue);
+            setStartDateDisp(newValue);
             if (newValue === DATE_FORMAT.length) {
               const [month, day, year] = parseValidDate(newValue);
               onChange({
@@ -148,17 +157,17 @@ export default function SidebarFilter({ values, onChange }) {
               });
             }
           }}
-          value={startDate}
+          value={startDateDisp}
         />
         <label htmlFor="date-range-end">To</label>
         <input
           id="date-range-end"
           type="text"
           placeholder={DATE_FORMAT}
-          className={getInvalidStyle(endDate, DATE_FORMAT)}
+          className={getInvalidStyle(endDateDisp, DATE_FORMAT)}
           onChange={(e) => {
             const newValue = formatDateInput(e);
-            setEndDate(newValue);
+            setEndDateDisp(newValue);
             if (newValue.length === DATE_FORMAT.length) {
               const [month, day, year] = parseValidDate(newValue);
               onChange({
@@ -176,7 +185,7 @@ export default function SidebarFilter({ values, onChange }) {
               });
             }
           }}
-          value={endDate}
+          value={endDateDisp}
         />
       </div>
       <div className={styles.group}>
@@ -186,10 +195,10 @@ export default function SidebarFilter({ values, onChange }) {
           id="time-range-start"
           type="text"
           placeholder={TIME_FORMAT}
-          className={getInvalidStyle(startTime, TIME_FORMAT)}
+          className={getInvalidStyle(startTimeDisp, TIME_FORMAT)}
           onChange={(e) => {
             const newValue = formatTimeInput(e);
-            setStartTime(newValue);
+            setStartTimeDisp(newValue);
             if (newValue.length === TIME_FORMAT.length) {
               const [hour, min] = parseValidTime(newValue);
               onChange({
@@ -211,7 +220,7 @@ export default function SidebarFilter({ values, onChange }) {
               });
             }
           }}
-          value={startTime}
+          value={startTimeDisp}
         />
         <label htmlFor="time-range-start-AM">AM</label>
         <input
@@ -222,8 +231,8 @@ export default function SidebarFilter({ values, onChange }) {
           onChange={(e) => {
             const newValue = e.target.value;
             setStartTimePeriod(newValue);
-            if (startTime.length === TIME_FORMAT.length) {
-              const [hour, min] = parseValidTime(startTime);
+            if (startTimeDisp.length === TIME_FORMAT.length) {
+              const [hour, min] = parseValidTime(startTimeDisp);
               onChange({
                 ...values,
                 startTime: {
@@ -254,8 +263,8 @@ export default function SidebarFilter({ values, onChange }) {
           onChange={(e) => {
             const newValue = e.target.value;
             setStartTimePeriod(newValue);
-            if (startTime.length === TIME_FORMAT.length) {
-              const [hour, min] = parseValidTime(startTime);
+            if (startTimeDisp.length === TIME_FORMAT.length) {
+              const [hour, min] = parseValidTime(startTimeDisp);
               onChange({
                 ...values,
                 startTime: {
@@ -282,10 +291,10 @@ export default function SidebarFilter({ values, onChange }) {
           id="time-range-end"
           type="text"
           placeholder={TIME_FORMAT}
-          className={getInvalidStyle(endTime, TIME_FORMAT)}
+          className={getInvalidStyle(endTimeDisp, TIME_FORMAT)}
           onChange={(e) => {
             const newValue = formatTimeInput(e);
-            setEndTime(newValue);
+            setEndTimeDisp(newValue);
             if (newValue.length === TIME_FORMAT.length) {
               const [hour, min] = parseValidTime(newValue);
               onChange({
@@ -307,7 +316,7 @@ export default function SidebarFilter({ values, onChange }) {
               });
             }
           }}
-          value={endTime}
+          value={endTimeDisp}
         />
         <label htmlFor="time-range-end-AM">AM</label>
         <input
@@ -317,9 +326,8 @@ export default function SidebarFilter({ values, onChange }) {
           value="AM"
           onChange={(e) => {
             const newValue = e.target.value;
-            setEndTimePeriod(newValue);
-            if (endTime.length === TIME_FORMAT.length) {
-              const [hour, min] = parseValidTime(endTime);
+            if (newValue.length === TIME_FORMAT.length) {
+              const [hour, min] = parseValidTime(newValue);
               onChange({
                 ...values,
                 endTime: {
@@ -339,7 +347,7 @@ export default function SidebarFilter({ values, onChange }) {
               });
             }
           }}
-          checked={endTimePeriod === 'AM'}
+          checked={values.endTime.timePeriod === 'AM'}
         />
         <label htmlFor="time-range-end-PM">PM</label>
         <input
@@ -350,8 +358,8 @@ export default function SidebarFilter({ values, onChange }) {
           onChange={(e) => {
             const newValue = e.target.value;
             setEndTimePeriod(newValue);
-            if (endTime.length === TIME_FORMAT.length) {
-              const [hour, min] = parseValidTime(endTime);
+            if (endTimeDisp.length === TIME_FORMAT.length) {
+              const [hour, min] = parseValidTime(endTimeDisp);
               onChange({
                 ...values,
                 endTime: {

@@ -106,42 +106,63 @@ export default function ResourcesPage({ data: resources }) {
     [],
   );
 
-  const [filters, setFilters] = useState({
+  const sidebarFilterState = {
     categories: router.query.categories ? router.query.categories.split(',') : [],
-    daysOfWeek: [],
+    daysOfWeek: router.query.daysOfWeek ? router.query.daysOfWeek.split(',') : [],
     startTime: {
-      hour: '',
-      min: '',
-      timePeriod: '',
+      hour: router.query.startHour ? (parseInt(router.query.startHour, 10) % 12).toString().padStart(router.query.startHour.length, '0') : '',
+      min: router.query.startMinute || '',
+      timePeriod: router.query.startHour && parseInt(router.query.startHour, 10) >= 12 ? 'PM' : 'AM',
     },
     endTime: {
-      hour: '',
-      min: '',
-      timePeriod: '',
+      hour: router.query.endHour ? (parseInt(router.query.endHour, 10) % 12).toString().padStart(router.query.endHour.length, '0') : '',
+      min: router.query.endMinute || '',
+      timePeriod: router.query.endHour && parseInt(router.query.endHour, 10) >= 12 ? 'PM' : 'AM',
     },
     startDate: {
-      month: '',
-      day: '',
-      year: '',
+      month: router.query.startMonth || '',
+      day: router.query.startDay || '',
+      year: router.query.startYear || '',
     },
     endDate: {
-      month: '',
-      day: '',
-      year: '',
+      month: router.query.endMonth || '',
+      day: router.query.endDay || '',
+      year: router.query.endYear || '',
     },
-  });
+  };
 
-  useEffect(() => {
-    const joined = filters.categories.join(',');
-    setQueryParams({ categories: joined.length ? joined : undefined });
-  }, [filters.categories, setQueryParams]);
+  const updateSidebarFilters = ({
+    categories,
+    daysOfWeek,
+    startTime: { hour: startHour, min: startMinute, timePeriod: startTimePeriod },
+    endTime: { hour: endHour, min: endMinute, timePeriod: endTimePeriod },
+    startDate: { month: startMonth, day: startDay, year: startYear },
+    endDate: { month: endMonth, day: endDay, year: endYear },
+  }) => {
+    console.log(JSON.stringify({startHour, startMinute, startTimePeriod}))
+    console.log((parseInt(startHour, 10) + ({ AM: 0, PM: 12 })[startTimePeriod]).toString().padStart(startHour.length, '0') || undefined)
+    setQueryParams({
+      categories: categories.join(',') || undefined,
+      daysOfWeek: daysOfWeek.join(',') || undefined,
+      startHour: (parseInt(startHour, 10) + ({ AM: 0, PM: 12 })[startTimePeriod]).toString().padStart(startHour.length, '0') || undefined,
+      startMinute: startMinute || undefined,
+      endHour: (parseInt(endHour, 10) + ({ AM: 0, PM: 12 })[endTimePeriod]).toString().padStart(endHour.length, '0') || undefined,
+      endMinute: endMinute || undefined,
+      startMonth: startMonth || undefined,
+      startDay: startDay || undefined,
+      startYear: startYear || undefined,
+      endMonth: endMonth || undefined,
+      endDay: endDay || undefined,
+      endYear: endYear || undefined,
+    });
+  }
 
   return (
     <div className={styles.base}>
       <div className={styles.left}>
         <SidebarFilter
-          values={filters}
-          onChange={setFilters}
+          values={sidebarFilterState}
+          onChange={updateSidebarFilters}
         />
       </div>
 
