@@ -58,7 +58,7 @@ class ResourceListCreate(ListCreateAPIView):
         errorCatalog = defaultdict(list)
 
         if data['startDate'] and data['endDate'] and data['startDate'] > data['endDate']:
-            errorCatalog['startDate'].append('Start date must occur after end date.')
+            errorCatalog['startDate'].append('Start date must occur before end date.')
 
         nowStr = datetime.now().strftime('%Y-%m-%d')
         if data['startDate'] and data['startDate'] < nowStr:
@@ -340,12 +340,15 @@ class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
         if response.status_code == 204:
             from django.core.cache import cache
             cache.delete('resource_data_{}'.format(resource_id))
+            response.status_code = 200
             response.data['success'] = True
         else:
+            response.status_code = 500
             response.data['success'] = False
         return response
 
     def update(self, request, *args, **kwargs):
+        # vErrors = self.inputValidator(request.data)
         #---- retrieve geoCoordinates
         if 'location' in request.data and request.data['location']:
             address = request.data['location']
@@ -357,7 +360,8 @@ class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
             request.data['location'] = {}
 
         response = super().update(request, *args, **kwargs)
-
+        # if response.status_code == 400:
+        #     return Response(vErrors, status=status.HTTP_400_BAD_REQUEST)
         if response.status_code == 200:
             from django.core.cache import cache
             Resource = response.data

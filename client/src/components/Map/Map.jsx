@@ -126,9 +126,9 @@ const Map = forwardRef(({ resources, onMove }, ref) => {
     if (!map) return () => {};
 
     const markers = locationResources
-      .filter(({ location }) => location)
-      .map(({ name, location, id }) => {
-        const lnglat = [location.longitude, location.latitude];
+      .filter(({ location: resourceLocation }) => resourceLocation)
+      .map(({ name, location: resourceLocation, id }) => {
+        const lnglat = [resourceLocation.longitude, resourceLocation.latitude];
 
         const newMarker = new mapboxgl.Marker({
           color: '#E1701D',
@@ -149,7 +149,7 @@ const Map = forwardRef(({ resources, onMove }, ref) => {
         newMarker.getElement().addEventListener('mouseover', () => {
           popup
             .setLngLat(lnglat)
-            .setHTML(`<h3>${escapeHTML(name)}</h3><p>${escapeHTML(location.street_address)}<br>${escapeHTML(location.city)}, ${escapeHTML(location.state)}`)
+            .setHTML(`<h3>${escapeHTML(name)}</h3><p>${escapeHTML(resourceLocation.street_address)}<br>${escapeHTML(resourceLocation.city)}, ${escapeHTML(resourceLocation.state)}`)
             .addTo(map);
         });
         newMarker.getElement().addEventListener('mouseleave', () => popup.remove());
@@ -165,7 +165,7 @@ const Map = forwardRef(({ resources, onMove }, ref) => {
   [
     map,
     // only refresh when data changes meaningfully
-    JSON.stringify(resources.map(({ name, location, id }) => ({ name, location, id }))),
+    JSON.stringify(resources.map(({ name, location: loc, id }) => ({ name, location: loc, id }))),
     onMove,
   ]);
   /* eslint-enable */
