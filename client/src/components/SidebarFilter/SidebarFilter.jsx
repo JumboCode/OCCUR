@@ -48,7 +48,10 @@ const parseValidDate = (dateStr) => [
 // parses the time according to TIME_FORMAT
 const parseValidTime = (timeStr) => [timeStr.substring(0, 2), timeStr.substring(3, 5)];
 
-const getInvalidStyle = (i, targetFmt) => i.length > 0 && i.length < targetFmt.length ? styles.invalid : styles.validInput;
+const getInvalidStyle = (i, targetFmt) => (
+  (i.length > 0 && i.length < targetFmt.length)
+    ? styles.invalid
+    : styles.validInput);
 
 export default function SidebarFilter({ values, onChange }) {
   const [endDate, setEndDate] = useState('');
