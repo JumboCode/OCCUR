@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { RESOURCE_PROP_TYPES } from 'data/resources';
 
@@ -172,8 +172,8 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
     startDate: { month: startMonth, day: startDay, year: startYear },
     endDate: { month: endMonth, day: endDay, year: endYear },
   }) => {
-    console.log(JSON.stringify({startHour, startMinute, startTimePeriod}))
-    console.log((parseInt(startHour, 10) + ({ AM: 0, PM: 12 })[startTimePeriod]).toString().padStart(startHour.length, '0') || undefined)
+    console.log(JSON.stringify({ startHour, startMinute, startTimePeriod }));
+    console.log((parseInt(startHour, 10) + ({ AM: 0, PM: 12 })[startTimePeriod]).toString().padStart(startHour.length, '0') || undefined);
     setQueryParams({
       categories: categories.join(',') || undefined,
       daysOfWeek: daysOfWeek.join(',') || undefined,
@@ -188,7 +188,7 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
       endDay: endDay || undefined,
       endYear: endYear || undefined,
     });
-  }
+  };
 
   return (
 
