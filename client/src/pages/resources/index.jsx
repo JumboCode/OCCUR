@@ -164,7 +164,7 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
     },
   };
 
-  const updateSidebarFilters = ({
+  const updateSidebarFilters = useCallback(({
     categories,
     daysOfWeek,
     startTime: { hour: startHour, min: startMinute, timePeriod: startTimePeriod },
@@ -188,7 +188,7 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
       endDay: endDay || undefined,
       endYear: endYear || undefined,
     });
-  };
+  }, [setQueryParams]);
 
   return (
 

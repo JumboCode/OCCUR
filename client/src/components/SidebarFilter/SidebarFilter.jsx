@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import React, { useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import styles from './SidebarFilter.module.scss';
 import { RESOURCE_CATEGORIES, DAYS_OF_WEEK } from 'data/resources';
@@ -68,6 +68,27 @@ export default function SidebarFilter({ values, onChange }) {
 
   const [startTimePeriod, setStartTimePeriod] = useState(values.startTime.timePeriod);
   const [endTimePeriod, setEndTimePeriod] = useState(values.endTime.timePeriod);
+
+  const valuesRef = useRef(values);
+  valuesRef.current = values;
+  // Pass entered startTime upwards
+  useEffect(() => {
+    if (startTimeDisp.length === TIME_FORMAT.length) {
+      const [hour, min] = parseValidTime(startTimeDisp);
+      onChange({ ...valuesRef.current, startTime: { hour, min, timePeriod: startTimePeriod } });
+    } else {
+      onChange({ ...valuesRef.current, startTime: { hour: '', min: '', timePeriod: '' } });
+    }
+  }, [onChange, startTimeDisp, startTimePeriod]);
+  // Pass entered endTime upwards
+  useEffect(() => {
+    if (endTimeDisp.length === TIME_FORMAT.length) {
+      const [hour, min] = parseValidTime(endTimeDisp);
+      onChange({ ...valuesRef.current, endTime: { hour, min, timePeriod: endTimePeriod } });
+    } else {
+      onChange({ ...valuesRef.current, endTime: { hour: '', min: '', timePeriod: '' } });
+    }
+  }, [onChange, endTimeDisp, endTimePeriod]);
 
   return (
     <div className={styles.base}>
@@ -192,36 +213,14 @@ export default function SidebarFilter({ values, onChange }) {
       </div>
       <div className={styles.group}>
         <h4>Time</h4>
+        {/* START TIME AND AM/PM */}
         <label htmlFor="time-range-start">From</label>
         <input
           id="time-range-start"
           type="text"
           placeholder={TIME_FORMAT}
           className={getInvalidStyle(startTimeDisp, TIME_FORMAT)}
-          onChange={(e) => {
-            const newValue = formatTimeInput(e);
-            setStartTimeDisp(newValue);
-            if (newValue.length === TIME_FORMAT.length) {
-              const [hour, min] = parseValidTime(newValue);
-              onChange({
-                ...values,
-                startTime: {
-                  hour,
-                  min,
-                  timePeriod: startTimePeriod,
-                },
-              });
-            } else {
-              onChange({
-                ...values,
-                startTime: {
-                  hour: '',
-                  min: '',
-                  timePeriod: '',
-                },
-              });
-            }
-          }}
+          onChange={(e) => { setStartTimeDisp(formatTimeInput(e)); }}
           value={startTimeDisp}
         />
         <label htmlFor="time-range-start-AM">AM</label>
@@ -230,30 +229,7 @@ export default function SidebarFilter({ values, onChange }) {
           type="radio"
           name="start-period"
           value="AM"
-          onChange={(e) => {
-            const newValue = e.target.value;
-            setStartTimePeriod(newValue);
-            if (startTimeDisp.length === TIME_FORMAT.length) {
-              const [hour, min] = parseValidTime(startTimeDisp);
-              onChange({
-                ...values,
-                startTime: {
-                  hour,
-                  min,
-                  timePeriod: newValue,
-                },
-              });
-            } else {
-              onChange({
-                ...values,
-                startTime: {
-                  hour: '',
-                  min: '',
-                  timePeriod: '',
-                },
-              });
-            }
-          }}
+          onChange={(e) => { setStartTimePeriod(e.target.value); }}
           checked={startTimePeriod === 'AM'}
         />
         <label htmlFor="time-range-start-PM">PM</label>
@@ -262,62 +238,17 @@ export default function SidebarFilter({ values, onChange }) {
           type="radio"
           name="start-period"
           value="PM"
-          onChange={(e) => {
-            const newValue = e.target.value;
-            setStartTimePeriod(newValue);
-            if (startTimeDisp.length === TIME_FORMAT.length) {
-              const [hour, min] = parseValidTime(startTimeDisp);
-              onChange({
-                ...values,
-                startTime: {
-                  hour,
-                  min,
-                  timePeriod: newValue,
-                },
-              });
-            } else {
-              onChange({
-                ...values,
-                startTime: {
-                  hour: '',
-                  min: '',
-                  timePeriod: '',
-                },
-              });
-            }
-          }}
+          onChange={(e) => { setStartTimePeriod(e.target.value); }}
           checked={startTimePeriod === 'PM'}
         />
+        {/* END TIME AND AM/PM */}
         <label htmlFor="time-range-end">To</label>
         <input
           id="time-range-end"
           type="text"
           placeholder={TIME_FORMAT}
           className={getInvalidStyle(endTimeDisp, TIME_FORMAT)}
-          onChange={(e) => {
-            const newValue = formatTimeInput(e);
-            setEndTimeDisp(newValue);
-            if (newValue.length === TIME_FORMAT.length) {
-              const [hour, min] = parseValidTime(newValue);
-              onChange({
-                ...values,
-                endTime: {
-                  hour,
-                  min,
-                  timePeriod: endTimePeriod,
-                },
-              });
-            } else {
-              onChange({
-                ...values,
-                endTime: {
-                  hour: '',
-                  min: '',
-                  timePeriod: '',
-                },
-              });
-            }
-          }}
+          onChange={(e) => { setEndTimeDisp(formatTimeInput(e)); }}
           value={endTimeDisp}
         />
         <label htmlFor="time-range-end-AM">AM</label>
@@ -326,29 +257,7 @@ export default function SidebarFilter({ values, onChange }) {
           type="radio"
           name="end-period"
           value="AM"
-          onChange={(e) => {
-            const newValue = e.target.value;
-            if (newValue.length === TIME_FORMAT.length) {
-              const [hour, min] = parseValidTime(newValue);
-              onChange({
-                ...values,
-                endTime: {
-                  hour,
-                  min,
-                  timePeriod: endTimePeriod,
-                },
-              });
-            } else {
-              onChange({
-                ...values,
-                endTime: {
-                  hour: '',
-                  min: '',
-                  timePeriod: '',
-                },
-              });
-            }
-          }}
+          onChange={(e) => { setEndTimePeriod(e.target.value); }}
           checked={values.endTime.timePeriod === 'AM'}
         />
         <label htmlFor="time-range-end-PM">PM</label>
@@ -357,30 +266,7 @@ export default function SidebarFilter({ values, onChange }) {
           type="radio"
           name="end-period"
           value="PM"
-          onChange={(e) => {
-            const newValue = e.target.value;
-            setEndTimePeriod(newValue);
-            if (endTimeDisp.length === TIME_FORMAT.length) {
-              const [hour, min] = parseValidTime(endTimeDisp);
-              onChange({
-                ...values,
-                endTime: {
-                  hour,
-                  min,
-                  timePeriod: newValue,
-                },
-              });
-            } else {
-              onChange({
-                ...values,
-                endTime: {
-                  hour: '',
-                  min: '',
-                  timePeriod: '',
-                },
-              });
-            }
-          }}
+          onChange={(e) => { setEndTimePeriod(e.target.value); }}
           checked={endTimePeriod === 'PM'}
         />
       </div>
