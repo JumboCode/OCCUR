@@ -172,14 +172,16 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
     startDate: { month: startMonth, day: startDay, year: startYear },
     endDate: { month: endMonth, day: endDay, year: endYear },
   }) => {
-    console.log(JSON.stringify({ startHour, startMinute, startTimePeriod }));
-    console.log((parseInt(startHour, 10) + ({ AM: 0, PM: 12 })[startTimePeriod]).toString().padStart(startHour.length, '0') || undefined);
+    const getHour = (hour, period) => (Number.isNaN(parseInt(hour, 10))
+      ? undefined
+      : (parseInt(hour, 10) + ({ AM: 0, PM: 12 })[period]).toString().padStart(hour.length, '0'));
+
     setQueryParams({
       categories: categories.join(',') || undefined,
       daysOfWeek: daysOfWeek.join(',') || undefined,
-      startHour: (parseInt(startHour, 10) + ({ AM: 0, PM: 12 })[startTimePeriod]).toString().padStart(startHour.length, '0') || undefined,
+      startHour: getHour(startHour, startTimePeriod),
       startMinute: startMinute || undefined,
-      endHour: (parseInt(endHour, 10) + ({ AM: 0, PM: 12 })[endTimePeriod]).toString().padStart(endHour.length, '0') || undefined,
+      endHour: getHour(endHour, endTimePeriod),
       endMinute: endMinute || undefined,
       startMonth: startMonth || undefined,
       startDay: startDay || undefined,
