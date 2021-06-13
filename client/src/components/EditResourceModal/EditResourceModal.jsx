@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { RESOURCE_CATEGORIES, DAYS_OF_WEEK, RESOURCE_PROP_TYPES } from 'data/resources';
 import Modal from 'components/Modal';
@@ -10,17 +10,16 @@ import Close from '../../../public/icons/close.svg';
 const cx = classNames.bind(styles);
 
 export default function EditResourceModal({ open, close, errorMessage, resource, submit }) {
-  const fillResource = resource;
-  fillResource.flyer = '';
   const { register, handleSubmit, watch } = useForm({
-    defaultValues: fillResource,
+    defaultValues: resource,
   });
-  let b64flyer;
+
+  const [b64flyer, setb64flyer] = useState();
+
   async function onSubmit(data) {
     let recurringDayList = [];
     let startTime = null;
     let endTime = null;
-    console.log(data.flyer);
     if (data.recurrenceDays) {
       recurringDayList = data.recurrenceDays;
     }
@@ -40,8 +39,8 @@ export default function EditResourceModal({ open, close, errorMessage, resource,
       endTime,
       isRecurring: data.isRecurring,
       recurrenceDays: recurringDayList,
-      flyer: b64flyer,
-      flyerId: data.flyerId,
+      flyer: b64flyer || resource.flyer,
+      flyerId: resource.flyerId,
       link: data.link,
       meetingLink: data.meetingLink,
       phone: data.phone,
@@ -70,13 +69,11 @@ export default function EditResourceModal({ open, close, errorMessage, resource,
   }
 
   const handleFlyerSelected = (e) => {
-    console.log('heres the flyer', e.target.files[0]);
     const flyer = e.target.files[0];
     const reader = new FileReader();
     reader.readAsDataURL(flyer);
     reader.onloadend = () => {
-      console.log(reader.result);
-      b64flyer = reader.result;
+      setb64flyer(reader.result);
     };
   };
 
@@ -171,9 +168,14 @@ export default function EditResourceModal({ open, close, errorMessage, resource,
           <input {...register('zip_code')} placeholder="Enter zip code" />
         </>
         <h2 className={styles.fieldTitle}>Resource Photo</h2>
+        <img
+          className={styles.resourcePhotoPreview}
+          src={resource.flyer || `/images/category-defaults/${resource.category || 'OTHER'}.jpeg`}
+          alt="Resource flyer"
+        />
         <input
           type="file"
-          {...register('flyer')}
+          {...register('flyerFile')}
           placeholder="Upload resource photo"
           name="resource photo"
           onChange={handleFlyerSelected}
