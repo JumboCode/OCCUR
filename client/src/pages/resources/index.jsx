@@ -258,11 +258,8 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
           {dropDownToggle ? (
             <div className={cx('dropDownFilterCategories')}>
               <SidebarFilter
-                values={router.query.categories ? router.query.categories.split(',') : []}
-                onChange={(cats) => {
-                  const joined = cats.join(',');
-                  setQueryParams({ categories: joined.length ? joined : undefined });
-                }}
+                values={sidebarFilterState}
+                onChange={updateSidebarFilters}
               />
             </div>
           ) : null}
