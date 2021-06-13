@@ -1,10 +1,14 @@
 @import '../../styles/colors';
 
-.group {
-  padding: .75em 0;
+.base {
+  font-size: .85rem;
 
-  &:not(:last-child) {
-    border-bottom: 1px solid transparentize($dark-gray, .75);
+  .group {
+    padding: .75em 0;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid transparentize($dark-gray, .75);
+    }
   }
 
   h4 {
@@ -12,7 +16,7 @@
     margin-bottom: .8em;
   }
 
-  label {
+  label.checkbox {
     display: block;
     margin-top: -8px;
     margin-bottom: calc(-8px + .4em);
@@ -51,16 +55,6 @@
       transform-origin: left center;
       transform: scale(.5);
     }
-
-    &.orange {
-      div { border-color: $orange; }
-      input:checked + div::before { background-color: $orange; }
-    }
-
-    &.yellow {
-      div { border-color: $yellow; }
-      input:checked + div::before { background-color: $yellow; }
-    }
   }
 
   .radioButtons {
@@ -78,30 +72,53 @@
     display: flex;
     margin-right: 0.5em;
   }
-}
 
-.invalid {
-  box-shadow: inset 0 0 0 1px $red;
-  border: 1px solid red;
-  border-radius: 4px;
-  box-sizing: content-box;
-  padding: 2px;
-}
+  label.text {
+    display: block;
+    overflow: hidden;
+    margin-bottom: .25em;
 
-.validInput {
-  box-sizing: content-box;
-  box-shadow: inset 0 0 0 1px black;
-  border: 1px solid black;
-  border-radius: 4px;
+    input[type="text"] {
+      background: none;
+      border: none;
+      outline: none;
+      font-family: inherit;
+      font-size: inherit;
 
-  padding: 2px;
-}
+      display: block;
+      margin: .25em 0;
 
-.validInput {
-  box-sizing: content-box;
-  box-shadow: inset 0 0 0 1px black;
-  border: 1px solid black;
-  border-radius: 4px;
-  padding: 5px 0px 5px 5px;
-  margin-bottom: 0.5rem;
+      border-radius: 3px;
+      box-shadow: inset 0 0 0 1.5px $dark-gray;
+      padding: .15em .5em;
+      transition: box-shadow .15s;
+
+      &:focus {
+        box-shadow: inset 0 0 0 1.5px $light-blue;
+      }
+
+      &.invalid {
+        box-shadow: inset 0 0 0 2.5px $red;
+      }
+    }
+
+    & + .am-pm {
+      margin: -0.25em 0 0.5em;
+    }
+  }
+
+
+  .am-pm {
+    display: flex;
+
+    label {
+      display: flex;
+      align-items: center;
+      margin-right: 1ch;
+
+      input[type="radio"] {
+        margin: .1em .5ch 0 0;
+      }
+    }
+  }
 }

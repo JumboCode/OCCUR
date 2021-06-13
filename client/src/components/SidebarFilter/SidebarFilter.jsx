@@ -115,7 +115,7 @@ export default function SidebarFilter({ values, onChange }) {
         <h4>Category</h4>
         {
           RESOURCE_CATEGORIES.map(({ id, label }) => (
-            <label key={id}>
+            <label key={id} className={styles.checkbox}>
               <input
                 type="checkbox"
                 checked={values.categories.includes(id)}
@@ -145,7 +145,7 @@ export default function SidebarFilter({ values, onChange }) {
         <h4>Day of the week</h4>
         {
           DAYS_OF_WEEK.map(({ id, label }) => (
-            <label key={id}>
+            <label key={id} className={styles.checkbox}>
               <input
                 type="checkbox"
                 checked={values.daysOfWeek.includes(id)}
@@ -173,7 +173,7 @@ export default function SidebarFilter({ values, onChange }) {
       </div>
       <div className={styles.group}>
         <h4>Date</h4>
-        <label>
+        <label className={styles.text}>
           From
           <input
             type="text"
@@ -184,7 +184,7 @@ export default function SidebarFilter({ values, onChange }) {
           />
         </label>
 
-        <label>
+        <label className={styles.text}>
           To
           <input
             type="text"
@@ -198,7 +198,7 @@ export default function SidebarFilter({ values, onChange }) {
       <div className={styles.group}>
         <h4>Time</h4>
         {/* START TIME AND AM/PM */}
-        <label>
+        <label className={styles.text}>
           From
           <input
             type="text"
@@ -208,28 +208,30 @@ export default function SidebarFilter({ values, onChange }) {
             value={startTimeDisp}
           />
         </label>
-        <label>
-          AM
-          <input
-            type="radio"
-            name="start-period"
-            value="AM"
-            onChange={(e) => { setStartTimePeriod(e.target.value); }}
-            checked={startTimePeriod === 'AM'}
-          />
-        </label>
-        <label>
-          PM
-          <input
-            type="radio"
-            name="start-period"
-            value="PM"
-            onChange={(e) => { setStartTimePeriod(e.target.value); }}
-            checked={startTimePeriod === 'PM'}
-          />
-        </label>
+        <div className={styles['am-pm']}>
+          <label>
+            <input
+              type="radio"
+              name="start-period"
+              value="AM"
+              onChange={(e) => { setStartTimePeriod(e.target.value); }}
+              checked={startTimePeriod === 'AM'}
+            />
+            AM
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="start-period"
+              value="PM"
+              onChange={(e) => { setStartTimePeriod(e.target.value); }}
+              checked={startTimePeriod === 'PM'}
+            />
+            PM
+          </label>
+        </div>
         {/* END TIME AND AM/PM */}
-        <label>
+        <label className={styles.text}>
           To
           <input
             type="text"
@@ -239,26 +241,28 @@ export default function SidebarFilter({ values, onChange }) {
             value={endTimeDisp}
           />
         </label>
-        <label>
-          AM
-          <input
-            type="radio"
-            name="end-period"
-            value="AM"
-            onChange={(e) => { setEndTimePeriod(e.target.value); }}
-            checked={values.endTime.timePeriod === 'AM'}
-          />
-        </label>
-        <label>
-          PM
-          <input
-            type="radio"
-            name="end-period"
-            value="PM"
-            onChange={(e) => { setEndTimePeriod(e.target.value); }}
-            checked={endTimePeriod === 'PM'}
-          />
-        </label>
+        <div className={styles['am-pm']}>
+          <label>
+            <input
+              type="radio"
+              name="end-period"
+              value="AM"
+              onChange={(e) => { setEndTimePeriod(e.target.value); }}
+              checked={values.endTime.timePeriod === 'AM'}
+            />
+            AM
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="end-period"
+              value="PM"
+              onChange={(e) => { setEndTimePeriod(e.target.value); }}
+              checked={endTimePeriod === 'PM'}
+            />
+            PM
+          </label>
+        </div>
       </div>
     </div>
   );
