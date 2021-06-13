@@ -61,16 +61,35 @@ export default function SidebarFilter({ values, onChange }) {
   const endDateFromUrl = [values.endDate.month, values.endDate.day, values.endDate.year]
     .filter((n) => n?.length).join('/');
 
-  const [startTimeDisp, setStartTimeDisp] = useState(startTimeFromUrl);
-  const [endTimeDisp, setEndTimeDisp] = useState(endTimeFromUrl);
   const [startDateDisp, setStartDateDisp] = useState(startDateFromUrl);
   const [endDateDisp, setEndDateDisp] = useState(endDateFromUrl);
 
+  const [startTimeDisp, setStartTimeDisp] = useState(startTimeFromUrl);
   const [startTimePeriod, setStartTimePeriod] = useState(values.startTime.timePeriod);
+  const [endTimeDisp, setEndTimeDisp] = useState(endTimeFromUrl);
   const [endTimePeriod, setEndTimePeriod] = useState(values.endTime.timePeriod);
 
   const valuesRef = useRef(values);
   valuesRef.current = values;
+  // Pass entered startDate upwards
+  useEffect(() => {
+    if (startDateDisp.length === DATE_FORMAT.length) {
+      const [month, day, year] = parseValidDate(startDateDisp);
+      onChange({ ...valuesRef.current, startDate: { month, day, year } });
+    } else {
+      onChange({ ...valuesRef.current, startDate: { month: '', day: '', year: '' } });
+    }
+  }, [onChange, startDateDisp]);
+  // Pass entered endDate upwards
+  useEffect(() => {
+    if (endDateDisp.length === DATE_FORMAT.length) {
+      const [month, day, year] = parseValidDate(endDateDisp);
+      onChange({ ...valuesRef.current, endDate: { month, day, year } });
+    } else {
+      onChange({ ...valuesRef.current, endDate: { month: '', day: '', year: '' } });
+    }
+  }, [onChange, endDateDisp]);
+
   // Pass entered startTime upwards
   useEffect(() => {
     if (startTimeDisp.length === TIME_FORMAT.length) {
@@ -160,26 +179,7 @@ export default function SidebarFilter({ values, onChange }) {
           type="text"
           placeholder={DATE_FORMAT}
           className={getInvalidStyle(startDateDisp, DATE_FORMAT)}
-          onChange={(e) => {
-            const newValue = formatDateInput(e);
-            setStartDateDisp(newValue);
-            if (newValue === DATE_FORMAT.length) {
-              const [month, day, year] = parseValidDate(newValue);
-              onChange({
-                ...values,
-                startDate: { month, day, year },
-              });
-            } else {
-              onChange({
-                ...values,
-                startDate: {
-                  month: '',
-                  day: '',
-                  year: '',
-                },
-              });
-            }
-          }}
+          onChange={(e) => { setStartDateDisp(formatDateInput(e)); }}
           value={startDateDisp}
         />
         <label htmlFor="date-range-end">To</label>
@@ -188,26 +188,7 @@ export default function SidebarFilter({ values, onChange }) {
           type="text"
           placeholder={DATE_FORMAT}
           className={getInvalidStyle(endDateDisp, DATE_FORMAT)}
-          onChange={(e) => {
-            const newValue = formatDateInput(e);
-            setEndDateDisp(newValue);
-            if (newValue.length === DATE_FORMAT.length) {
-              const [month, day, year] = parseValidDate(newValue);
-              onChange({
-                ...values,
-                endDate: { month, day, year },
-              });
-            } else {
-              onChange({
-                ...values,
-                endDate: {
-                  month: '',
-                  day: '',
-                  year: '',
-                },
-              });
-            }
-          }}
+          onChange={(e) => { setEndDateDisp(formatDateInput(e)); }}
           value={endDateDisp}
         />
       </div>
