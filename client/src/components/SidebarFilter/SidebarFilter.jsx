@@ -54,7 +54,8 @@ const parseValidDate = (dateStr) => [
 const parseValidTime = (timeStr) => [timeStr.substring(0, 2), timeStr.substring(3, 5)];
 
 const validateTime = (time) => /[0-9]{2}:[0-9]{2}/.test(time) // format is correct
-  && parseValidTime(time)[0] <= 12 // valid hour
+  && parseValidTime(time)[0] <= 12 // valid hour (no 13:00)
+  && parseValidTime(time)[0] > 0 // valid hour (no 00:00)
   && parseValidTime(time)[1] <= 60; // valid minute
 
 const validateDate = (date) => /[0-9]{2}\/[0-9]{2}\/[0-9]{4}/.test(date) // format is correct
