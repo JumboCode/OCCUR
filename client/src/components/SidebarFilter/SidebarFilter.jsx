@@ -44,17 +44,31 @@ const formatTimeInput = (e) => {
 };
 
 // parses the date according to DATE_FORMAT
+// output: ['mm', 'dd', 'yyyy']
 const parseValidDate = (dateStr) => [
   dateStr.substring(0, 2), dateStr.substring(3, 5), dateStr.substring(6, 11),
 ];
 
 // parses the time according to TIME_FORMAT
+// output: ['hh', 'mm']
 const parseValidTime = (timeStr) => [timeStr.substring(0, 2), timeStr.substring(3, 5)];
 
-const getInvalidStyle = (i, targetFmt) => (
-  (i.length > 0 && i.length < targetFmt.length)
-    ? styles.invalid
-    : styles.validInput);
+const validateTime = (time) => /[0-9]{2}:[0-9]{2}/.test(time) // format is correct
+  && parseValidTime(time)[0] <= 12 // valid hour
+  && parseValidTime(time)[1] <= 60; // valid minute
+
+const validateDate = (date) => /[0-9]{2}\/[0-9]{2}\/[0-9]{4}/.test(date) // format is correct
+  // valid month
+  && parseValidDate(date)[0] <= 12
+  // day fits in that month on that year (year only matters for feb 29)
+  && ((month, day, year) => {
+    const d = new Date();
+    d.setFullYear(year);
+    d.setMonth(month - 1);
+    d.setDate(day);
+    return d.getMonth() === month - 1; // check for overflow
+  })(...parseValidDate(date));
+
 
 export default function SidebarFilter({ values, onChange }) {
   const startTimeFromUrl = [values.startTime.hour, values.startTime.min].filter((n) => n?.length).join(':');
@@ -76,7 +90,7 @@ export default function SidebarFilter({ values, onChange }) {
   valuesRef.current = values;
   // Pass entered startDate upwards
   useEffect(() => {
-    if (startDateDisp.length === DATE_FORMAT.length) {
+    if (validateDate(startDateDisp)) {
       const [month, day, year] = parseValidDate(startDateDisp);
       onChange({ ...valuesRef.current, startDate: { month, day, year } });
     } else {
@@ -85,7 +99,7 @@ export default function SidebarFilter({ values, onChange }) {
   }, [onChange, startDateDisp]);
   // Pass entered endDate upwards
   useEffect(() => {
-    if (endDateDisp.length === DATE_FORMAT.length) {
+    if (validateDate(endDateDisp)) {
       const [month, day, year] = parseValidDate(endDateDisp);
       onChange({ ...valuesRef.current, endDate: { month, day, year } });
     } else {
@@ -95,7 +109,7 @@ export default function SidebarFilter({ values, onChange }) {
 
   // Pass entered startTime upwards
   useEffect(() => {
-    if (startTimeDisp.length === TIME_FORMAT.length) {
+    if (validateTime(startTimeDisp)) {
       const [hour, min] = parseValidTime(startTimeDisp);
       onChange({ ...valuesRef.current, startTime: { hour, min, timePeriod: startTimePeriod } });
     } else {
@@ -104,7 +118,7 @@ export default function SidebarFilter({ values, onChange }) {
   }, [onChange, startTimeDisp, startTimePeriod]);
   // Pass entered endTime upwards
   useEffect(() => {
-    if (endTimeDisp.length === TIME_FORMAT.length) {
+    if (validateTime(endTimeDisp)) {
       const [hour, min] = parseValidTime(endTimeDisp);
       onChange({ ...valuesRef.current, endTime: { hour, min, timePeriod: endTimePeriod } });
     } else {
@@ -181,7 +195,7 @@ export default function SidebarFilter({ values, onChange }) {
           <input
             type="text"
             placeholder={DATE_FORMAT}
-            className={getInvalidStyle(startDateDisp, DATE_FORMAT)}
+            className={cx({ invalid: !validateDate(startDateDisp) })}
             onChange={(e) => { setStartDateDisp(formatDateInput(e)); }}
             value={startDateDisp}
           />
@@ -192,7 +206,7 @@ export default function SidebarFilter({ values, onChange }) {
           <input
             type="text"
             placeholder={DATE_FORMAT}
-            className={getInvalidStyle(endDateDisp, DATE_FORMAT)}
+            className={cx({ invalid: !validateDate(endDateDisp) })}
             onChange={(e) => { setEndDateDisp(formatDateInput(e)); }}
             value={endDateDisp}
           />
@@ -206,7 +220,7 @@ export default function SidebarFilter({ values, onChange }) {
           <input
             type="text"
             placeholder={TIME_FORMAT}
-            className={getInvalidStyle(startTimeDisp, TIME_FORMAT)}
+            className={cx({ invalid: !validateTime(startTimeDisp) })}
             onChange={(e) => { setStartTimeDisp(formatTimeInput(e)); }}
             value={startTimeDisp}
           />
@@ -239,7 +253,7 @@ export default function SidebarFilter({ values, onChange }) {
           <input
             type="text"
             placeholder={TIME_FORMAT}
-            className={getInvalidStyle(endTimeDisp, TIME_FORMAT)}
+            className={cx({ invalid: !validateTime(endTimeDisp) })}
             onChange={(e) => { setEndTimeDisp(formatTimeInput(e)); }}
             value={endTimeDisp}
           />
