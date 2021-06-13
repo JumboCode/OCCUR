@@ -69,6 +69,7 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
   const routerRef = useRef();
   const router = useRouter();
   const mapRef = useRef();
+  const sidebarFilterRef = useRef();
   const api = useApi();
 
   routerRef.current = router;
@@ -260,6 +261,7 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
       />
       <div className={styles.left}>
         <SidebarFilter
+          ref={sidebarFilterRef}
           values={sidebarFilterState}
           onChange={safeMergeSidebarFilters}
         />
@@ -300,6 +302,7 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
             className={cx('clear')}
             onClick={() => {
               mapRef.current.resetBounds();
+              sidebarFilterRef.current.clearInputs();
               router.replace('/resources', undefined, { shallow: true });
             }}
           >

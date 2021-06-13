@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useImperativeHandle } from 'react';
+import { unstable_batchedUpdates } from 'react-dom'; // eslint-disable-line camelcase
 import PropTypes from 'prop-types';
 import { RESOURCE_CATEGORIES, DAYS_OF_WEEK } from 'data/resources';
 
@@ -71,7 +72,7 @@ const validateDate = (date) => /[0-9]{2}\/[0-9]{2}\/[0-9]{4}/.test(date) // form
   })(...parseValidDate(date));
 
 
-export default function SidebarFilter({ values, onChange }) {
+const SidebarFilter = React.forwardRef(({ values, onChange }, ref) => {
   const startTimeFromUrl = [values.startTime.hour, values.startTime.min].filter((n) => n?.length).join(':');
   const endTimeFromUrl = [values.endTime.hour, values.endTime.min].filter((n) => n?.length).join(':');
   const startDateFromUrl = [values.startDate.month, values.startDate.day, values.startDate.year]
@@ -86,6 +87,19 @@ export default function SidebarFilter({ values, onChange }) {
   const [startTimePeriod, setStartTimePeriod] = useState(values.startTime.timePeriod);
   const [endTimeDisp, setEndTimeDisp] = useState(endTimeFromUrl);
   const [endTimePeriod, setEndTimePeriod] = useState(values.endTime.timePeriod);
+
+  useImperativeHandle(ref, () => ({
+    clearInputs() {
+      unstable_batchedUpdates(() => { // TODO: remove with React 18 if this app ever gets updated
+        setStartDateDisp('');
+        setStartTimeDisp('');
+        setStartTimePeriod('AM');
+        setEndDateDisp('');
+        setEndTimeDisp('');
+        setEndTimePeriod('AM');
+      });
+    },
+  }));
 
   const valuesRef = useRef(values);
   valuesRef.current = values;
@@ -272,7 +286,8 @@ export default function SidebarFilter({ values, onChange }) {
       </div>
     </div>
   );
-}
+});
+
 SidebarFilter.propTypes = {
   values: PropTypes.shape({
     categories: PropTypes.arrayOf(PropTypes.oneOf(
@@ -304,3 +319,6 @@ SidebarFilter.propTypes = {
   }).isRequired,
   onChange: PropTypes.func.isRequired,
 };
+
+
+export default SidebarFilter;
