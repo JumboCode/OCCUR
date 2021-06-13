@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { RESOURCE_PROP_TYPES } from 'data/resources';
 
@@ -171,6 +171,8 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
       year: router.query.endYear || '',
     },
   };
+  const sidebarFilterStateRef = useRef();
+  sidebarFilterStateRef.current = sidebarFilterState;
 
   const updateSidebarFilters = useCallback(({
     categories,
@@ -200,6 +202,53 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
     });
   }, [setQueryParams]);
 
+  // Apply updates to a subset of sidebar filters without passing the full list
+  const mergeSidebarFilters = useCallback(
+    (updates) => updateSidebarFilters({ ...sidebarFilterStateRef.current, ...updates }),
+    [updateSidebarFilters],
+  );
+
+  // IMPORTANT: running multiple updates at the same time creates issues because each update
+  //            reinstates a value that the previous update had asked to change. The following code
+  //            detects whether a state update is scheduled, and then batches all updates that come
+  //            before it's finished into a single group. Then, when the first state update is done,
+  //            we safely apply all of the scheduled updates based on the new, settled state,
+  //            thereby avoiding bugs that reapplied stale values
+
+  // Track whether a querystring update is in progress
+  const routeChanging = useRef(false);
+  useEffect(() => {
+    const a = () => { routeChanging.current = true; };
+    const b = () => { routeChanging.current = false; };
+    router.events.on('routeChangeStart', a);
+    router.events.on('routeChangeComplete', b);
+    return () => {
+      router.events.off('routeChangeStart', a);
+      router.events.off('routeChangeComplete', b);
+    };
+  }, [router]);
+  // While route is changing, accumulate scheduled updates without trying to apply them yet
+  const scheduledUpdates = useRef({});
+  const safeMergeSidebarFilters = useCallback((updates) => {
+    if (routeChanging.current) {
+      scheduledUpdates.current = { ...scheduledUpdates.current, ...updates };
+    } else {
+      mergeSidebarFilters(updates);
+    }
+  }, [mergeSidebarFilters]);
+  // Once route is finished changing based on the first update, apply all accumulated updates
+  useEffect(() => {
+    const applyScheduledUpdates = () => {
+      if (Object.keys(scheduledUpdates.current).length) {
+        mergeSidebarFilters(scheduledUpdates.current);
+        scheduledUpdates.current = {};
+      }
+    };
+    router.events.on('routeChangeComplete', applyScheduledUpdates);
+    return () => { router.events.off('routeChangeComplete', applyScheduledUpdates); };
+  }, [router, mergeSidebarFilters]);
+
+
   return (
 
     <div className={styles.base}>
@@ -212,7 +261,7 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
       <div className={styles.left}>
         <SidebarFilter
           values={sidebarFilterState}
-          onChange={updateSidebarFilters}
+          onChange={safeMergeSidebarFilters}
         />
       </div>
 

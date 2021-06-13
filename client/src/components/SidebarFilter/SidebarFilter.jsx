@@ -93,18 +93,18 @@ export default function SidebarFilter({ values, onChange }) {
   useEffect(() => {
     if (validateDate(startDateDisp)) {
       const [month, day, year] = parseValidDate(startDateDisp);
-      onChange({ ...valuesRef.current, startDate: { month, day, year } });
+      onChange({ startDate: { month, day, year } });
     } else {
-      onChange({ ...valuesRef.current, startDate: { month: '', day: '', year: '' } });
+      onChange({ startDate: { month: '', day: '', year: '' } });
     }
   }, [onChange, startDateDisp]);
   // Pass entered endDate upwards
   useEffect(() => {
     if (validateDate(endDateDisp)) {
       const [month, day, year] = parseValidDate(endDateDisp);
-      onChange({ ...valuesRef.current, endDate: { month, day, year } });
+      onChange({ endDate: { month, day, year } });
     } else {
-      onChange({ ...valuesRef.current, endDate: { month: '', day: '', year: '' } });
+      onChange({ endDate: { month: '', day: '', year: '' } });
     }
   }, [onChange, endDateDisp]);
 
@@ -112,18 +112,18 @@ export default function SidebarFilter({ values, onChange }) {
   useEffect(() => {
     if (validateTime(startTimeDisp)) {
       const [hour, min] = parseValidTime(startTimeDisp);
-      onChange({ ...valuesRef.current, startTime: { hour, min, timePeriod: startTimePeriod } });
+      onChange({ startTime: { hour, min, timePeriod: startTimePeriod } });
     } else {
-      onChange({ ...valuesRef.current, startTime: { hour: '', min: '', timePeriod: '' } });
+      onChange({ startTime: { hour: '', min: '', timePeriod: '' } });
     }
   }, [onChange, startTimeDisp, startTimePeriod]);
   // Pass entered endTime upwards
   useEffect(() => {
     if (validateTime(endTimeDisp)) {
       const [hour, min] = parseValidTime(endTimeDisp);
-      onChange({ ...valuesRef.current, endTime: { hour, min, timePeriod: endTimePeriod } });
+      onChange({ endTime: { hour, min, timePeriod: endTimePeriod } });
     } else {
-      onChange({ ...valuesRef.current, endTime: { hour: '', min: '', timePeriod: '' } });
+      onChange({ endTime: { hour: '', min: '', timePeriod: '' } });
     }
   }, [onChange, endTimeDisp, endTimePeriod]);
 
@@ -140,16 +140,10 @@ export default function SidebarFilter({ values, onChange }) {
                 onChange={() => {
                   if (!values.categories.includes(id)) {
                     // Add this checkbox to the array
-                    onChange({
-                      ...values,
-                      categories: [...values.categories, id],
-                    });
+                    onChange({ categories: [...values.categories, id] });
                   } else {
                     // Remove this checkbox from the array
-                    onChange({
-                      ...values,
-                      categories: values.categories.filter((val) => val !== id),
-                    });
+                    onChange({ categories: values.categories.filter((val) => val !== id) });
                   }
                 }}
               />
@@ -170,16 +164,10 @@ export default function SidebarFilter({ values, onChange }) {
                 onChange={() => {
                   if (!values.daysOfWeek.includes(id)) {
                     // Add this checkbox to the array
-                    onChange({
-                      ...values,
-                      daysOfWeek: [...values.daysOfWeek, id],
-                    });
+                    onChange({ daysOfWeek: [...values.daysOfWeek, id] });
                   } else {
                     // Remove this checkbox from the array
-                    onChange({
-                      ...values,
-                      daysOfWeek: values.daysOfWeek.filter((val) => val !== id),
-                    });
+                    onChange({ daysOfWeek: values.daysOfWeek.filter((val) => val !== id) });
                   }
                 }}
               />
