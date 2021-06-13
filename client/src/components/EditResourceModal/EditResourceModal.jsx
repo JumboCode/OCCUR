@@ -168,6 +168,11 @@ export default function EditResourceModal({ open, close, errorMessage, resource,
           <input {...register('zip_code')} placeholder="Enter zip code" />
         </>
         <h2 className={styles.fieldTitle}>Resource Photo</h2>
+        <img
+          className={styles.resourcePhotoPreview}
+          src={resource.flyer || `/images/category-defaults/${resource.category || 'OTHER'}.jpeg`}
+          alt="Resource flyer"
+        />
         <input
           type="file"
           {...register('flyerFile')}
