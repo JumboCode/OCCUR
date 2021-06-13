@@ -139,16 +139,24 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
     }
   };
 
+  const get12Hour = () => {
+    let h = parseInt(router.query.startHour, 10);
+    if (Number.isNaN(h)) return '';
+    // adjust to 12 hours
+    if (h > 12) h -= 12;
+    return h.toString().padStart(router.query.startHour.length, '0');
+  };
+
   const sidebarFilterState = {
     categories: router.query.categories ? router.query.categories.split(',') : [],
     daysOfWeek: router.query.daysOfWeek ? router.query.daysOfWeek.split(',') : [],
     startTime: {
-      hour: router.query.startHour ? (parseInt(router.query.startHour, 10) % 12).toString().padStart(router.query.startHour.length, '0') : '',
+      hour: get12Hour(router.query.startHour),
       min: router.query.startMinute || '',
       timePeriod: router.query.startHour && parseInt(router.query.startHour, 10) >= 12 ? 'PM' : 'AM',
     },
     endTime: {
-      hour: router.query.endHour ? (parseInt(router.query.endHour, 10) % 12).toString().padStart(router.query.endHour.length, '0') : '',
+      hour: get12Hour(router.query.endHour),
       min: router.query.endMinute || '',
       timePeriod: router.query.endHour && parseInt(router.query.endHour, 10) >= 12 ? 'PM' : 'AM',
     },
@@ -174,7 +182,7 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
   }) => {
     const getHour = (hour, period) => (Number.isNaN(parseInt(hour, 10))
       ? undefined
-      : (parseInt(hour, 10) + ({ AM: 0, PM: 12 })[period]).toString().padStart(hour.length, '0'));
+      : ((parseInt(hour, 10) + ({ AM: hour === '12' ? 12 : 0, PM: hour === '12' ? 0 : 12 })[period]) % 24).toString().padStart(hour.length, '0'));
 
     setQueryParams({
       categories: categories.join(',') || undefined,
