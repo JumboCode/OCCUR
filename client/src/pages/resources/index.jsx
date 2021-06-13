@@ -3,24 +3,25 @@ import PropTypes from 'prop-types';
 import { RESOURCE_PROP_TYPES } from 'data/resources';
 
 import { useRouter } from 'next/router';
+import { isAdmin } from 'auth';
 import unauthenticatedApi, { useApi } from 'api';
-import fuzzysort from 'fuzzysort';
 
+import fuzzysort from 'fuzzysort';
 import throttle from 'lodash/throttle';
 import omit from 'lodash/omit';
+import { matchesDays } from 'utils/filters';
 
 import ResourceCard from 'components/ResourceCard';
 import SidebarFilter from 'components/SidebarFilter/SidebarFilter';
 import Map from 'components/Map/lazy';
+import AddResourceModal from 'components/AddResourceModal';
 
 import Exclamation from '../../../public/icons/exclamation.svg';
 import Arrow from '../../../public/icons/arrow.svg';
+import Circleplus from '../../../public/icons/circle_plus.svg';
 
 import classNames from 'classnames/bind';
 import styles from './ResourceSearch.module.scss';
-import Circleplus from '../../../public/icons/circle_plus.svg';
-import { isAdmin } from 'auth';
-import AddResourceModal from 'components/AddResourceModal';
 
 const cx = classNames.bind(styles);
 
@@ -38,12 +39,12 @@ function filterResources(passedResources, filters) {
   }
   // Other filters
   resources = resources.filter((r) => {
+    let include = true;
     // Category filter
-    if (filters.categories && filters.categories.length) {
-      return filters.categories.includes(r.category);
-    }
-    // TODO: more filters when implemented
-    return true;
+    if (filters?.categories?.length) { include &&= filters.categories.includes(r.category); }
+    // Day of week filter
+    if (filters?.daysOfWeek?.length) { include &&= matchesDays(r, filters.daysOfWeek); }
+    return include;
   });
 
   return resources;
@@ -64,6 +65,15 @@ const geoFilterResources = (
 });
 
 
+const get12Hour = (str) => {
+  let h = parseInt(str, 10);
+  if (Number.isNaN(h)) return '';
+  // adjust to 12 hours
+  if (h > 12) h -= 12;
+  return h.toString().padStart(str.length, '0');
+};
+
+
 export default function ResourcesPage({ blocked, data: passedResources }) {
   const [resources, setResources] = useState(passedResources);
   const routerRef = useRef();
@@ -74,8 +84,35 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
 
   routerRef.current = router;
 
+  const sidebarFilterState = {
+    categories: router.query.categories ? router.query.categories.split(',') : [],
+    daysOfWeek: router.query.daysOfWeek ? router.query.daysOfWeek.split(',') : [],
+    startTime: {
+      hour: get12Hour(router.query.startHour),
+      min: router.query.startMinute || '',
+      timePeriod: router.query.startHour && parseInt(router.query.startHour, 10) >= 12 ? 'PM' : 'AM',
+    },
+    endTime: {
+      hour: get12Hour(router.query.endHour),
+      min: router.query.endMinute || '',
+      timePeriod: router.query.endHour && parseInt(router.query.endHour, 10) >= 12 ? 'PM' : 'AM',
+    },
+    startDate: {
+      month: router.query.startMonth || '',
+      day: router.query.startDay || '',
+      year: router.query.startYear || '',
+    },
+    endDate: {
+      month: router.query.endMonth || '',
+      day: router.query.endDay || '',
+      year: router.query.endYear || '',
+    },
+  };
+  const sidebarFilterStateRef = useRef();
+  sidebarFilterStateRef.current = sidebarFilterState;
+
   const filteredResourcesRef = useRef();
-  const filteredResources = filterResources(resources, router.query);
+  const filteredResources = filterResources(resources, { ...router.query, ...sidebarFilterState });
   filteredResourcesRef.current = filteredResources;
   const visibleResources = geoFilterResources(filteredResources, router.query);
   const [dropDownToggle, setDropDownToggle] = useState(false);
@@ -139,41 +176,6 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
       return false;
     }
   };
-
-  const get12Hour = (str) => {
-    let h = parseInt(str, 10);
-    if (Number.isNaN(h)) return '';
-    // adjust to 12 hours
-    if (h > 12) h -= 12;
-    return h.toString().padStart(str.length, '0');
-  };
-
-  const sidebarFilterState = {
-    categories: router.query.categories ? router.query.categories.split(',') : [],
-    daysOfWeek: router.query.daysOfWeek ? router.query.daysOfWeek.split(',') : [],
-    startTime: {
-      hour: get12Hour(router.query.startHour),
-      min: router.query.startMinute || '',
-      timePeriod: router.query.startHour && parseInt(router.query.startHour, 10) >= 12 ? 'PM' : 'AM',
-    },
-    endTime: {
-      hour: get12Hour(router.query.endHour),
-      min: router.query.endMinute || '',
-      timePeriod: router.query.endHour && parseInt(router.query.endHour, 10) >= 12 ? 'PM' : 'AM',
-    },
-    startDate: {
-      month: router.query.startMonth || '',
-      day: router.query.startDay || '',
-      year: router.query.startYear || '',
-    },
-    endDate: {
-      month: router.query.endMonth || '',
-      day: router.query.endDay || '',
-      year: router.query.endYear || '',
-    },
-  };
-  const sidebarFilterStateRef = useRef();
-  sidebarFilterStateRef.current = sidebarFilterState;
 
   const updateSidebarFilters = useCallback(({
     categories,
