@@ -223,17 +223,15 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
           ? visibleResources.map((r) => <ResourceCard key={r.id} {...r} />) */}
         {visibleResources?.length > 0
           // Fill in each resource card
-          ? visibleResources.map((r) => {
-            const r2 = ({ ...r, blocked });
-            return (
-              <ResourceCard
-                key={r2.id}
-                r={r2}
-                onResourceDeleted={refreshData}
-                onResourceEdited={refreshData}
-              />
-            );
-          })
+          ? visibleResources.map((r) => (
+            <ResourceCard
+              key={r.id}
+              r={r}
+              blocked={blocked}
+              onResourceDeleted={refreshData}
+              onResourceEdited={refreshData}
+            />
+          ))
           : (
             <div className={styles.noResults}>
               <Exclamation className={styles.exclamation} />

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 
 import { RESOURCE_PROP_TYPES, RESOURCE_DEFAULT_PROPS } from 'data/resources';
 import styles from './ResourceCard.module.scss';
@@ -23,7 +24,7 @@ import PenIcon from '../../../public/icons/pencil.svg';
 import { slugify } from 'utils';
 
 
-export default function ResourceCard({ r, onResourceDeleted, onResourceEdited }) {
+export default function ResourceCard({ r, blocked, onResourceDeleted, onResourceEdited }) {
   const api = useApi();
 
   const defaultImage = `/images/category-defaults/${r.category || 'OTHER'}.jpeg`;
@@ -115,7 +116,7 @@ export default function ResourceCard({ r, onResourceDeleted, onResourceEdited })
         </Link>
 
         {
-          r.blocked
+          blocked
             ? (
               <div className={styles.buttons}>
                 <CalendarEventDownload
@@ -156,5 +157,12 @@ export default function ResourceCard({ r, onResourceDeleted, onResourceEdited })
   );
 }
 
-ResourceCard.propTypes = RESOURCE_PROP_TYPES;
-ResourceCard.defaultProps = RESOURCE_DEFAULT_PROPS;
+ResourceCard.propTypes = {
+  r: PropTypes.shape(RESOURCE_PROP_TYPES),
+  blocked: PropTypes.bool.isRequired,
+  onResourceDeleted: PropTypes.func.isRequired,
+  onResourceEdited: PropTypes.func.isRequired,
+};
+ResourceCard.defaultProps = {
+  r: RESOURCE_DEFAULT_PROPS,
+};
