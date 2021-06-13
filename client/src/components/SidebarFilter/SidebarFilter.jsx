@@ -1,8 +1,11 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
-import styles from './SidebarFilter.module.scss';
 import { RESOURCE_CATEGORIES, DAYS_OF_WEEK } from 'data/resources';
+
+import classNames from 'classnames/bind';
+import styles from './SidebarFilter.module.scss';
+const cx = classNames.bind(styles);
 
 const DATE_FORMAT = 'mm/dd/yyyy';
 const TIME_FORMAT = 'hh:mm';
@@ -110,12 +113,12 @@ export default function SidebarFilter({ values, onChange }) {
   }, [onChange, endTimeDisp, endTimePeriod]);
 
   return (
-    <div className={styles.base}>
-      <div className={styles.group}>
+    <div className={cx('base')}>
+      <div className={cx('group')}>
         <h4>Category</h4>
         {
           RESOURCE_CATEGORIES.map(({ id, label }) => (
-            <label key={id} className={styles.checkbox}>
+            <label key={id} className={cx('checkbox')}>
               <input
                 type="checkbox"
                 checked={values.categories.includes(id)}
@@ -135,17 +138,17 @@ export default function SidebarFilter({ values, onChange }) {
                   }
                 }}
               />
-              <div className={styles.checkbox} />
+              <div className={cx('checkbox')} />
               {label}
             </label>
           ))
         }
       </div>
-      <div className={styles.group}>
+      <div className={cx('group')}>
         <h4>Day of the week</h4>
         {
           DAYS_OF_WEEK.map(({ id, label }) => (
-            <label key={id} className={styles.checkbox}>
+            <label key={id} className={cx('checkbox')}>
               <input
                 type="checkbox"
                 checked={values.daysOfWeek.includes(id)}
@@ -165,15 +168,15 @@ export default function SidebarFilter({ values, onChange }) {
                   }
                 }}
               />
-              <div className={styles.checkbox} />
+              <div className={cx('checkbox')} />
               {label}
             </label>
           ))
         }
       </div>
-      <div className={styles.group}>
+      <div className={cx('group')}>
         <h4>Date</h4>
-        <label className={styles.text}>
+        <label className={cx('text')}>
           From
           <input
             type="text"
@@ -184,7 +187,7 @@ export default function SidebarFilter({ values, onChange }) {
           />
         </label>
 
-        <label className={styles.text}>
+        <label className={cx('text')}>
           To
           <input
             type="text"
@@ -195,10 +198,10 @@ export default function SidebarFilter({ values, onChange }) {
           />
         </label>
       </div>
-      <div className={styles.group}>
+      <div className={cx('group')}>
         <h4>Time</h4>
         {/* START TIME AND AM/PM */}
-        <label className={styles.text}>
+        <label className={cx('text')}>
           From
           <input
             type="text"
@@ -231,7 +234,7 @@ export default function SidebarFilter({ values, onChange }) {
           </label>
         </div>
         {/* END TIME AND AM/PM */}
-        <label className={styles.text}>
+        <label className={cx('text')}>
           To
           <input
             type="text"
