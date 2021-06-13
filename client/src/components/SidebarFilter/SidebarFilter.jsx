@@ -173,83 +173,92 @@ export default function SidebarFilter({ values, onChange }) {
       </div>
       <div className={styles.group}>
         <h4>Date</h4>
-        <label htmlFor="date-range-begin">From</label>
-        <input
-          id="date-range-begin"
-          type="text"
-          placeholder={DATE_FORMAT}
-          className={getInvalidStyle(startDateDisp, DATE_FORMAT)}
-          onChange={(e) => { setStartDateDisp(formatDateInput(e)); }}
-          value={startDateDisp}
-        />
-        <label htmlFor="date-range-end">To</label>
-        <input
-          id="date-range-end"
-          type="text"
-          placeholder={DATE_FORMAT}
-          className={getInvalidStyle(endDateDisp, DATE_FORMAT)}
-          onChange={(e) => { setEndDateDisp(formatDateInput(e)); }}
-          value={endDateDisp}
-        />
+        <label>
+          From
+          <input
+            type="text"
+            placeholder={DATE_FORMAT}
+            className={getInvalidStyle(startDateDisp, DATE_FORMAT)}
+            onChange={(e) => { setStartDateDisp(formatDateInput(e)); }}
+            value={startDateDisp}
+          />
+        </label>
+
+        <label>
+          To
+          <input
+            type="text"
+            placeholder={DATE_FORMAT}
+            className={getInvalidStyle(endDateDisp, DATE_FORMAT)}
+            onChange={(e) => { setEndDateDisp(formatDateInput(e)); }}
+            value={endDateDisp}
+          />
+        </label>
       </div>
       <div className={styles.group}>
         <h4>Time</h4>
         {/* START TIME AND AM/PM */}
-        <label htmlFor="time-range-start">From</label>
-        <input
-          id="time-range-start"
-          type="text"
-          placeholder={TIME_FORMAT}
-          className={getInvalidStyle(startTimeDisp, TIME_FORMAT)}
-          onChange={(e) => { setStartTimeDisp(formatTimeInput(e)); }}
-          value={startTimeDisp}
-        />
-        <label htmlFor="time-range-start-AM">AM</label>
-        <input
-          id="time-range-start-AM"
-          type="radio"
-          name="start-period"
-          value="AM"
-          onChange={(e) => { setStartTimePeriod(e.target.value); }}
-          checked={startTimePeriod === 'AM'}
-        />
-        <label htmlFor="time-range-start-PM">PM</label>
-        <input
-          id="time-range-start-PM"
-          type="radio"
-          name="start-period"
-          value="PM"
-          onChange={(e) => { setStartTimePeriod(e.target.value); }}
-          checked={startTimePeriod === 'PM'}
-        />
+        <label>
+          From
+          <input
+            type="text"
+            placeholder={TIME_FORMAT}
+            className={getInvalidStyle(startTimeDisp, TIME_FORMAT)}
+            onChange={(e) => { setStartTimeDisp(formatTimeInput(e)); }}
+            value={startTimeDisp}
+          />
+        </label>
+        <label>
+          AM
+          <input
+            type="radio"
+            name="start-period"
+            value="AM"
+            onChange={(e) => { setStartTimePeriod(e.target.value); }}
+            checked={startTimePeriod === 'AM'}
+          />
+        </label>
+        <label>
+          PM
+          <input
+            type="radio"
+            name="start-period"
+            value="PM"
+            onChange={(e) => { setStartTimePeriod(e.target.value); }}
+            checked={startTimePeriod === 'PM'}
+          />
+        </label>
         {/* END TIME AND AM/PM */}
-        <label htmlFor="time-range-end">To</label>
-        <input
-          id="time-range-end"
-          type="text"
-          placeholder={TIME_FORMAT}
-          className={getInvalidStyle(endTimeDisp, TIME_FORMAT)}
-          onChange={(e) => { setEndTimeDisp(formatTimeInput(e)); }}
-          value={endTimeDisp}
-        />
-        <label htmlFor="time-range-end-AM">AM</label>
-        <input
-          id="time-range-end-AM"
-          type="radio"
-          name="end-period"
-          value="AM"
-          onChange={(e) => { setEndTimePeriod(e.target.value); }}
-          checked={values.endTime.timePeriod === 'AM'}
-        />
-        <label htmlFor="time-range-end-PM">PM</label>
-        <input
-          id="time-range-end-PM"
-          type="radio"
-          name="end-period"
-          value="PM"
-          onChange={(e) => { setEndTimePeriod(e.target.value); }}
-          checked={endTimePeriod === 'PM'}
-        />
+        <label>
+          To
+          <input
+            type="text"
+            placeholder={TIME_FORMAT}
+            className={getInvalidStyle(endTimeDisp, TIME_FORMAT)}
+            onChange={(e) => { setEndTimeDisp(formatTimeInput(e)); }}
+            value={endTimeDisp}
+          />
+        </label>
+        <label>
+          AM
+          <input
+            type="radio"
+            name="end-period"
+            value="AM"
+            onChange={(e) => { setEndTimePeriod(e.target.value); }}
+            checked={values.endTime.timePeriod === 'AM'}
+          />
+        </label>
+        <label>
+          PM
+          <input
+            type="radio"
+            name="end-period"
+            value="PM"
+            onChange={(e) => { setEndTimePeriod(e.target.value); }}
+            checked={endTimePeriod === 'PM'}
+          />
+        </label>
       </div>
     </div>
   );
