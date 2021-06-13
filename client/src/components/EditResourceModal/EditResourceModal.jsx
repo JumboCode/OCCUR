@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { RESOURCE_CATEGORIES, DAYS_OF_WEEK, RESOURCE_PROP_TYPES } from 'data/resources';
 import Modal from 'components/Modal';
@@ -13,12 +13,13 @@ export default function EditResourceModal({ open, close, errorMessage, resource,
   const { register, handleSubmit, watch } = useForm({
     defaultValues: resource,
   });
-  let b64flyer;
+
+  const [b64flyer, setb64flyer] = useState();
+
   async function onSubmit(data) {
     let recurringDayList = [];
     let startTime = null;
     let endTime = null;
-    console.log(data.flyer);
     if (data.recurrenceDays) {
       recurringDayList = data.recurrenceDays;
     }
@@ -38,8 +39,8 @@ export default function EditResourceModal({ open, close, errorMessage, resource,
       endTime,
       isRecurring: data.isRecurring,
       recurrenceDays: recurringDayList,
-      flyer: b64flyer,
-      flyerId: data.flyerId,
+      flyer: b64flyer || resource.flyer,
+      flyerId: resource.flyerId,
       link: data.link,
       meetingLink: data.meetingLink,
       phone: data.phone,
@@ -68,13 +69,11 @@ export default function EditResourceModal({ open, close, errorMessage, resource,
   }
 
   const handleFlyerSelected = (e) => {
-    console.log('heres the flyer', e.target.files[0]);
     const flyer = e.target.files[0];
     const reader = new FileReader();
     reader.readAsDataURL(flyer);
     reader.onloadend = () => {
-      console.log(reader.result);
-      b64flyer = reader.result;
+      setb64flyer(reader.result);
     };
   };
 
@@ -171,7 +170,7 @@ export default function EditResourceModal({ open, close, errorMessage, resource,
         <h2 className={styles.fieldTitle}>Resource Photo</h2>
         <input
           type="file"
-          {...register('flyer')}
+          {...register('flyerFile')}
           placeholder="Upload resource photo"
           name="resource photo"
           onChange={handleFlyerSelected}
