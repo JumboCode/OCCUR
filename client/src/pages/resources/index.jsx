@@ -140,12 +140,12 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
     }
   };
 
-  const get12Hour = () => {
-    let h = parseInt(router.query.startHour, 10);
+  const get12Hour = (str) => {
+    let h = parseInt(str, 10);
     if (Number.isNaN(h)) return '';
     // adjust to 12 hours
     if (h > 12) h -= 12;
-    return h.toString().padStart(router.query.startHour.length, '0');
+    return h.toString().padStart(str.length, '0');
   };
 
   const sidebarFilterState = {
