@@ -10,10 +10,8 @@ import Close from '../../../public/icons/close.svg';
 const cx = classNames.bind(styles);
 
 export default function EditResourceModal({ open, close, errorMessage, resource, submit }) {
-  const fillResource = resource;
-  fillResource.flyer = '';
   const { register, handleSubmit, watch } = useForm({
-    defaultValues: fillResource,
+    defaultValues: resource,
   });
   let b64flyer;
   async function onSubmit(data) {
