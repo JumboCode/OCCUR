@@ -41,9 +41,16 @@ function filterResources(passedResources, filters) {
   resources = resources.filter((r) => {
     let include = true;
     // Category filter
-    if (filters?.categories?.length) { include &&= filters.categories.includes(r.category); }
+    if (filters.categories?.length) { include &&= filters.categories.includes(r.category); }
     // Day of week filter
-    if (filters?.daysOfWeek?.length) { include &&= matchesDays(r, filters.daysOfWeek); }
+    if (filters.daysOfWeek?.length) { include &&= matchesDays(r, filters.daysOfWeek); }
+    // Date filter
+    if (filters.startMonth && filters.startDay && filters.startYear) {
+      include &&= r.endDate && new Date(r.endDate) >= new Date(`${filters.startYear}-${filters.startMonth}-${filters.startDay}`);
+    }
+    if (filters.endMonth && filters.endDay && filters.endYear) {
+      include &&= r.startDate && new Date(r.startDate) <= new Date(`${filters.endYear}-${filters.endMonth}-${filters.endDay}`);
+    }
     return include;
   });
 
