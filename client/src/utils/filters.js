@@ -51,7 +51,9 @@ export default function filterResources(passedResources, filters) {
     if (filters.categories?.length) { include &&= filters.categories.includes(r.category); }
     // Day of week filter
     if (filters.daysOfWeek?.length) { include &&= matchesDays(r, filters.daysOfWeek); }
+
     // Date filter
+
     if (filters.startMonth && filters.startDay && filters.startYear) {
       include &&= r.endDate && new Date(r.endDate) >= new Date(`${filters.startYear}-${filters.startMonth}-${filters.startDay}`);
     }
@@ -59,6 +61,16 @@ export default function filterResources(passedResources, filters) {
       include &&= r.startDate && new Date(r.startDate) <= new Date(`${filters.endYear}-${filters.endMonth}-${filters.endDay}`);
     }
 
+    // Time filter
+
+    const time = (hh, mm) => new Date(`1970-01-01T${hh}:${mm}:00Z`);
+
+    if (filters.startHour && filters.startMinute) {
+      include &&= r.endTime && time(...r.endTime.split(':')) >= time(filters.startHour, filters.startMinute);
+    }
+    if (filters.endHour && filters.endMinute) {
+      include &&= r.startTime && time(...r.startTime.split(':')) <= time(filters.endHour, filters.endMinute);
+    }
     return include;
   });
 
