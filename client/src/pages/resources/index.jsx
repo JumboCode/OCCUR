@@ -6,10 +6,9 @@ import { useRouter } from 'next/router';
 import { isAdmin } from 'auth';
 import unauthenticatedApi, { useApi } from 'api';
 
-import fuzzysort from 'fuzzysort';
 import throttle from 'lodash/throttle';
 import omit from 'lodash/omit';
-import { matchesDays } from 'utils/filters';
+import filterResources, { geoFilterResources } from 'utils/filters';
 
 import ResourceCard from 'components/ResourceCard';
 import SidebarFilter from 'components/SidebarFilter/SidebarFilter';
@@ -24,53 +23,6 @@ import classNames from 'classnames/bind';
 import styles from './ResourceSearch.module.scss';
 
 const cx = classNames.bind(styles);
-
-
-function filterResources(passedResources, filters) {
-  let resources = passedResources;
-  // Text search
-  if (filters.search) {
-    const results = fuzzysort.go(
-      filters.search,
-      resources,
-      { keys: ['name', 'organization'] },
-    );
-    resources = results.map((result) => result.obj);
-  }
-  // Other filters
-  resources = resources.filter((r) => {
-    let include = true;
-    // Category filter
-    if (filters.categories?.length) { include &&= filters.categories.includes(r.category); }
-    // Day of week filter
-    if (filters.daysOfWeek?.length) { include &&= matchesDays(r, filters.daysOfWeek); }
-    // Date filter
-    if (filters.startMonth && filters.startDay && filters.startYear) {
-      include &&= r.endDate && new Date(r.endDate) >= new Date(`${filters.startYear}-${filters.startMonth}-${filters.startDay}`);
-    }
-    if (filters.endMonth && filters.endDay && filters.endYear) {
-      include &&= r.startDate && new Date(r.startDate) <= new Date(`${filters.endYear}-${filters.endMonth}-${filters.endDay}`);
-    }
-    return include;
-  });
-
-  return resources;
-}
-
-// Latitude/longitude filters happen in a separate step so that the map can display everything
-const geoFilterResources = (
-  resources,
-  { min_lat: minLat, max_lat: maxLat, min_lng: minLng, max_lng: maxLng },
-) => resources.filter(({ location }) => {
-  if ((minLat || maxLat || minLng || maxLng) && !location) return false;
-  const { latitude: resourceLat, longitude: resourceLng } = location || {};
-  if (minLat && (resourceLat < minLat)) return false;
-  if (maxLat && (resourceLat > maxLat)) return false;
-  if (minLng && (resourceLng < minLng)) return false;
-  if (maxLng && (resourceLng > maxLng)) return false;
-  return true;
-});
-
 
 const get12Hour = (str) => {
   let h = parseInt(str, 10);
