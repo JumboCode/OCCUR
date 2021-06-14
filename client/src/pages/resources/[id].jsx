@@ -67,7 +67,7 @@ export default function ResourcePage({
           <div className={styles.mainColumns}>
             <div
               className={styles.logo}
-              style={{ backgroundImage: flyer ? `url(${flyer})` : `url(${defaultImage})`}}
+              style={{ backgroundImage: flyer ? `url(${flyer})` : `url(${defaultImage})` }}
             />
             <div>
               <div className={styles.basic}>
