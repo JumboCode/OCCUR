@@ -28,9 +28,14 @@ const get12Hour = (str) => {
   let h = parseInt(str, 10);
   if (Number.isNaN(h)) return '';
   // adjust to 12 hours
+  if (h === 0) h = 12;
   if (h > 12) h -= 12;
   return h.toString().padStart(str.length, '0');
 };
+
+const get24Hour = (hour, period) => (Number.isNaN(parseInt(hour, 10))
+  ? undefined
+  : ((parseInt(hour, 10) + ({ AM: hour === '12' ? 12 : 0, PM: hour === '12' ? 0 : 12 })[period]) % 24).toString().padStart(hour.length, '0'));
 
 
 export default function ResourcesPage({ blocked, data: passedResources }) {
@@ -144,16 +149,12 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
     startDate: { month: startMonth, day: startDay, year: startYear },
     endDate: { month: endMonth, day: endDay, year: endYear },
   }) => {
-    const getHour = (hour, period) => (Number.isNaN(parseInt(hour, 10))
-      ? undefined
-      : ((parseInt(hour, 10) + ({ AM: hour === '12' ? 12 : 0, PM: hour === '12' ? 0 : 12 })[period]) % 24).toString().padStart(hour.length, '0'));
-
     setQueryParams({
       categories: categories.join(',') || undefined,
       daysOfWeek: daysOfWeek.join(',') || undefined,
-      startHour: getHour(startHour, startTimePeriod),
+      startHour: get24Hour(startHour, startTimePeriod),
       startMinute: startMinute || undefined,
-      endHour: getHour(endHour, endTimePeriod),
+      endHour: get24Hour(endHour, endTimePeriod),
       endMinute: endMinute || undefined,
       startMonth: startMonth || undefined,
       startDay: startDay || undefined,
