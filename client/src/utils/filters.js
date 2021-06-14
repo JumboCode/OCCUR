@@ -54,6 +54,16 @@ export default function filterResources(passedResources, filters) {
 
     // Date filter
 
+    // If start date is after end date, no results should be returned
+    if (
+      filters.startMonth && filters.startDay && filters.startYear
+      && filters.endMonth && filters.endDay && filters.endYear
+      && (
+        new Date(`${filters.startYear}-${filters.startMonth}-${filters.startDay}`)
+        > new Date(`${filters.endYear}-${filters.endMonth}-${filters.endDay}`)
+      )
+    ) return false;
+
     if (filters.startMonth && filters.startDay && filters.startYear) {
       include &&= r.endDate && new Date(r.endDate) >= new Date(`${filters.startYear}-${filters.startMonth}-${filters.startDay}`);
     }
@@ -64,6 +74,11 @@ export default function filterResources(passedResources, filters) {
     // Time filter
 
     const time = (hh, mm) => new Date(`1970-01-01T${hh}:${mm}:00Z`);
+    // If start time is after end time, no results should be returned
+    if (
+      filters.startHour && filters.startMinute && filters.endHour && filters.endMinute
+      && time(filters.startHour, filters.startMinute) > time(filters.endHour, filters.endMinute)
+    ) return false;
 
     if (filters.startHour && filters.startMinute) {
       include &&= r.endTime && time(...r.endTime.split(':')) >= time(filters.startHour, filters.startMinute);
