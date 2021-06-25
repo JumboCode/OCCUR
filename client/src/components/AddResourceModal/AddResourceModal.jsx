@@ -1,25 +1,22 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
-import { RESOURCE_CATEGORIES, DAYS_OF_WEEK, RESOURCE_PROP_TYPES } from 'data/resources';
+import { RESOURCE_CATEGORIES, DAYS_OF_WEEK } from 'data/resources';
 import Modal from 'components/Modal';
-import styles from './EditResourceModal.module.scss';
+import styles from './AddResourceModal.module.scss';
 import classNames from 'classnames/bind';
 import PropTypes from 'prop-types';
 import Close from '../../../public/icons/close.svg';
 
 const cx = classNames.bind(styles);
 
-export default function EditResourceModal({ open, close, errorMessage, resource, submit }) {
-  const { register, handleSubmit, watch } = useForm({
-    defaultValues: resource,
-  });
-
-  const [b64flyer, setb64flyer] = useState();
-
+export default function AddResourceModal({ open, close, errorMessage, submit }) {
+  const { register, handleSubmit, watch } = useForm();
+  let b64flyer;
   async function onSubmit(data) {
     let recurringDayList = [];
-    let startTime = null;
-    let endTime = null;
+    let startTime = '';
+    let endTime = '';
+    console.log(data.flyer);
     if (data.recurrenceDays) {
       recurringDayList = data.recurrenceDays;
     }
@@ -39,8 +36,8 @@ export default function EditResourceModal({ open, close, errorMessage, resource,
       endTime,
       isRecurring: data.isRecurring,
       recurrenceDays: recurringDayList,
-      flyer: b64flyer || resource.flyer,
-      flyerId: resource.flyerId,
+      flyer: b64flyer,
+      flyerId: data.flyerId,
       link: data.link,
       meetingLink: data.meetingLink,
       phone: data.phone,
@@ -69,11 +66,13 @@ export default function EditResourceModal({ open, close, errorMessage, resource,
   }
 
   const handleFlyerSelected = (e) => {
+    console.log('heres the flyer', e.target.files[0]);
     const flyer = e.target.files[0];
     const reader = new FileReader();
     reader.readAsDataURL(flyer);
     reader.onloadend = () => {
-      setb64flyer(reader.result);
+      console.log(reader.result);
+      b64flyer = reader.result;
     };
   };
 
@@ -83,7 +82,7 @@ export default function EditResourceModal({ open, close, errorMessage, resource,
     <Modal className={styles.resourceForm} open={open} onClose={() => close(false)}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Close onClick={() => close(false)} className={cx('closeButton')} type="button" />
-        <h1>Edit this Resource</h1>
+        <h1>Add a Resource</h1>
         <h2 className={styles.fieldTitle}>
           Resource Name
           <span className={styles.required}>*</span>
@@ -125,7 +124,7 @@ export default function EditResourceModal({ open, close, errorMessage, resource,
           <div className={styles.daysWrapper}>
             { DAYS_OF_WEEK.map((day) => (
               <label key={day.id} className={styles.dayOfWeek}>
-                <input type="checkbox" {...register('recurrenceDays')} value={day.id} />
+                <input {...register('recurrenceDays')} type="checkbox" value={day.id} />
                 <div>{day.shortLabel}</div>
               </label>
             )) }
@@ -168,14 +167,9 @@ export default function EditResourceModal({ open, close, errorMessage, resource,
           <input {...register('zip_code')} placeholder="Enter zip code" />
         </>
         <h2 className={styles.fieldTitle}>Resource Photo</h2>
-        <img
-          className={styles.resourcePhotoPreview}
-          src={resource.flyer || `/images/category-defaults/${resource.category || 'OTHER'}.jpeg`}
-          alt="Resource flyer"
-        />
         <input
           type="file"
-          {...register('flyerFile')}
+          {...register('flyer')}
           placeholder="Upload resource photo"
           name="resource photo"
           onChange={handleFlyerSelected}
@@ -207,13 +201,12 @@ export default function EditResourceModal({ open, close, errorMessage, resource,
   );
 }
 
-EditResourceModal.propTypes = {
+AddResourceModal.propTypes = {
   open: PropTypes.bool.isRequired,
   close: PropTypes.func.isRequired,
   errorMessage: PropTypes.string,
   submit: PropTypes.func.isRequired,
-  resource: PropTypes.shape(RESOURCE_PROP_TYPES).isRequired,
 };
-EditResourceModal.defaultProps = {
+AddResourceModal.defaultProps = {
   errorMessage: null,
 };

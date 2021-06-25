@@ -50,7 +50,6 @@ DTEND;VALUE=DATE:${y}${m}${(parseInt(d, 10) + 1).toString().padStart(2, '0')}
         now.setUTCDate(now.getUTCDate() + ((dayIds.indexOf(dow) + (7 - now.getUTCDay())) % 7));
         return now;
       });
-      if (name === 'Telegraph Community Ministry Center Food Pantry') console.log(potentialStartDates);
       [startDate] = new Date(Math.min(...potentialStartDates)).toISOString().split('T');
     }
 

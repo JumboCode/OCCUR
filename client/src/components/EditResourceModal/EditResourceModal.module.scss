@@ -98,7 +98,7 @@ span.required {
     & > :not(:last-child) {
         margin-right: 10px;
     }
-    
+
 }
 
 .error {
@@ -115,3 +115,9 @@ span.required {
       box-shadow: inset 0 0 0 2.5px $red;
     }
   }
+
+.resourcePhotoPreview {
+    width: 200px;
+    height: auto;
+    display: block;
+}

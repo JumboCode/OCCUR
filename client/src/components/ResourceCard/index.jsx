@@ -1,4 +1,5 @@
-import React, { useCallback, useRef,  useState } from 'react';
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 
 import { RESOURCE_PROP_TYPES, RESOURCE_DEFAULT_PROPS } from 'data/resources';
 import styles from './ResourceCard.module.scss';
@@ -23,10 +24,7 @@ import PenIcon from '../../../public/icons/pencil.svg';
 import { slugify } from 'utils';
 
 
-
-
-export default function ResourceCard({
-   r, onResourceDeleted, onResourceEdited }) {
+export default function ResourceCard({ r, blocked, onResourceDeleted, onResourceEdited }) {
   const api = useApi();
 
   const defaultImage = `/images/category-defaults/${r.category || 'OTHER'}.jpeg`;
@@ -39,7 +37,7 @@ export default function ResourceCard({
 
   const deleteResource = () => {
     api.delete(`resources/${r.id}`)
-      .then((response) =>{
+      .then((response) => {
         onResourceDeleted();
         console.log(response);
       })
@@ -49,21 +47,20 @@ export default function ResourceCard({
   };
 
   const editResource = async (resource) => {
-    try{
-      await api.put(`resources/${r.id}`, undefined, resource)
+    try {
+      await api.put(`resources/${r.id}`, undefined, resource);
       setErrorMessage(null);
       onResourceEdited();
       return true;
-
-    }catch(errors){
-      if(errors.status == 400 && errors.body){
-        console.log("errors: ", errors.body);
-        console.log("errors type: ", typeof(errors.body));
+    } catch (errors) {
+      if (errors.status === 400 && errors.body) {
+        console.log('errors: ', errors.body);
+        console.log('errors type: ', typeof (errors.body));
         setErrorMessage(JSON.stringify(errors.body));
       }
       return false;
     }
-  }
+  };
 
   return (
     <div className={styles.base}>
@@ -119,43 +116,53 @@ export default function ResourceCard({
         </Link>
 
         {
-        r.blocked ?
-        <div className={styles.buttons}>
-            <CalendarEventDownload
-              name={r.name}
-              startTime={r.startTime}
-              endTime={r.endTime}
-              startDate={r.startDate}
-              endDate={r.endDate}
-              isRecurring={r.isRecurring}
-              recurrenceDays={r.recurrenceDays}
-              location={r.location}
-            >
-            <Calendar2Icon />
-            Add to Calendar
-          </CalendarEventDownload>
+          blocked
+            ? (
+              <div className={styles.buttons}>
+                <CalendarEventDownload
+                  name={r.name}
+                  startTime={r.startTime}
+                  endTime={r.endTime}
+                  startDate={r.startDate}
+                  endDate={r.endDate}
+                  isRecurring={r.isRecurring}
+                  recurrenceDays={r.recurrenceDays}
+                  location={r.location}
+                >
+                  <Calendar2Icon />
+                  Add to Calendar
+                </CalendarEventDownload>
 
-          <button type="button">
-            <ShareIcon />
-            Share
-          </button>
-        </div>
-        :
-        <div className={styles.buttons}>
-          <button type="button" onClick={handleDeleteClick}>
-            <TrashIcon />
-            Delete
-          </button>
-          <button type="button" onClick={handleEditClick}>
-            <PenIcon />
-            Edit
-          </button>
-        </div>
+                <button type="button">
+                  <ShareIcon />
+                  Share
+                </button>
+              </div>
+            )
+            : (
+              <div className={styles.buttons}>
+                <button type="button" onClick={handleDeleteClick}>
+                  <TrashIcon />
+                  Delete
+                </button>
+                <button type="button" onClick={handleEditClick}>
+                  <PenIcon />
+                  Edit
+                </button>
+              </div>
+            )
         }
       </div>
     </div>
   );
 }
 
-ResourceCard.propTypes = RESOURCE_PROP_TYPES;
-ResourceCard.defaultProps = RESOURCE_DEFAULT_PROPS;
+ResourceCard.propTypes = {
+  r: PropTypes.shape(RESOURCE_PROP_TYPES),
+  blocked: PropTypes.bool.isRequired,
+  onResourceDeleted: PropTypes.func.isRequired,
+  onResourceEdited: PropTypes.func.isRequired,
+};
+ResourceCard.defaultProps = {
+  r: RESOURCE_DEFAULT_PROPS,
+};

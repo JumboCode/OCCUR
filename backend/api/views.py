@@ -43,72 +43,73 @@ def apiUrlsList(request):
 # Purpose: View for GET, POST resources
 # Functionality: create new resource, retrieve all resources with given query params
 #
+
+def inputValidator(data):
+    # dict of list matches the format of serializer.errors
+    errorCatalog = defaultdict(list)
+
+    if data['startDate'] and data['endDate'] and data['startDate'] > data['endDate']:
+        errorCatalog['startDate'].append('Start date must occur after end date.')
+
+    nowStr = datetime.now().strftime('%Y-%m-%d')
+    if data['startDate'] and data['startDate'] < nowStr:
+        errorCatalog['startDate'].append('Start date must occur in the future.')
+
+    if data['startTime'] and data['endTime'] and data['startTime'] > data['endTime']:
+        errorCatalog['startDate'].append('Start time must occur before end time.')
+
+    if data['location'] != {} and data['location'] and len(data['location']['zip_code']) != 5 and len(data['location']['zip_code']) != 0:
+        # matching format of error in foreign key field
+        errorCatalog['location'] = {}
+        errorCatalog['location']['zip_code'] = ['Invalid zipcode.']
+
+    dataURLPattern = r"data:.+;base64,"
+    if data['flyer'] != None and not re.match(dataURLPattern, data['flyer']):
+        errorCatalog['flyer'].append('Data URL for `flyer` is either missing or invalid.')
+
+    correctDataURLStart = 'data:image'
+    if data['flyer'] != None and not correctDataURLStart == data['flyer'][:len(correctDataURLStart)]:
+        errorCatalog['flyer'].append('The flyer is not a valid image.')
+
+    phoneNumberPattern = r"^[0-9]*$"
+    if data['phone'] != None and not re.match(phoneNumberPattern, data['phone']):
+        errorCatalog['phone'].append('Phone numbers must only contain digits')
+
+    return dict(errorCatalog)
+
+def fillRequestBlanks(data, optionalsToDefaults):
+    for (fieldName,defaultVal) in optionalsToDefaults.items():
+        if not fieldName in data or data[fieldName] == "":
+            data[fieldName] = defaultVal
+
+def mergeFieldErrors(vErrors, sErrors):
+    result = sErrors
+    for (vFieldName,vFieldErrors) in vErrors.items():
+        if vFieldName == 'location':
+            # recursively merge location errors, since it is a foreign key field
+            sLocationErrors = sErrors['location'] if 'location' in sErrors else {}
+            result['location'] = mergeFieldErrors(vFieldErrors, sLocationErrors)
+        else:
+            # combine both lists of errors
+            sFieldErrors = sErrors[vFieldName] if vFieldName in sErrors else []
+            result[vFieldName] = sFieldErrors + vFieldErrors
+
+    return result
+
 class ResourceListCreate(ListCreateAPIView):
     queryset = Resource.objects.all()
     serializer_class = ResourceSerializer
     filter_backends = (DjangoFilterBackend, SearchFilter)
     filter_fields = ('id',)
     search_fields = ('name', 'organization',)
-
+    
     # All unrequired fields are populated with None values if empty
-    defaultOptionalVals = { 'flyer': None, 'meetingLink': None, 'location': {}, 'flyerId': None, 'startDate': None, 'endDate': None, 'link': None, 'startTime': None, 'endTime': None, 'phone': None, 'email': None, 'isRecurring': None, 'recurrenceDays': [] }
-
-    def inputValidator(self, data):
-        # dict of list matches the format of serializer.errors
-        errorCatalog = defaultdict(list)
-
-        if data['startDate'] and data['endDate'] and data['startDate'] > data['endDate']:
-            errorCatalog['startDate'].append('Start date must occur before end date.')
-
-        nowStr = datetime.now().strftime('%Y-%m-%d')
-        if data['startDate'] and data['startDate'] < nowStr:
-            errorCatalog['startDate'].append('Start date must occur in the future.')
-
-        if data['startTime'] and data['endTime'] and data['startTime'] > data['endTime']:
-            errorCatalog['startDate'].append('Start time must occur before end time.')
-
-        if data['location'] != {} and data['location'] and len(data['location']['zip_code']) != 5 and len(data['location']['zip_code']) != 0:
-            # matching format of error in foreign key field
-            errorCatalog['location'] = {}
-            errorCatalog['location']['zip_code'] = ['Invalid zipcode.']
-
-        dataURLPattern = r"data:.+;base64,"
-        if data['flyer'] != None and not re.match(dataURLPattern, data['flyer']):
-            errorCatalog['flyer'].append('Data URL for `flyer` is either missing or invalid.')
-
-        correctDataURLStart = 'data:image'
-        if data['flyer'] != None and not correctDataURLStart == data['flyer'][:len(correctDataURLStart)]:
-            errorCatalog['flyer'].append('The flyer is not a valid image.')
-
-        phoneNumberPattern = r"^[0-9]*$"
-        if data['phone'] != None and not re.match(phoneNumberPattern, data['phone']):
-            errorCatalog['phone'].append('Phone numbers must only contain digits')
-
-        return dict(errorCatalog)
-
-    def fillRequestBlanks(self, data, optionalsToDefaults):
-        for (fieldName,defaultVal) in optionalsToDefaults.items():
-            if not fieldName in data or data[fieldName] == "":
-                data[fieldName] = defaultVal
-
-    def mergeFieldErrors(self, vErrors, sErrors):
-        result = sErrors
-        for (vFieldName,vFieldErrors) in vErrors.items():
-            if vFieldName == 'location':
-                # recursively merge location errors, since it is a foreign key field
-                sLocationErrors = sErrors['location'] if 'location' in sErrors else {}
-                result['location'] = self.mergeFieldErrors(vFieldErrors, sLocationErrors)
-            else:
-                # combine both lists of errors
-                sFieldErrors = sErrors[vFieldName] if vFieldName in sErrors else []
-                result[vFieldName] = sFieldErrors + vFieldErrors
-
-        return result
-
     # creates new resource
     def create(self, request, *args, **kwargs):
-        self.fillRequestBlanks(request.data, self.defaultOptionalVals)
-        vErrors = self.inputValidator(request.data)
+        # All unrequired fields are populated with None values if empty
+        defaultOptionalVals = { 'flyer': None, 'meetingLink': None, 'location': {}, 'flyerId': None, 'startDate': None, 'endDate': None, 'link': None, 'startTime': None, 'endTime': None, 'phone': None, 'email': None, 'isRecurring': None, 'recurrenceDays': [] }
+        fillRequestBlanks(request.data, defaultOptionalVals)
+        vErrors = inputValidator(request.data)
 
         #---- retrieve geoCoordinates
         if 'location' in request.data and request.data['location']:
@@ -124,7 +125,7 @@ class ResourceListCreate(ListCreateAPIView):
         # go on to be added to DB, don't add img to cloudinary
         if image != None and len(vErrors) == 0:
             image = cloudinary_url(image)
-            request.data['flyer'] = image["url"]
+            request.data['flyer'] = image["secure_url"]
             request.data['flyerId'] = image["public_id"]
 
         serializer = ResourceSerializer(data=request.data)
@@ -346,9 +347,40 @@ class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
             response.status_code = 500
             response.data['success'] = False
         return response
-
+    
     def update(self, request, *args, **kwargs):
-        # vErrors = self.inputValidator(request.data)
+        # All unrequired fields are populated with None values if empty
+        defaultOptionalVals = { 'flyer': None, 'meetingLink': None, 'location': {}, 'flyerId': None, 'startDate': None, 'endDate': None, 'link': None, 'startTime': None, 'endTime': None, 'phone': None, 'email': None, 'isRecurring': None, 'recurrenceDays': [] }
+
+        fillRequestBlanks(request.data, defaultOptionalVals)
+
+        isbase64 = None
+        # Image Handling
+        if request.data['flyer']:
+            dataURLPattern = r"data:.+;base64,"
+            correctDataURLStart = 'data:image'
+            isbase64 = re.match(dataURLPattern, request.data['flyer']) and correctDataURLStart == request.data['flyer'][:len(correctDataURLStart)]
+            
+        vErrors = inputValidator(request.data)
+        
+        # Handle new resource images
+        if isbase64 != None and isbase64:
+            # delete old flyer image if it exists
+            if request.data['flyerId']:
+                cloudinary_delete(request.data['flyerId'])
+
+            # add new flyer image to resource
+            image = request.data['flyer']
+            if image != None:
+                image = cloudinary_url(image)
+                request.data['flyer'] = image["secure_url"]
+                request.data['flyerId'] = image["public_id"]
+
+        # Delete existing image if flyer value in non
+        if request.data['flyer'] == None and request.data['flyerId']:
+            cloudinary_delete(request.data['flyerId'])
+            request.data['flyerId'] = None
+
         #---- retrieve geoCoordinates
         if 'location' in request.data and request.data['location']:
             address = request.data['location']
@@ -360,8 +392,10 @@ class ResourceRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
             request.data['location'] = {}
 
         response = super().update(request, *args, **kwargs)
-        # if response.status_code == 400:
-        #     return Response(vErrors, status=status.HTTP_400_BAD_REQUEST)
+
+        if response.status_code == 400:
+            return Response(vErrors, status=status.HTTP_400_BAD_REQUEST)
+    
         if response.status_code == 200:
             from django.core.cache import cache
             Resource = response.data
@@ -426,7 +460,6 @@ class LocationRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
                 'longitude': Location['longitude'],
             })
         return response
-
 #
 # LocationList
 # Purpose: View for retrieving list of all locations

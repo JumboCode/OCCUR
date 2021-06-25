@@ -19,7 +19,11 @@ export default function DeleteAdminModal({ open, close, user, submit }) {
       <form className={cx('deleteAdminForm')} onSubmit={handleSubmit(onSubmit)}>
         <Close onClick={() => close(false)} className={cx('closeButton')} type="button" />
         <h4>Delete Admin</h4>
-        <div>Are you sure that you would like to delete {user.name}?</div>
+        <div>
+          Are you sure that you would like to delete
+          {user.name}
+          ?
+        </div>
         <div className={cx('buttonContainer')}>
           <button onClick={handleSubmit(onSubmit)} className={cx('saveButton')} type="button">Yes</button>
           <button onClick={() => close(false)} className={cx('cancelButton')} type="button">Cancel</button>

@@ -1,69 +1,41 @@
-import React, { useCallback, useRef,  useState , useEffect, setState} from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { RESOURCE_PROP_TYPES } from 'data/resources';
 
 import { useRouter } from 'next/router';
-import {HTTPError, useApi} from 'api';
-import api from 'api';
-import fuzzysort from 'fuzzysort';
+import { isAdmin } from 'auth';
+import unauthenticatedApi, { useApi } from 'api';
 
 import throttle from 'lodash/throttle';
 import omit from 'lodash/omit';
+import filterResources, { geoFilterResources } from 'utils/filters';
 
 import ResourceCard from 'components/ResourceCard';
 import SidebarFilter from 'components/SidebarFilter/SidebarFilter';
 import Map from 'components/Map/lazy';
+import AddResourceModal from 'components/AddResourceModal';
 
 import Exclamation from '../../../public/icons/exclamation.svg';
 import Arrow from '../../../public/icons/arrow.svg';
+import Circleplus from '../../../public/icons/circle_plus.svg';
 
 import classNames from 'classnames/bind';
 import styles from './ResourceSearch.module.scss';
-import { transform } from 'lodash';
-import Circleplus from '../../../public/icons/circle_plus.svg';
-import { isAdmin } from 'auth';
-import AddResourceModal from 'pages/admin-addResource'
 
 const cx = classNames.bind(styles);
 
+const get12Hour = (str) => {
+  let h = parseInt(str, 10);
+  if (Number.isNaN(h)) return '';
+  // adjust to 12 hours
+  if (h === 0) h = 12;
+  if (h > 12) h -= 12;
+  return h.toString().padStart(str.length, '0');
+};
 
-function filterResources(passedResources, filters) {
-  let resources = passedResources;
-  // Text search
-  if (filters.search) {
-    const results = fuzzysort.go(
-      filters.search,
-      resources,
-      { keys: ['name', 'organization'] },
-    );
-    resources = results.map((result) => result.obj);
-  }
-  // Other filters
-  resources = resources.filter((r) => {
-    // Category filter
-    if (filters.categories && filters.categories.length) {
-      return filters.categories.includes(r.category);
-    }
-    // TODO: more filters when implemented
-    return true;
-  });
-
-  return resources;
-}
-
-// Latitude/longitude filters happen in a separate step so that the map can display everything
-const geoFilterResources = (
-  resources,
-  { min_lat: minLat, max_lat: maxLat, min_lng: minLng, max_lng: maxLng },
-) => resources.filter(({ location }) => {
-  if ((minLat || maxLat || minLng || maxLng) && !location) return false;
-  const { latitude: resourceLat, longitude: resourceLng } = location || {};
-  if (minLat && (resourceLat < minLat)) return false;
-  if (maxLat && (resourceLat > maxLat)) return false;
-  if (minLng && (resourceLng < minLng)) return false;
-  if (maxLng && (resourceLng > maxLng)) return false;
-  return true;
-});
+const get24Hour = (hour, period) => (Number.isNaN(parseInt(hour, 10))
+  ? undefined
+  : ((parseInt(hour, 10) + ({ AM: hour === '12' ? 12 : 0, PM: hour === '12' ? 0 : 12 })[period]) % 24).toString().padStart(hour.length, '0'));
 
 
 export default function ResourcesPage({ blocked, data: passedResources }) {
@@ -71,28 +43,49 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
   const routerRef = useRef();
   const router = useRouter();
   const mapRef = useRef();
+  const sidebarFilterRef = useRef();
   const api = useApi();
 
   routerRef.current = router;
 
+  const sidebarFilterState = {
+    categories: router.query.categories ? router.query.categories.split(',') : [],
+    daysOfWeek: router.query.daysOfWeek ? router.query.daysOfWeek.split(',') : [],
+    startTime: {
+      hour: get12Hour(router.query.startHour),
+      min: router.query.startMinute || '',
+      timePeriod: router.query.startHour && parseInt(router.query.startHour, 10) >= 12 ? 'PM' : 'AM',
+    },
+    endTime: {
+      hour: get12Hour(router.query.endHour),
+      min: router.query.endMinute || '',
+      timePeriod: router.query.endHour && parseInt(router.query.endHour, 10) >= 12 ? 'PM' : 'AM',
+    },
+    startDate: {
+      month: router.query.startMonth || '',
+      day: router.query.startDay || '',
+      year: router.query.startYear || '',
+    },
+    endDate: {
+      month: router.query.endMonth || '',
+      day: router.query.endDay || '',
+      year: router.query.endYear || '',
+    },
+  };
+  const sidebarFilterStateRef = useRef();
+  sidebarFilterStateRef.current = sidebarFilterState;
+
   const filteredResourcesRef = useRef();
-  const filteredResources = filterResources(resources, router.query);
+  const filteredResources = filterResources(resources, { ...router.query, ...sidebarFilterState });
   filteredResourcesRef.current = filteredResources;
   const visibleResources = geoFilterResources(filteredResources, router.query);
   const [dropDownToggle, setDropDownToggle] = useState(false);
   const [openAddResourceModal, setopenAddResourceModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
 
-  // const [filteredResources, setFilteredResources] = useState(filterResources(resources, router.query));
-  // const filteredResources = filterResources(resources, router.query);
-  // filteredResourcesRef.current = filteredResources;
-  // const [visibleResources, setVisible] = geoFilterResources(filteredResources, router.query);
-  // const [openAddResourceModal, setopenAddResourceModal] = useState(false);
-  // const [resourceDeleted, setResourceDeleted] = useState(false);
-
   const refreshData = () => {
     api.get('resources').then(setResources);
-  }
+  };
 
   const setQueryParams = useCallback((params) => {
     const oldQuery = omit(routerRef.current.query, Object.keys(params));
@@ -129,37 +122,95 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
     ),
     [],
   );
-// sends request to create a resource based on resource passed from form
+  // sends request to create a resource based on resource passed from form
   const addResource = async (resource) => {
-    try{
+    try {
       await api.post('resources', undefined, resource);
       console.log(resources);
       setErrorMessage(null);
       refreshData();
       return true;
-
-    }catch(errors){
-      console.log("status code: ", errors.status);
-      if(errors.status == 400 && errors.body){
-        console.log("errors: ", errors.body);
-        console.log("errors type: ", typeof(errors.body));
-
-          // var errorsList = [[errors.body.startDate, 
-          //                   errors.body.meetingLink,
-          //                   ...errors.body.flyer,
-          //                   ...errors.body.phone,
-          //                   ...errors.body.flyer]]
-          
-          // if(errors.body.location){errorsList.concat(errors.body.location.zip_code)}
-          // if(errors.body.location){errorsList.concat(errors.body.location.zip_code)}
-          // if(errors.body.location){errorsList.concat(errors.body.location.zip_code)}
-          // if(errors.body.location){errorsList.concat(errors.body.location.zip_code)}
-          // if(errors.body.location){errorsList.concat(errors.body.location.zip_code)}
+    } catch (errors) {
+      console.log('status code: ', errors.status);
+      if (errors.status === 400 && errors.body) {
+        console.log('errors: ', errors.body);
+        console.log('errors type: ', typeof errors.body);
         setErrorMessage(JSON.stringify(errors.body));
       }
       return false;
     }
-  }
+  };
+
+  const updateSidebarFilters = useCallback(({
+    categories,
+    daysOfWeek,
+    startTime: { hour: startHour, min: startMinute, timePeriod: startTimePeriod },
+    endTime: { hour: endHour, min: endMinute, timePeriod: endTimePeriod },
+    startDate: { month: startMonth, day: startDay, year: startYear },
+    endDate: { month: endMonth, day: endDay, year: endYear },
+  }) => {
+    setQueryParams({
+      categories: categories.join(',') || undefined,
+      daysOfWeek: daysOfWeek.join(',') || undefined,
+      startHour: get24Hour(startHour, startTimePeriod),
+      startMinute: startMinute || undefined,
+      endHour: get24Hour(endHour, endTimePeriod),
+      endMinute: endMinute || undefined,
+      startMonth: startMonth || undefined,
+      startDay: startDay || undefined,
+      startYear: startYear || undefined,
+      endMonth: endMonth || undefined,
+      endDay: endDay || undefined,
+      endYear: endYear || undefined,
+    });
+  }, [setQueryParams]);
+
+  // Apply updates to a subset of sidebar filters without passing the full list
+  const mergeSidebarFilters = useCallback(
+    (updates) => updateSidebarFilters({ ...sidebarFilterStateRef.current, ...updates }),
+    [updateSidebarFilters],
+  );
+
+  // IMPORTANT: running multiple updates at the same time creates issues because each update
+  //            reinstates a value that the previous update had asked to change. The following code
+  //            detects whether a state update is scheduled, and then batches all updates that come
+  //            before it's finished into a single group. Then, when the first state update is done,
+  //            we safely apply all of the scheduled updates based on the new, settled state,
+  //            thereby avoiding bugs that reapplied stale values
+
+  // Track whether a querystring update is in progress
+  const routeChanging = useRef(false);
+  useEffect(() => {
+    const a = () => { routeChanging.current = true; };
+    const b = () => { routeChanging.current = false; };
+    router.events.on('routeChangeStart', a);
+    router.events.on('routeChangeComplete', b);
+    return () => {
+      router.events.off('routeChangeStart', a);
+      router.events.off('routeChangeComplete', b);
+    };
+  }, [router]);
+  // While route is changing, accumulate scheduled updates without trying to apply them yet
+  const scheduledUpdates = useRef({});
+  const safeMergeSidebarFilters = useCallback((updates) => {
+    if (routeChanging.current) {
+      scheduledUpdates.current = { ...scheduledUpdates.current, ...updates };
+    } else {
+      mergeSidebarFilters(updates);
+    }
+  }, [mergeSidebarFilters]);
+  // Once route is finished changing based on the first update, apply all accumulated updates
+  useEffect(() => {
+    const applyScheduledUpdates = () => {
+      if (Object.keys(scheduledUpdates.current).length) {
+        mergeSidebarFilters(scheduledUpdates.current);
+        scheduledUpdates.current = {};
+      }
+    };
+    router.events.on('routeChangeComplete', applyScheduledUpdates);
+    return () => { router.events.off('routeChangeComplete', applyScheduledUpdates); };
+  }, [router, mergeSidebarFilters]);
+
 
   return (
 
@@ -172,11 +223,9 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
       />
       <div className={styles.left}>
         <SidebarFilter
-          values={router.query.categories ? router.query.categories.split(',') : []}
-          onChange={(cats) => {
-            const joined = cats.join(',');
-            setQueryParams({ categories: joined.length ? joined : undefined });
-          }}
+          ref={sidebarFilterRef}
+          values={sidebarFilterState}
+          onChange={safeMergeSidebarFilters}
         />
       </div>
 
@@ -189,19 +238,20 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
           />
         </div>
         <div className={cx('results-summary', { empty: !visibleResources.length })}>
-         {
-          //  If user is logged in as an admin, show the add resource button
-         !blocked &&
-          <div className={cx('buttonContainer')}>
-            <button className={cx('addResource')} type="button" onClick={() => setopenAddResourceModal(true)}>
-              <Circleplus className={cx('circleIcon')} />
-              <div
-                className={cx('addResourceButton')}
-              >
-                Add Resource
-              </div>
-            </button>
-          </div>
+          {
+          // If user is logged in as an admin, show the add resource button
+          !blocked && (
+            <div className={cx('buttonContainer')}>
+              <button className={cx('addResource')} type="button" onClick={() => setopenAddResourceModal(true)}>
+                <Circleplus className={cx('circleIcon')} />
+                <div
+                  className={cx('addResourceButton')}
+                >
+                  Add Resource
+                </div>
+              </button>
+            </div>
+          )
           }
           <div className={cx('message')}>
             {visibleResources.length ? visibleResources.length : 'No'}
@@ -214,6 +264,7 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
             className={cx('clear')}
             onClick={() => {
               mapRef.current.resetBounds();
+              sidebarFilterRef.current.clearInputs();
               router.replace('/resources', undefined, { shallow: true });
             }}
           >
@@ -222,46 +273,41 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
         </div>
 
         <div className={cx('dropDownFilter')}>
-            <button className={cx('dropDownFilterButton')} onClick={()=>{setDropDownToggle(!dropDownToggle)}}>
-              Filters
-            <Arrow className={ dropDownToggle? cx('arrow-show'): cx('arrow-hidden')}/>
-            </button>
-            {dropDownToggle ? ( 
-              <div className={cx('dropDownFilterCategories')}>
-                <SidebarFilter
-                  values={router.query.categories ? router.query.categories.split(',') : []}
-                  onChange={(cats) => {
-                    const joined = cats.join(',');
-                    setQueryParams({ categories: joined.length ? joined : undefined });
-                  }}
-                />
-              </div>
-            ) : null}
-            
+          <button type="button" className={cx('dropDownFilterButton')} onClick={() => { setDropDownToggle(!dropDownToggle); }}>
+            Filters
+            <Arrow className={cx({ 'arrow-show': dropDownToggle, 'arrow-hidden': !dropDownToggle })} />
+          </button>
+          {dropDownToggle ? (
+            <div className={cx('dropDownFilterCategories')}>
+              <SidebarFilter
+                values={sidebarFilterState}
+                onChange={updateSidebarFilters}
+              />
+            </div>
+          ) : null}
+
         </div>
 
         {/* {visibleResources?.length > 0
           ? visibleResources.map((r) => <ResourceCard key={r.id} {...r} />) */}
-        {visibleResources?.length > 0 ? 
-        // Fill in each resource card
-          visibleResources.map((r) => {
-            r.blocked = blocked;
-            return (
-              <ResourceCard
-                key={r.id}
-                r={r}
-                onResourceDeleted={refreshData}
-                onResourceEdited={refreshData}
-              />)
-          })
+        {visibleResources?.length > 0
+          // Fill in each resource card
+          ? visibleResources.map((r) => (
+            <ResourceCard
+              key={r.id}
+              r={r}
+              blocked={blocked}
+              onResourceDeleted={refreshData}
+              onResourceEdited={refreshData}
+            />
+          ))
           : (
             <div className={styles.noResults}>
               <Exclamation className={styles.exclamation} />
               <h4>No results found.</h4>
               <div>We cannot find any matching resources.</div>
             </div>
-          )
-         }
+          )}
 
       </div>
     </div>
@@ -275,6 +321,6 @@ ResourcesPage.propTypes = {
 export async function getServerSideProps(ctx) {
   const blocked = !isAdmin(ctx);
   return {
-    props: {blocked, data: await api.get('resources')},
+    props: { blocked, data: await unauthenticatedApi.get('resources') },
   };
 }
