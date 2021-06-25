@@ -18,10 +18,12 @@ export default function NavBar() {
 
       <div className={styles.innernav}>
       <SearchBar live />
-      <Burger classname={styles.burger} type="button" onClick={() => setMenuOpen(!menuOpen)} />
+      {/* <button onclick= {() => setMenuOpen(true)}> */}
+      <Burger classname={styles.burger} />
+      {/* </button> */}
       </div>
       
-      <ModalNavMenu className={styles.ModalNavMenu} open={menuOpen} close={setMenuOpen} isAuthenticated={isAuthenticated}/>
+      <ModalNavMenu className={styles.ModalNavMenu} isopen={menuOpen} close={setMenuOpen} isAuthenticated={isAuthenticated}/>
 
       <Link href="/"><a>Home</a></Link>
       <Link href="/resources"><a>Resources</a></Link>

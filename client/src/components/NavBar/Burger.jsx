@@ -1,22 +1,21 @@
-import React, { useState } from 'react';
-import RightNav from './RightNav';
+import React from 'react';
+import PropTypes from 'prop-types';
+// import RightNav from './RightNav';
 import styles from './Burger.module.scss';
 
 
-const Burger = () => {
-  // const [open, setOpen] = useState(false);
-  // eslint-disable-next-line no-trailing-spaces
-  
+export default function Burger ({ handleClick }){ 
+
   return (
-    // <React.Fragment open={open} onClick={() => setOpen(!open)}>
-      <div className={styles.styledburger}>
+      <button type='button' className={styles.styledburger} onClick={handleClick}>
         <div className={styles.top} />
         <div className={styles.middle} />
         <div className={styles.bottom} />
-      </div>
-      
-    // </React.Fragment>
+      </button>      
   );
 };
 
-export default Burger;
+
+Burger.propTypes = {
+  handleClick : PropTypes.func.isRequired,
+}
