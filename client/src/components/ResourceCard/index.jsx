@@ -93,6 +93,7 @@ export default function ResourceCard({ r, blocked, onResourceDeleted, requestEdi
             ? (
               <div className={styles.buttons}>
                 <CalendarEventDownload
+                  id={r.id}
                   name={r.name}
                   startTime={r.startTime}
                   endTime={r.endTime}
