@@ -9,7 +9,6 @@ import { DateRange, TimeRange } from 'components/DateRange';
 import { useApi } from 'api';
 import CalendarEventDownload from 'components/CalendarEventDownload';
 
-import EditResourceModal from 'components/EditResourceModal';
 import DeleteResourceModal from 'components/DeleteResourceModal';
 
 
@@ -24,16 +23,13 @@ import PenIcon from '../../../public/icons/pencil.svg';
 import { slugify } from 'utils';
 
 
-export default function ResourceCard({ r, blocked, onResourceDeleted, onResourceEdited }) {
+export default function ResourceCard({ r, blocked, onResourceDeleted, requestEditResource }) {
   const api = useApi();
 
   const defaultImage = `/images/category-defaults/${r.category || 'OTHER'}.jpeg`;
   const [openDeleteResourceModal, setopenDeleteResourceModal] = useState(false);
-  const [openEditResourceModal, setopenEditResourceModal] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(null);
 
   const handleDeleteClick = () => { setopenDeleteResourceModal(true); };
-  const handleEditClick = () => { setopenEditResourceModal(true); };
 
   const deleteResource = () => {
     api.delete(`resources/${r.id}`)
@@ -46,22 +42,6 @@ export default function ResourceCard({ r, blocked, onResourceDeleted, onResource
       });
   };
 
-  const editResource = async (resource) => {
-    try {
-      await api.put(`resources/${r.id}`, undefined, resource);
-      setErrorMessage(null);
-      onResourceEdited();
-      return true;
-    } catch (errors) {
-      if (errors.status === 400 && errors.body) {
-        console.log('errors: ', errors.body);
-        console.log('errors type: ', typeof (errors.body));
-        setErrorMessage(JSON.stringify(errors.body));
-      }
-      return false;
-    }
-  };
-
   return (
     <div className={styles.base}>
       <DeleteResourceModal
@@ -69,13 +49,6 @@ export default function ResourceCard({ r, blocked, onResourceDeleted, onResource
         close={setopenDeleteResourceModal}
         resourceID={r.id}
         submit={deleteResource}
-      />
-      <EditResourceModal
-        open={openEditResourceModal}
-        close={setopenEditResourceModal}
-        errorMessage={errorMessage}
-        resource={r}
-        submit={editResource}
       />
       <div className={styles.leftside}>
         <img alt="Resource flyer" src={r.flyer || defaultImage} />
@@ -145,7 +118,7 @@ export default function ResourceCard({ r, blocked, onResourceDeleted, onResource
                   <TrashIcon />
                   Delete
                 </button>
-                <button type="button" onClick={handleEditClick}>
+                <button type="button" onClick={() => requestEditResource(r.id)}>
                   <PenIcon />
                   Edit
                 </button>
@@ -161,7 +134,7 @@ ResourceCard.propTypes = {
   r: PropTypes.shape(RESOURCE_PROP_TYPES),
   blocked: PropTypes.bool.isRequired,
   onResourceDeleted: PropTypes.func.isRequired,
-  onResourceEdited: PropTypes.func.isRequired,
+  requestEditResource: PropTypes.func.isRequired,
 };
 ResourceCard.defaultProps = {
   r: RESOURCE_DEFAULT_PROPS,

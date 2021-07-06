@@ -14,6 +14,7 @@ import ResourceCard from 'components/ResourceCard';
 import SidebarFilter from 'components/SidebarFilter/SidebarFilter';
 import Map from 'components/Map/lazy';
 import AddResourceModal from 'components/AddResourceModal';
+import EditResourceModal from 'components/EditResourceModal';
 
 import Exclamation from '../../../public/icons/exclamation.svg';
 import Arrow from '../../../public/icons/arrow.svg';
@@ -140,6 +141,28 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
       return false;
     }
   };
+
+
+  const [resourceEditId, setResourceEditId] = useState(null);
+  const [openEditResourceModal, setOpenEditResourceModal] = useState(false);
+  const [editResourceErrorMessage, setEditResourceErrorMessage] = useState(null);
+  // Sends a request to edit a resource
+  const editResource = async (resource, id) => {
+    try {
+      await api.put(`resources/${id}`, undefined, resource);
+      setEditResourceErrorMessage(null);
+      refreshData();
+      return true;
+    } catch (errors) {
+      if (errors.status === 400 && errors.body) {
+        console.log('errors: ', errors.body);
+        console.log('errors type: ', typeof (errors.body));
+        setEditResourceErrorMessage(JSON.stringify(errors.body));
+      }
+      return false;
+    }
+  };
+
 
   const updateSidebarFilters = useCallback(({
     categories,
@@ -288,8 +311,6 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
 
         </div>
 
-        {/* {visibleResources?.length > 0
-          ? visibleResources.map((r) => <ResourceCard key={r.id} {...r} />) */}
         {visibleResources?.length > 0
           // Fill in each resource card
           ? visibleResources.map((r) => (
@@ -298,7 +319,10 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
               r={r}
               blocked={blocked}
               onResourceDeleted={refreshData}
-              onResourceEdited={refreshData}
+              requestEditResource={(id) => {
+                setResourceEditId(id);
+                setOpenEditResourceModal(true);
+              }}
             />
           ))
           : (
@@ -310,6 +334,16 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
           )}
 
       </div>
+
+      {resourceEditId !== null && (
+        <EditResourceModal
+          open={openEditResourceModal}
+          close={() => { setOpenEditResourceModal(false); setResourceEditId(null); }}
+          errorMessage={editResourceErrorMessage}
+          resource={resources.find(({ id }) => id === resourceEditId)}
+          submit={(data) => editResource(data, resourceEditId)}
+        />
+      )}
     </div>
   );
 }
