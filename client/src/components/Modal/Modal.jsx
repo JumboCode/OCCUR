@@ -12,7 +12,7 @@ export default function Modal({ open, onClose, children }) {
   useEffect(() => setMounted(true), []);
   const baseRef = useRef(null);
 
-  return mounted
+  return (mounted && open)
     ? createPortal(
       <div
         className={cx('base', { open })}
