@@ -303,8 +303,9 @@ export default function ResourcesPage({ blocked, data: passedResources }) {
           {dropDownToggle ? (
             <div className={cx('dropDownFilterCategories')}>
               <SidebarFilter
+                ref={sidebarFilterRef}
                 values={sidebarFilterState}
-                onChange={updateSidebarFilters}
+                onChange={safeMergeSidebarFilters}
               />
             </div>
           ) : null}
